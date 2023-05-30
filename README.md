@@ -15,6 +15,7 @@ If you get "Failed to open the serial port", run $ls /dev/cu.usbserial* and upda
 
 
 ### DETAILED INSTRUCTIONS
+* Install FLTK library on mac: `brew install fltk`
 * Connect ST-LINK to STM32F0 board
 * Connect UART: Black on GND, Yellow on PA9, Orange on PA10
 * Create two new folders on desktop, Firmware and GUI
