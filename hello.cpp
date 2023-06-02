@@ -40,6 +40,8 @@ void readSerialData(const int &serialPort, std::atomic<bool> &stopFlag, std::ofs
 {
     const int bufferSize = 64;
     char buffer[bufferSize + 1];
+    int flushInterval = 1000; // Flush the file every 10,000 bytes
+    int bytesReadTotal = 0;
     while (!stopFlag)
     {
         ssize_t bytesRead = read(serialPort, buffer, bufferSize - 1);
@@ -47,6 +49,17 @@ void readSerialData(const int &serialPort, std::atomic<bool> &stopFlag, std::ofs
         {
             buffer[bytesRead] = '\0';
             outputFile << buffer;
+            bytesReadTotal += bytesRead;
+
+            // Flush and truncate the file if the byte count exceeds the flush interval
+            if (bytesReadTotal >= flushInterval)
+            {
+                outputFile.flush();
+                outputFile.close();
+                truncate("mylog.0", 0);
+                outputFile.open("mylog.0", std::ios::app);
+                bytesReadTotal = 0;
+            }
         }
         else if (bytesRead == -1)
         {
@@ -102,31 +115,40 @@ int main(int argc, char **argv)
     tcgetattr(serialPort, &options);
     cfsetispeed(&options, B115200);
     cfsetospeed(&options, B115200);
+    options.c_cflag |= O_NONBLOCK;
+
     tcsetattr(serialPort, TCSANOW, &options);
 
     // Create and start the reading thread
     std::thread readingThread([&serialPort, &stopFlag, &outputFile]
-                              { return readSerialData(serialPort, std::ref(stopFlag), outputFile); });
+                              { return readSerialData(serialPort, std::ref(stopFlag), std::ref(outputFile)); });
 
     int width = 790; // Width and Height of Main Window
     int height = 700;
     int x_packet_offset = 0; // X and Y offsets for the three packet groups
-    int y_packet_offset = 250;
+    int y_packet_offset = 350;
 
     Fl_Window *window = new Fl_Window(width, height, "IS Packet Interpreter"); // Create main window
 
     // -------------- CONTROLS GROUP --------------
-    Fl_Group *group4 = new Fl_Group(15, 100, 760, 60, "CONTROLS");
+    Fl_Group *group4 = new Fl_Group(15, 100, 760, 120, "CONTROLS");
     group4->box(FL_BORDER_BOX);
     group4->labelfont(FL_BOLD);
-    Fl_Round_Button *PB6 = new Fl_Round_Button(20, 105, 100, 50, "PB6");
-    Fl_Round_Button *PB5 = new Fl_Round_Button(120, 105, 100, 50, "PB5");
+    Fl_Round_Button *PB5 = new Fl_Round_Button(20, 105, 100, 50, "PB5");
+    Fl_Round_Button *PB6 = new Fl_Round_Button(120, 105, 100, 50, "PB6");
     Fl_Round_Button *PC10 = new Fl_Round_Button(220, 105, 100, 50, "PC10");
     Fl_Round_Button *PC13 = new Fl_Round_Button(320, 105, 100, 50, "PC13");
     Fl_Round_Button *PC7 = new Fl_Round_Button(420, 105, 100, 50, "PC7");
     Fl_Round_Button *PC8 = new Fl_Round_Button(520, 105, 100, 50, "PC8");
     Fl_Round_Button *PC9 = new Fl_Round_Button(620, 105, 100, 50, "PC9");
     Fl_Round_Button *PC6 = new Fl_Round_Button(720, 105, 50, 50, "PC6");
+    Fl_Round_Button *PMT_ON = new Fl_Round_Button(20, 150, 100, 50, "PMT ON");
+    Fl_Round_Button *ERPA_ON = new Fl_Round_Button(120, 150, 100, 50, "ERPA ON");
+    Fl_Round_Button *HK_ON = new Fl_Round_Button(220, 150, 100, 50, "HK ON");
+    PMT_ON->value(1);
+    ERPA_ON->value(1);
+    HK_ON->value(1);
+
     unsigned char valPB6 = PB6->value();
     unsigned char valPB5 = PB5->value();
     unsigned char valPC10 = PC10->value();
@@ -135,8 +157,12 @@ int main(int argc, char **argv)
     unsigned char valPC8 = PC8->value();
     unsigned char valPC9 = PC9->value();
     unsigned char valPC6 = PC6->value();
+    unsigned char valPMT = PMT_ON->value();
+    unsigned char valERPA = ERPA_ON->value();
+    unsigned char valHK = HK_ON->value();
 
     // ------------ PACKET GROUPS --------------
+
     Fl_Group *group1 = new Fl_Group(x_packet_offset + 15, y_packet_offset, 200, 270,
                                     "PMT PACKET"); // PMT packet group
     group1->box(FL_BORDER_BOX);
@@ -341,25 +367,38 @@ int main(int argc, char **argv)
     HK11->labelfont(FL_BOLD);
     HK11->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
 
-    window->end(); // Cleanup
-    window->show(argc, argv);
-    window->end(); // Cleanup
     window->show(argc, argv);
 
     while (1) // Main loop to check Radio Button states, as well as output packet data
     {
-        // ----------- GPIO data ------------
-        if (PB6->value() != valPB6)
+        if (PMT_ON->value() != valPMT)
         {
-            valPB6 = PB6->value();
-            writeSerialData(serialPort, "a");
+            valPMT = PMT_ON->value();
+            writeSerialData(serialPort, "1");
         }
-        if (PB6->value()) // PB6, which is SYS_ON, must be on in order to toggle other GPIO's
+        if (ERPA_ON->value() != valERPA)
         {
-            if (PB5->value() != valPB5)
+            valERPA = ERPA_ON->value();
+            writeSerialData(serialPort, "2");
+        }
+        if (HK_ON->value() != valHK)
+        {
+            valHK = HK_ON->value();
+            writeSerialData(serialPort, "3");
+        }
+
+        // ----------- GPIO data ------------
+        if (PB5->value() != valPB5)
+        {
+            valPB5 = PB5->value();
+            writeSerialData(serialPort, "b");
+        }
+        if (PB5->value()) // PB5, which is SYS_ON, must be on in order to toggle other GPIO's
+        {
+            if (PB6->value() != valPB6)
             {
-                valPB5 = PB5->value();
-                writeSerialData(serialPort, "b");
+                valPB6 = PB6->value();
+                writeSerialData(serialPort, "a");
             }
             if (PC10->value() != valPC10)
             {
@@ -401,138 +440,153 @@ int main(int argc, char **argv)
             truncate("mylog.0", 0);
             for (int i = 0; i < strings.size(); i++)
             {
+                cout << strings[i] << endl;
                 char letter = strings[i][0];
                 strings[i] = strings[i].substr(2);
-                switch (letter)
+                if (ERPA_ON->value())
                 {
-                case 'a':
+                    switch (letter)
+                    {
+                    case 'a':
+                    {
+                        snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
+                        ERPAsync->value(buffer);
+                        break;
+                    }
+                    case 'b':
+                    {
+                        snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
+                        ERPAseq->value(buffer);
+                        break;
+                    }
+                    case 'c':
+                    {
+                        snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
+                        ERPAadc->value(buffer);
+                        break;
+                    }
+                    case 'd':
+                    {
+                        snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
+                        ERPAswp->value(buffer);
+                        break;
+                    }
+                    case 'f':
+                    {
+                        snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
+                        ERPAtemp1->value(buffer);
+                        break;
+                    }
+                    case 'g':
+                    {
+                        snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
+                        ERPAtemp2->value(buffer);
+                        break;
+                    }
+                    case 'h':
+                    {
+                        snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
+                        ERPAendmon->value(buffer);
+                        break;
+                    }
+                    }
+                }
+                if (PMT_ON->value())
                 {
-                    snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
-                    ERPAsync->value(buffer);
-                    break;
+                    switch (letter)
+                    {
+                    case 'i':
+                    {
+                        snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
+                        PMTsync->value(buffer);
+                        break;
+                    }
+                    case 'j':
+                    {
+                        snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
+                        PMTseq->value(buffer);
+                        break;
+                    }
+                    case 'k':
+                    {
+                        snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
+                        PMTadc->value(buffer);
+                        break;
+                    }
+                    }
                 }
-                case 'b':
+                if (HK_ON->value())
                 {
-                    snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
-                    ERPAseq->value(buffer);
-                    break;
+                    switch (letter)
+                    {
+                    case 'l':
+                    {
+                        snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
+                        HKsync->value(buffer);
+                        break;
+                    }
+                    case 'm':
+                    {
+                        snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
+                        HKseq->value(buffer);
+                        break;
+                    }
+                    case 'n':
+                    {
+                        snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
+                        HKbusvmon->value(buffer);
+                        break;
+                    }
+                    case 'o':
+                    {
+                        snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
+                        HKbusimon->value(buffer);
+                        break;
+                    }
+                    case 'p':
+                    {
+                        snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
+                        HK25vmon->value(buffer);
+                        break;
+                    }
+                    case 'q':
+                    {
+                        snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
+                        HK33vmon->value(buffer);
+                        break;
+                    }
+                    case 'r':
+                    {
+                        snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
+                        HK5vmon->value(buffer);
+                        break;
+                    }
+                    case 's':
+                    {
+                        snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
+                        HK5vref->value(buffer);
+                        break;
+                    }
+                    case 't':
+                    {
+                        snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
+                        HK15v->value(buffer);
+                        break;
+                    }
+                    case 'u':
+                    {
+                        snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
+                        HKn3v3->value(buffer);
+                        break;
+                    }
+                    case 'v':
+                    {
+                        snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
+                        HKn5v->value(buffer);
+                        break;
+                    }
+                    }
                 }
-                case 'c':
-                {
-                    snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
-                    ERPAadc->value(buffer);
-                    break;
-                }
-                case 'd':
-                {
-                    snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
-                    ERPAswp->value(buffer);
-                    break;
-                }
-                case 'f':
-                {
-                    snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
-                    ERPAtemp1->value(buffer);
-                    break;
-                }
-                case 'g':
-                {
-                    snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
-                    ERPAtemp2->value(buffer);
-                    break;
-                }
-                case 'h':
-                {
-                    snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
-                    ERPAendmon->value(buffer);
-                    break;
-                }
-                case 'i':
-                {
-                    snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
-                    PMTsync->value(buffer);
-                    break;
-                }
-                case 'j':
-                {
-                    snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
-                    PMTseq->value(buffer);
-                    break;
-                }
-                case 'k':
-                {
-                    snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
-                    PMTadc->value(buffer);
-                    break;
-                }
-                case 'l':
-                {
-                    snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
-                    HKsync->value(buffer);
-                    break;
-                }
-                case 'm':
-                {
-                    snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
-                    HKseq->value(buffer);
-                    break;
-                }
-                case 'n':
-                {
-                    snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
-                    HKbusvmon->value(buffer);
-                    break;
-                }
-                case 'o':
-                {
-                    snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
-                    HKbusimon->value(buffer);
-                    break;
-                }
-                case 'p':
-                {
-                    snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
-                    HK25vmon->value(buffer);
-                    break;
-                }
-                case 'q':
-                {
-                    snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
-                    HK33vmon->value(buffer);
-                    break;
-                }
-                case 'r':
-                {
-                    snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
-                    HK5vmon->value(buffer);
-                    break;
-                }
-                case 's':
-                {
-                    snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
-                    HK5vref->value(buffer);
-                    break;
-                }
-                case 't':
-                {
-                    snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
-                    HK15v->value(buffer);
-                    break;
-                }
-                case 'u':
-                {
-                    snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
-                    HKn3v3->value(buffer);
-                    break;
-                }
-                case 'v':
-                {
-                    snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
-                    HKn5v->value(buffer);
-                    break;
-                }
-                }
-
                 window->redraw(); // Refreshing main window with new data every loop
                 Fl::check();
             }

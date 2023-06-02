@@ -183,13 +183,13 @@ vector<string> interpret(const string& inputStr) {
                 switch (hkIndex) {
 
                     case 0:
-                        /* SEQ Bytes; should be 0xCCCC */
+                        /* SYNC Bytes; should be 0xCCCC */
                         sprintf(result, "%s:0x%X ", hkLabels[hkIndex].c_str(), hkValues[hkIndex]);
                         strings.push_back(result);
                         arrCounter++;
                         break;
                     case 1:
-                        /* SYNC Bytes; 0-65535 */
+                        /* SEQ Bytes; 0-65535 */
                         sprintf(result, "%s:%04d ", hkLabels[hkIndex].c_str(), hkValues[hkIndex]);
                         strings.push_back(result);
                         arrCounter++;
