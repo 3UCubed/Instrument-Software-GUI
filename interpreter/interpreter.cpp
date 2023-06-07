@@ -58,10 +58,10 @@ vector<string> interpret(const string& inputStr) {
     int pmtIndex = 0;
     int pmtValid = 0;
 
-    string hkLabels[13] = {"l", "m", "n", "o", "p",
+    string hkLabels[15] = {"l", "m", "n", "o", "p",
                            "q", "r", "s", "t",
-                           "u", "v", "w", "x"};
-    int hkValues[13];
+                           "u", "v", "w", "x", "y", "z"};
+    int hkValues[15];
     int hkIndex = 0;
     int hkValid = 0;
 
@@ -194,62 +194,86 @@ vector<string> interpret(const string& inputStr) {
                         strings.push_back(result);
                         arrCounter++;
                         break;
-                    case 3:
+                    case 2:
                         /* BUS_Imon */
                         sprintf(result, "%s:%.3f", hkLabels[hkIndex].c_str(), intToVoltage(hkValues[hkIndex], 12, 3));
                         strings.push_back(result);
                         arrCounter++;
                         break;
+                    case 3:
+                        /* BUS_Vmon */
+                        sprintf(result, "%s:%.3f", hkLabels[hkIndex].c_str(), intToVoltage(hkValues[hkIndex], 12, 3));
+                        strings.push_back(result);
+                        arrCounter++;
+                        break;
                     case 4:
-                        /* 2.5v_mon */
+                        /* 3v3_mon */
+                        sprintf(result, "%s:%.3f", hkLabels[hkIndex].c_str(), intToVoltage(hkValues[hkIndex], 12, 3));
+                        strings.push_back(result);
+                        arrCounter++;
+                        break;
+                    case 5:
+                        /* n150v_mon */
                         sprintf(result, "%s:%.3f", hkLabels[hkIndex].c_str(), intToVoltage(hkValues[hkIndex], 12, 3));
                         strings.push_back(result);
                         arrCounter++;
                         break;
                     case 6:
-                        /* 5v_mon */
+                        /* n800v_mon */
                         sprintf(result, "%s:%.3f", hkLabels[hkIndex].c_str(), intToVoltage(hkValues[hkIndex], 12, 3));
                         strings.push_back(result);
                         arrCounter++;
                         break;
                     case 7:
-                        /* 5vref_mon */
+                        /* 2v5_mon */
                         sprintf(result, "%s:%.3f", hkLabels[hkIndex].c_str(), intToVoltage(hkValues[hkIndex], 12, 3));
                         strings.push_back(result);
                         arrCounter++;
                         break;
-                    case 2:
-                        /* BUS_Vmon */
-                    case 5:
-                        /* 3v3_mon */
                     case 8:
-                        /* 15v_mon */
-                    case 9:
-                        /* n3v3_mon */
-                        sprintf(result, "%s:%.3f", hkLabels[hkIndex].c_str(), intToVoltage(hkValues[hkIndex], 12, 3));
-                        strings.push_back(result);
-                        arrCounter++;
-                        break;
-                    case 10:
                         /* n5v_mon */
                         sprintf(result, "%s:%.3f", hkLabels[hkIndex].c_str(), intToVoltage(hkValues[hkIndex], 12, 3));
                         strings.push_back(result);
                         arrCounter++;
                         break;
+                    case 9:
+                        /* 5v_mon */
+                        sprintf(result, "%s:%.3f", hkLabels[hkIndex].c_str(), intToVoltage(hkValues[hkIndex], 12, 3));
+                        strings.push_back(result);
+                        arrCounter++;
+                        break;
+                    case 10:
+                        /* n3v3_mon */
+                        sprintf(result, "%s:%.3f", hkLabels[hkIndex].c_str(), intToVoltage(hkValues[hkIndex], 12, 3));
+                        strings.push_back(result);
+                        arrCounter++;
+                        break;
                     case 11:
-                        /* MCU_TEMP */
+                        /* 5vref_mon */
                         sprintf(result, "%s:%.3f", hkLabels[hkIndex].c_str(), intToVoltage(hkValues[hkIndex], 12, 3));
                         strings.push_back(result);
                         arrCounter++;
                         break;
                     case 12:
-                        /* MCU_VREF */
+                        /* 15v_mon */
+                        sprintf(result, "%s:%.3f", hkLabels[hkIndex].c_str(), intToVoltage(hkValues[hkIndex], 12, 3));
+                        strings.push_back(result);
+                        arrCounter++;
+                        break;
+                    case 13:
+                        /* vsense */
+                        sprintf(result, "%s:%.3f", hkLabels[hkIndex].c_str(), intToVoltage(hkValues[hkIndex], 12, 3));
+                        strings.push_back(result);
+                        arrCounter++;
+                        break;
+                    case 14:
+                        /* vrefint */
                         sprintf(result, "%s:%.3f", hkLabels[hkIndex].c_str(), intToVoltage(hkValues[hkIndex], 12, 3));
                         strings.push_back(result);
                         arrCounter++;
                         break;
                 }
-                hkIndex = (hkIndex + 1) % 13;
+                hkIndex = (hkIndex + 1) % 15;
             }
             hkValid = !hkValid;
         }
