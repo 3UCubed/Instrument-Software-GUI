@@ -1,5 +1,6 @@
-// -------------- README --------------
-// If you get error "Failed to open serial port" go to line 85
+// ------------------------- README -----------------------
+// If you get error "Failed to open serial port" go to line 120
+
 
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
@@ -20,23 +21,19 @@
 #include <string>
 #include <chrono>
 #include <mutex>
-
 #include "interpreter/interpreter.cpp"
 
 using namespace std;
 
-unsigned char valPMT;
-unsigned char valERPA;
-unsigned char valHK;
-int turnedOff = 0;
 
-
-void buttonCallback(Fl_Widget* widget)
+// ------------------- Quit button event ------------------
+void buttonCallback(Fl_Widget *widget)
 {
     exit(0);
 }
 
-// Function to write data to serial port, used for toggling GPIO's
+
+// --------------- Write data to serial port --------------
 void writeSerialData(const int &serialPort, const std::string &data)
 {
     ssize_t bytesWritten = write(serialPort, data.c_str(), data.length());
@@ -46,12 +43,13 @@ void writeSerialData(const int &serialPort, const std::string &data)
     }
 }
 
-// Function to continuously read data from the serial port
+
+// ----- Continuously reads data from the serial port -----
 void readSerialData(const int &serialPort, std::atomic<bool> &stopFlag, std::ofstream &outputFile)
 {
     const int bufferSize = 64;
     char buffer[bufferSize + 1];
-    int flushInterval = 1000; // Flush the file every 10,000 bytes
+    int flushInterval = 1000; // Flush the file every 1000 bytes
     int bytesReadTotal = 0;
 
     while (!stopFlag)
@@ -62,9 +60,7 @@ void readSerialData(const int &serialPort, std::atomic<bool> &stopFlag, std::ofs
             buffer[bytesRead] = '\0';
             outputFile << buffer;
             bytesReadTotal += bytesRead;
-
-            // Flush and truncate the file if the byte count exceeds the flush interval
-            if (bytesReadTotal >= flushInterval)
+            if (bytesReadTotal >= flushInterval) // Flush and truncate the file if the byte count exceeds the flush interval
             {
                 outputFile.flush();
                 outputFile.close();
@@ -80,99 +76,98 @@ void readSerialData(const int &serialPort, std::atomic<bool> &stopFlag, std::ofs
     }
 }
 
-char buffer[32]; // Buffer to hold the converted string
 
-// ----- Output Field Variables -----
-float pmt_sync = 0;
-float pmt_seq = 0;
-float pmt_adc = 0;
-float erpa_sync = 0;
-float erpa_seq = 0;
-float erpa_adc = 0;
-float erpa_swp = 0;
-float erpa_temp1 = 0;
-float erpa_temp2 = 0;
-float erpa_endmon = 0;
-float hk_sync = 0;
-float hk_seq = 0;
-float hk_busimon = 0;
-float hk_busvmon = 0;
-float hk_3v3vmon = 0;
-float hk_n150vmon = 0;
-float hk_n800vmon = 0;
-float hk_2v5mon = 0;
-float hk_n5vmon = 0;
-float hk_5vmon = 0;
-float hk_n3v3mon = 0;
-float hk_5vrefmon = 0;
-float hk_15vmon = 0;
-float hk_vsense = 0;
-float hk_vrefint = 0;
-
-
+// ----------------- Main Program Function ----------------
 int main(int argc, char **argv)
 {
+    // ---------------- Output Field Vars -----------------
+    char buffer[32];
+    float pmt_sync = 0;
+    float pmt_seq = 0;
+    float pmt_adc = 0;
+    float erpa_sync = 0;
+    float erpa_seq = 0;
+    float erpa_adc = 0;
+    float erpa_swp = 0;
+    float erpa_temp1 = 0;
+    float erpa_temp2 = 0;
+    float erpa_endmon = 0;
+    float hk_sync = 0;
+    float hk_seq = 0;
+    float hk_busimon = 0;
+    float hk_busvmon = 0;
+    float hk_3v3vmon = 0;
+    float hk_n150vmon = 0;
+    float hk_n800vmon = 0;
+    float hk_2v5mon = 0;
+    float hk_n5vmon = 0;
+    float hk_5vmon = 0;
+    float hk_n3v3mon = 0;
+    float hk_5vrefmon = 0;
+    float hk_15vmon = 0;
+    float hk_vsense = 0;
+    float hk_vrefint = 0;
 
+    // ------- Vars Keeping Track Of Packet States --------
+    unsigned char valPMT;
+    unsigned char valERPA;
+    unsigned char valHK;
+    int turnedOff = 0;
 
+    // --------------------- Thread Vars ------------------
+    struct termios options = {};
+    std::atomic<bool> stopFlag(false);
     const char *portName = "/dev/cu.usbserial-FT6E0L8J"; // CHANGE TO YOUR PORT NAME
-    // const char *portName = "/dev/cu.usbserial-FT6E8SZC";
     std::ofstream outputFile("mylog.0", std::ios::out | std::ios::trunc);
 
-    // Create an atomic flag to signal the reading thread to stop
-    std::atomic<bool> stopFlag(false);
-
-    // Open the serial port
-    int serialPort = open(portName, O_RDWR | O_NOCTTY);
+    // ------------------ Thread/Port Setup ---------------
+    int serialPort = open(portName, O_RDWR | O_NOCTTY); // Opening serial port
     if (serialPort == -1)
     {
         std::cerr << "Failed to open the serial port." << std::endl;
         ::exit(0);
     }
 
-    // Configure the serial port
-    struct termios options = {};
     tcgetattr(serialPort, &options);
     cfsetispeed(&options, B115200);
     cfsetospeed(&options, B115200);
     options.c_cflag |= O_NONBLOCK;
-
     tcsetattr(serialPort, TCSANOW, &options);
 
-    // Create and start the reading thread
     std::thread readingThread([&serialPort, &stopFlag, &outputFile]
                               { return readSerialData(serialPort, std::ref(stopFlag), std::ref(outputFile)); });
 
+    // ------------ Main Window Elements Setup ------------
     int width = 1100; // Width and Height of Main Window
     int height = 600;
     int x_packet_offset = 250; // X and Y offsets for the three packet groups
     int y_packet_offset = 150;
 
-    Fl_Window *window = new Fl_Window(width, height, "IS Packet Interpreter"); // Create main window
-    Fl_Color darkBackground = fl_rgb_color(28,28,30);  // Red color
-    Fl_Color text = fl_rgb_color(203,207,213);  // Red color
-    Fl_Color box = fl_rgb_color(46,47,56);
-    Fl_Color output = fl_rgb_color(60,116,239);
+    Fl_Window *window = new Fl_Window(width, height, "IS Packet Interpreter");
+    Fl_Color darkBackground = fl_rgb_color(28, 28, 30);
+    Fl_Color text = fl_rgb_color(203, 207, 213);
+    Fl_Color box = fl_rgb_color(46, 47, 56);
+    Fl_Color output = fl_rgb_color(60, 116, 239);
 
     window->color(darkBackground);
 
-    Fl_Button* quit = new Fl_Button(15, 10, 40, 40, "ⓧ");
+    Fl_Button *quit = new Fl_Button(15, 10, 40, 40, "ⓧ");
     quit->box(FL_FLAT_BOX);
     quit->color(darkBackground);
     quit->labelcolor(FL_RED);
-    quit->labelsize(40); // Set the font size to 20
+    quit->labelsize(40);
     quit->callback(buttonCallback);
     Fl_Round_Button *PMT_ON = new Fl_Round_Button(x_packet_offset + 165, y_packet_offset - 18, 20, 20);
     Fl_Round_Button *ERPA_ON = new Fl_Round_Button(x_packet_offset + 450, y_packet_offset - 18, 20, 20);
     Fl_Round_Button *HK_ON = new Fl_Round_Button(x_packet_offset + 725, y_packet_offset - 18, 20, 20);
 
-    // -------------- CONTROLS GROUP --------------
+    // ------------------- CONTROLS GROUP -----------------
     Fl_Box *group4 = new Fl_Box(15, 100, 130, 410, "CONTROLS");
     group4->color(box);
     group4->box(FL_BORDER_BOX);
     group4->labelcolor(text);
     group4->labelfont(FL_BOLD);
     group4->align(FL_ALIGN_TOP);
-
     Fl_Round_Button *PB5 = new Fl_Round_Button(20, 105, 100, 50, "sys_on PB5");
     Fl_Round_Button *PB6 = new Fl_Round_Button(20, 155, 100, 50, "800v_en PB6");
     Fl_Round_Button *PC10 = new Fl_Round_Button(20, 205, 100, 50, "3v3_en PC10");
@@ -181,7 +176,6 @@ int main(int argc, char **argv)
     Fl_Round_Button *PC8 = new Fl_Round_Button(20, 355, 100, 50, "n5v_en PC8");
     Fl_Round_Button *PC9 = new Fl_Round_Button(20, 405, 100, 50, "5v_en PC9");
     Fl_Round_Button *PC6 = new Fl_Round_Button(20, 455, 100, 50, "n3v3_en PC6");
-
     PB5->labelcolor(text);
     PB6->labelcolor(text);
     PC10->labelcolor(text);
@@ -190,12 +184,6 @@ int main(int argc, char **argv)
     PC8->labelcolor(text);
     PC9->labelcolor(text);
     PC6->labelcolor(text);
-
-
-
-
-
-
     PB6->deactivate();
     PC10->deactivate();
     PC13->deactivate();
@@ -203,19 +191,9 @@ int main(int argc, char **argv)
     PC8->deactivate();
     PC9->deactivate();
     PC6->deactivate();
-
-    
-    
-    
-    
-    
-
-
-
     PMT_ON->value(1);
     ERPA_ON->value(1);
     HK_ON->value(1);
-
     unsigned char valPB6 = PB6->value();
     unsigned char valPB5 = PB5->value();
     unsigned char valPC10 = PC10->value();
@@ -229,13 +207,9 @@ int main(int argc, char **argv)
     valHK = HK_ON->value();
     turnedOff = 0;
 
-
-
-
-    // ------------ PACKET GROUPS --------------
-
+    // ---------------- PMT Packet Group ------------------
     Fl_Group *group1 = new Fl_Group(x_packet_offset + 15, y_packet_offset, 200, 320,
-                                    "PMT PACKET"); // PMT packet group
+                                    "PMT PACKET");
     group1->color(box);
     group1->box(FL_BORDER_BOX);
     group1->labelfont(FL_BOLD);
@@ -277,8 +251,9 @@ int main(int argc, char **argv)
     PMT3->labelcolor(text);
     PMT3->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
 
+    // ------------------ ERPA Packet Group ---------------
     Fl_Group *group2 = new Fl_Group(x_packet_offset + 295, y_packet_offset, 200, 320,
-                                    "ERPA PACKET"); // ERPA packet group
+                                    "ERPA PACKET");
     group2->color(box);
     group2->box(FL_BORDER_BOX);
     group2->labelfont(FL_BOLD);
@@ -368,8 +343,9 @@ int main(int argc, char **argv)
     ERPA7->labelcolor(text);
     ERPA7->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
 
+    // ------------------ HK Packet Group -----------------
     Fl_Group *group3 = new Fl_Group(x_packet_offset + 575, y_packet_offset, 200, 320,
-                                    "HK PACKET"); // HK packet group
+                                    "HK PACKET");
     group3->color(box);
     group3->box(FL_BORDER_BOX);
     group3->labelfont(FL_BOLD);
@@ -506,7 +482,6 @@ int main(int argc, char **argv)
     HK11->labelfont();
     HK11->labelcolor(text);
     HK11->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
-
     Fl_Box *HK12 = new Fl_Box(x_packet_offset + 580, y_packet_offset + 225, 50, 20, "5vrefmon:");
     Fl_Output *HK5vrefmon = new Fl_Output(x_packet_offset + 682, y_packet_offset + 225, 60, 20);
     HK5vrefmon->color(box);
@@ -519,7 +494,6 @@ int main(int argc, char **argv)
     HK12->labelfont();
     HK12->labelcolor(text);
     HK12->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
-
     Fl_Box *HK13 = new Fl_Box(x_packet_offset + 580, y_packet_offset + 245, 50, 20, "15vmon:");
     Fl_Output *HK15vmon = new Fl_Output(x_packet_offset + 682, y_packet_offset + 245, 60, 20);
     HK15vmon->color(box);
@@ -532,7 +506,6 @@ int main(int argc, char **argv)
     HK13->labelfont();
     HK13->labelcolor(text);
     HK13->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
-
     Fl_Box *HK14 = new Fl_Box(x_packet_offset + 580, y_packet_offset + 265, 50, 20, "vsense:");
     Fl_Output *HKvsense = new Fl_Output(x_packet_offset + 682, y_packet_offset + 265, 60, 20);
     HKvsense->color(box);
@@ -545,7 +518,6 @@ int main(int argc, char **argv)
     HK14->labelfont();
     HK14->labelcolor(text);
     HK14->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
-
     Fl_Box *HK15 = new Fl_Box(x_packet_offset + 580, y_packet_offset + 285, 50, 20, "vrefint:");
     Fl_Output *HKvrefint = new Fl_Output(x_packet_offset + 682, y_packet_offset + 285, 60, 20);
     HKvrefint->color(box);
@@ -559,13 +531,13 @@ int main(int argc, char **argv)
     HK15->labelcolor(text);
     HK15->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
 
-// Show the GUI before entering the main loop
+    window->show(); // Opening main window before entering main loop
+    Fl::check();
 
-window->show();
-Fl::check();
-    while (1) // Main loop to check Radio Button states, as well as output packet data
+    // -------------- MAIN PROGRAM EVENT LOOP -------------
+    while (1)
     {
-        if (valPMT == '0' && valERPA == '0' && valHK == '0' && turnedOff == 0)
+        if (valPMT == '0' && valERPA == '0' && valHK == '0' && turnedOff == 0) // Checking if all packet data is toggled off
         {
             turnedOff = 1;
         }
@@ -573,7 +545,7 @@ Fl::check();
         {
             turnedOff = 0;
         }
-        if (PMT_ON->value() != valPMT)
+        if (PMT_ON->value() != valPMT) // Toggling individual packet data
         {
             valPMT = PMT_ON->value();
             writeSerialData(serialPort, "1");
@@ -589,12 +561,12 @@ Fl::check();
             writeSerialData(serialPort, "3");
         }
 
-        // ----------- GPIO data ------------
-        if (PB5->value() != valPB5)
+        if (PB5->value() != valPB5) // Making sure sys_on (PB5) is on before activating other GPIO buttons
         {
             valPB5 = PB5->value();
             writeSerialData(serialPort, "a");
-            if (PB5->value()){
+            if (PB5->value())
+            {
                 PB6->activate();
                 PC10->activate();
                 PC13->activate();
@@ -603,7 +575,8 @@ Fl::check();
                 PC9->activate();
                 PC6->activate();
             }
-            else{
+            else
+            {
                 PB6->deactivate();
                 PC10->deactivate();
                 PC13->deactivate();
@@ -613,7 +586,7 @@ Fl::check();
                 PC6->deactivate();
             }
         }
-        if (PB5->value()) // PB5, which is SYS_ON, must be on in order to toggle other GPIO's
+        if (PB5->value())
         {
             if (PB6->value() != valPB6)
             {
@@ -652,8 +625,7 @@ Fl::check();
             }
         }
 
-        // ------------ PACKET DATA ------------
-        if (turnedOff == 0)
+        if (turnedOff == 0) // Checking if data is being received before going through packet data
         {
             outputFile.flush();
             vector<string> strings = interpret("mylog.0");
@@ -833,8 +805,6 @@ Fl::check();
                         }
                         }
                     }
-
-
                 }
             }
         }
@@ -842,7 +812,7 @@ Fl::check();
         Fl::check();
     }
 
-    // -------- Cleanup --------
+    // ---------------------- Cleanup ---------------------
     stopFlag = true;
     readingThread.join();
     outputFile << '\0';
