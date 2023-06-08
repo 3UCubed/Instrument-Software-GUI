@@ -30,6 +30,12 @@ unsigned char valERPA;
 unsigned char valHK;
 int turnedOff = 0;
 
+
+void buttonCallback(Fl_Widget* widget)
+{
+    exit(0);
+}
+
 // Function to write data to serial port, used for toggling GPIO's
 void writeSerialData(const int &serialPort, const std::string &data)
 {
@@ -103,12 +109,11 @@ float hk_15vmon = 0;
 float hk_vsense = 0;
 float hk_vrefint = 0;
 
-void guiEventLoop(Fl_Window &myWindow) {
-
-}
 
 int main(int argc, char **argv)
 {
+
+
     const char *portName = "/dev/cu.usbserial-FT6E0L8J"; // CHANGE TO YOUR PORT NAME
     // const char *portName = "/dev/cu.usbserial-FT6E8SZC";
     std::ofstream outputFile("mylog.0", std::ios::out | std::ios::trunc);
@@ -144,6 +149,8 @@ int main(int argc, char **argv)
 
     Fl_Window *window = new Fl_Window(width, height, "IS Packet Interpreter"); // Create main window
 
+
+
     // -------------- CONTROLS GROUP --------------
     Fl_Group *group4 = new Fl_Group(15, 100, 870, 120, "CONTROLS");
     group4->box(FL_BORDER_BOX);
@@ -160,6 +167,28 @@ int main(int argc, char **argv)
     Fl_Round_Button *PMT_ON = new Fl_Round_Button(300, 150, 100, 50, "PMT ON");
     Fl_Round_Button *ERPA_ON = new Fl_Round_Button(440, 150, 100, 50, "ERPA ON");
     Fl_Round_Button *HK_ON = new Fl_Round_Button(580, 150, 100, 50, "HK ON");
+    Fl_Button* quit = new Fl_Button(725, 155, 40, 40, "ⓧ");
+    
+    PB6->deactivate();
+    PC10->deactivate();
+    PC13->deactivate();
+    PC7->deactivate();
+    PC8->deactivate();
+    PC9->deactivate();
+    PC6->deactivate();
+
+    
+    
+    
+    
+    
+    quit->box(FL_FLAT_BOX);
+    quit->color(FL_BACKGROUND_COLOR);
+    quit->labelcolor(FL_RED);
+    quit->labelsize(40); // Set the font size to 20
+    quit->callback(buttonCallback);
+
+
     PMT_ON->value(1);
     ERPA_ON->value(1);
     HK_ON->value(1);
@@ -176,6 +205,9 @@ int main(int argc, char **argv)
     valERPA = ERPA_ON->value();
     valHK = HK_ON->value();
     turnedOff = 0;
+
+
+
 
     // ------------ PACKET GROUPS --------------
 
@@ -424,6 +456,7 @@ int main(int argc, char **argv)
     HK15->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
 
 // Show the GUI before entering the main loop
+
 window->show();
 Fl::check();
     while (1) // Main loop to check Radio Button states, as well as output packet data
@@ -457,6 +490,24 @@ Fl::check();
         {
             valPB5 = PB5->value();
             writeSerialData(serialPort, "a");
+            if (PB5->value()){
+                PB6->activate();
+                PC10->activate();
+                PC13->activate();
+                PC7->activate();
+                PC8->activate();
+                PC9->activate();
+                PC6->activate();
+            }
+            else{
+                PB6->deactivate();
+                PC10->deactivate();
+                PC13->deactivate();
+                PC7->deactivate();
+                PC8->deactivate();
+                PC9->deactivate();
+                PC6->deactivate();
+            }
         }
         if (PB5->value()) // PB5, which is SYS_ON, must be on in order to toggle other GPIO's
         {
