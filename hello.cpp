@@ -148,27 +148,54 @@ int main(int argc, char **argv)
     int y_packet_offset = 150;
 
     Fl_Window *window = new Fl_Window(width, height, "IS Packet Interpreter"); // Create main window
+    Fl_Color darkBackground = fl_rgb_color(28,28,30);  // Red color
+    Fl_Color text = fl_rgb_color(203,207,213);  // Red color
+    Fl_Color box = fl_rgb_color(46,47,56);
+    Fl_Color output = fl_rgb_color(60,116,239);
+
+    window->color(darkBackground);
 
     Fl_Button* quit = new Fl_Button(15, 10, 40, 40, "ⓧ");
+    quit->box(FL_FLAT_BOX);
+    quit->color(darkBackground);
+    quit->labelcolor(FL_RED);
+    quit->labelsize(40); // Set the font size to 20
+    quit->callback(buttonCallback);
     Fl_Round_Button *PMT_ON = new Fl_Round_Button(x_packet_offset + 165, y_packet_offset - 18, 20, 20);
     Fl_Round_Button *ERPA_ON = new Fl_Round_Button(x_packet_offset + 450, y_packet_offset - 18, 20, 20);
     Fl_Round_Button *HK_ON = new Fl_Round_Button(x_packet_offset + 725, y_packet_offset - 18, 20, 20);
 
     // -------------- CONTROLS GROUP --------------
-    Fl_Group *group4 = new Fl_Group(15, 100, 130, 410, "CONTROLS");
+    Fl_Box *group4 = new Fl_Box(15, 100, 130, 410, "CONTROLS");
+    group4->color(box);
     group4->box(FL_BORDER_BOX);
+    group4->labelcolor(text);
     group4->labelfont(FL_BOLD);
+    group4->align(FL_ALIGN_TOP);
+
     Fl_Round_Button *PB5 = new Fl_Round_Button(20, 105, 100, 50, "sys_on PB5");
     Fl_Round_Button *PB6 = new Fl_Round_Button(20, 155, 100, 50, "800v_en PB6");
     Fl_Round_Button *PC10 = new Fl_Round_Button(20, 205, 100, 50, "3v3_en PC10");
     Fl_Round_Button *PC13 = new Fl_Round_Button(20, 255, 100, 50, "n150v_en PC13");
     Fl_Round_Button *PC7 = new Fl_Round_Button(20, 305, 100, 50, "15v_en PC7");
     Fl_Round_Button *PC8 = new Fl_Round_Button(20, 355, 100, 50, "n5v_en PC8");
-
     Fl_Round_Button *PC9 = new Fl_Round_Button(20, 405, 100, 50, "5v_en PC9");
     Fl_Round_Button *PC6 = new Fl_Round_Button(20, 455, 100, 50, "n3v3_en PC6");
 
-    
+    PB5->labelcolor(text);
+    PB6->labelcolor(text);
+    PC10->labelcolor(text);
+    PC13->labelcolor(text);
+    PC7->labelcolor(text);
+    PC8->labelcolor(text);
+    PC9->labelcolor(text);
+    PC6->labelcolor(text);
+
+
+
+
+
+
     PB6->deactivate();
     PC10->deactivate();
     PC13->deactivate();
@@ -182,11 +209,7 @@ int main(int argc, char **argv)
     
     
     
-    quit->box(FL_FLAT_BOX);
-    quit->color(FL_BACKGROUND_COLOR);
-    quit->labelcolor(FL_RED);
-    quit->labelsize(40); // Set the font size to 20
-    quit->callback(buttonCallback);
+
 
 
     PMT_ON->value(1);
@@ -213,246 +236,327 @@ int main(int argc, char **argv)
 
     Fl_Group *group1 = new Fl_Group(x_packet_offset + 15, y_packet_offset, 200, 320,
                                     "PMT PACKET"); // PMT packet group
+    group1->color(box);
     group1->box(FL_BORDER_BOX);
     group1->labelfont(FL_BOLD);
+    group1->labelcolor(text);
     Fl_Box *PMT1 = new Fl_Box(x_packet_offset + 18, y_packet_offset + 5, 50, 20, "SYNC:");
     Fl_Output *PMTsync = new Fl_Output(x_packet_offset + 135, y_packet_offset + 5, 60, 20);
-    PMTsync->color(FL_BACKGROUND_COLOR);
+    PMTsync->color(box);
     snprintf(buffer, sizeof(buffer), "%f", pmt_sync);
     PMTsync->value(buffer);
     PMTsync->box(FL_FLAT_BOX);
+    PMTsync->textcolor(output);
     PMT1->box(FL_FLAT_BOX);
-    PMT1->labelfont(FL_BOLD);
+    PMT1->color(box);
+    PMT1->labelfont();
+    PMT1->labelcolor(text);
     PMT1->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
     Fl_Box *PMT2 = new Fl_Box(x_packet_offset + 18, y_packet_offset + 25, 50, 20, "SEQ:");
     Fl_Output *PMTseq = new Fl_Output(x_packet_offset + 135, y_packet_offset + 25, 60, 20);
-    PMTseq->color(FL_BACKGROUND_COLOR);
+    PMTseq->color(box);
     snprintf(buffer, sizeof(buffer), "%f", pmt_seq);
     PMTseq->value(buffer);
     PMTseq->box(FL_FLAT_BOX);
+    PMTseq->textcolor(output);
     PMT2->box(FL_FLAT_BOX);
-    PMT2->labelfont(FL_BOLD);
+    PMT2->color(box);
+    PMT2->labelfont();
+    PMT2->labelcolor(text);
     PMT2->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
     Fl_Box *PMT3 = new Fl_Box(x_packet_offset + 18, y_packet_offset + 45, 50, 20, "ADC:");
     Fl_Output *PMTadc = new Fl_Output(x_packet_offset + 135, y_packet_offset + 45, 60, 20);
-    PMTadc->color(FL_BACKGROUND_COLOR);
+    PMTadc->color(box);
     snprintf(buffer, sizeof(buffer), "%f", pmt_adc);
     PMTadc->value(buffer);
     PMTadc->box(FL_FLAT_BOX);
+    PMTadc->textcolor(output);
     PMT3->box(FL_FLAT_BOX);
-    PMT3->labelfont(FL_BOLD);
+    PMT3->color(box);
+    PMT3->labelfont();
+    PMT3->labelcolor(text);
     PMT3->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
 
     Fl_Group *group2 = new Fl_Group(x_packet_offset + 295, y_packet_offset, 200, 320,
                                     "ERPA PACKET"); // ERPA packet group
+    group2->color(box);
     group2->box(FL_BORDER_BOX);
     group2->labelfont(FL_BOLD);
+    group2->labelcolor(text);
     Fl_Box *ERPA1 = new Fl_Box(x_packet_offset + 300, y_packet_offset + 5, 50, 20, "SYNC:");
     Fl_Output *ERPAsync = new Fl_Output(x_packet_offset + 417, y_packet_offset + 5, 60, 20);
-    ERPAsync->color(FL_BACKGROUND_COLOR);
+    ERPAsync->color(box);
     snprintf(buffer, sizeof(buffer), "%f", erpa_sync);
     ERPAsync->value(buffer);
     ERPAsync->box(FL_FLAT_BOX);
+    ERPAsync->textcolor(output);
     ERPA1->box(FL_FLAT_BOX);
-    ERPA1->labelfont(FL_BOLD);
+    ERPA1->color(box);
+    ERPA1->labelfont();
+    ERPA1->labelcolor(text);
     ERPA1->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
     Fl_Box *ERPA2 = new Fl_Box(x_packet_offset + 300, y_packet_offset + 25, 50, 20, "SEQ:");
     Fl_Output *ERPAseq = new Fl_Output(x_packet_offset + 417, y_packet_offset + 25, 60, 20);
-    ERPAseq->color(FL_BACKGROUND_COLOR);
+    ERPAseq->color(box);
     snprintf(buffer, sizeof(buffer), "%f", erpa_seq);
     ERPAseq->value(buffer);
     ERPAseq->box(FL_FLAT_BOX);
+    ERPAseq->textcolor(output);
     ERPA2->box(FL_FLAT_BOX);
-    ERPA2->labelfont(FL_BOLD);
+    ERPA2->color(box);
+    ERPA2->labelfont();
+    ERPA2->labelcolor(text);
     ERPA2->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
     Fl_Box *ERPA3 = new Fl_Box(x_packet_offset + 300, y_packet_offset + 45, 50, 20, "ADC:");
     Fl_Output *ERPAadc = new Fl_Output(x_packet_offset + 417, y_packet_offset + 45, 60, 20);
-    ERPAadc->color(FL_BACKGROUND_COLOR);
+    ERPAadc->color(box);
     snprintf(buffer, sizeof(buffer), "%f", erpa_adc);
     ERPAadc->value(buffer);
     ERPAadc->box(FL_FLAT_BOX);
+    ERPAadc->textcolor(output);
     ERPA3->box(FL_FLAT_BOX);
-    ERPA3->labelfont(FL_BOLD);
+    ERPA3->color(box);
+    ERPA3->labelfont();
+    ERPA3->labelcolor(text);
     ERPA3->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
     Fl_Box *ERPA4 = new Fl_Box(x_packet_offset + 300, y_packet_offset + 65, 50, 20, "SWP:");
     Fl_Output *ERPAswp = new Fl_Output(x_packet_offset + 417, y_packet_offset + 65, 60, 20);
-    ERPAswp->color(FL_BACKGROUND_COLOR);
+    ERPAswp->color(box);
     snprintf(buffer, sizeof(buffer), "%f", erpa_swp);
     ERPAswp->value(buffer);
     ERPAswp->box(FL_FLAT_BOX);
+    ERPAswp->textcolor(output);
     ERPA4->box(FL_FLAT_BOX);
-    ERPA4->labelfont(FL_BOLD);
+    ERPA4->color(box);
+    ERPA4->labelfont();
+    ERPA4->labelcolor(text);
     ERPA4->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
     Fl_Box *ERPA5 = new Fl_Box(x_packet_offset + 300, y_packet_offset + 105, 50, 20, "TEMP1:");
     Fl_Output *ERPAtemp1 = new Fl_Output(x_packet_offset + 417, y_packet_offset + 105, 60, 20);
-    ERPAtemp1->color(FL_BACKGROUND_COLOR);
+    ERPAtemp1->color(box);
     snprintf(buffer, sizeof(buffer), "%f", erpa_temp1);
     ERPAtemp1->value(buffer);
     ERPAtemp1->box(FL_FLAT_BOX);
+    ERPAtemp1->textcolor(output);
     ERPA5->box(FL_FLAT_BOX);
-    ERPA5->labelfont(FL_BOLD);
+    ERPA5->color(box);
+    ERPA5->labelfont();
+    ERPA5->labelcolor(text);
     ERPA5->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
     Fl_Box *ERPA6 = new Fl_Box(x_packet_offset + 300, y_packet_offset + 125, 50, 20, "TEMP2:");
     Fl_Output *ERPAtemp2 = new Fl_Output(x_packet_offset + 417, y_packet_offset + 125, 60, 20);
-    ERPAtemp2->color(FL_BACKGROUND_COLOR);
+    ERPAtemp2->color(box);
     snprintf(buffer, sizeof(buffer), "%f", erpa_temp2);
     ERPAtemp2->value(buffer);
     ERPAtemp2->box(FL_FLAT_BOX);
+    ERPAtemp2->textcolor(output);
     ERPA6->box(FL_FLAT_BOX);
-    ERPA6->labelfont(FL_BOLD);
+    ERPA6->color(box);
+    ERPA6->labelfont();
+    ERPA6->labelcolor(text);
     ERPA6->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
     Fl_Box *ERPA7 = new Fl_Box(x_packet_offset + 300, y_packet_offset + 145, 50, 20, "ENDmon:");
     Fl_Output *ERPAendmon = new Fl_Output(x_packet_offset + 417, y_packet_offset + 145, 60, 20);
-    ERPAendmon->color(FL_BACKGROUND_COLOR);
+    ERPAendmon->color(box);
     snprintf(buffer, sizeof(buffer), "%f", erpa_endmon);
     ERPAendmon->value(buffer);
     ERPAendmon->box(FL_FLAT_BOX);
+    ERPAendmon->textcolor(output);
     ERPA7->box(FL_FLAT_BOX);
-    ERPA7->labelfont(FL_BOLD);
+    ERPA7->color(box);
+    ERPA7->labelfont();
+    ERPA7->labelcolor(text);
     ERPA7->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
 
     Fl_Group *group3 = new Fl_Group(x_packet_offset + 575, y_packet_offset, 200, 320,
                                     "HK PACKET"); // HK packet group
+    group3->color(box);
     group3->box(FL_BORDER_BOX);
     group3->labelfont(FL_BOLD);
+    group3->labelcolor(text);
     Fl_Box *HK1 = new Fl_Box(x_packet_offset + 580, y_packet_offset + 5, 50, 20, "SYNC:");
     Fl_Output *HKsync = new Fl_Output(x_packet_offset + 682, y_packet_offset + 5, 60, 20);
-    HKsync->color(FL_BACKGROUND_COLOR);
+    HKsync->color(box);
     snprintf(buffer, sizeof(buffer), "%f", hk_sync);
     HKsync->value(buffer);
     HKsync->box(FL_FLAT_BOX);
+    HKsync->textcolor(output);
     HK1->box(FL_FLAT_BOX);
-    HK1->labelfont(FL_BOLD);
+    HK1->color(box);
+    HK1->labelfont();
+    HK1->labelcolor(text);
     HK1->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
     Fl_Box *HK2 = new Fl_Box(x_packet_offset + 580, y_packet_offset + 25, 50, 20, "SEQ:");
     Fl_Output *HKseq = new Fl_Output(x_packet_offset + 682, y_packet_offset + 25, 60, 20);
-    HKseq->color(FL_BACKGROUND_COLOR);
+    HKseq->color(box);
     snprintf(buffer, sizeof(buffer), "%f", hk_seq);
     HKseq->value(buffer);
     HKseq->box(FL_FLAT_BOX);
+    HKseq->textcolor(output);
     HK2->box(FL_FLAT_BOX);
-    HK2->labelfont(FL_BOLD);
+    HK2->color(box);
+    HK2->labelfont();
+    HK2->labelcolor(text);
     HK2->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
     Fl_Box *HK3 = new Fl_Box(x_packet_offset + 580, y_packet_offset + 45, 50, 20, "BUSimon:");
     Fl_Output *HKbusimon = new Fl_Output(x_packet_offset + 682, y_packet_offset + 45, 60, 20);
-    HKbusimon->color(FL_BACKGROUND_COLOR);
+    HKbusimon->color(box);
     snprintf(buffer, sizeof(buffer), "%f", hk_busimon);
     HKbusimon->value(buffer);
     HKbusimon->box(FL_FLAT_BOX);
+    HKbusimon->textcolor(output);
     HK3->box(FL_FLAT_BOX);
-    HK3->labelfont(FL_BOLD);
+    HK3->color(box);
+    HK3->labelfont();
+    HK3->labelcolor(text);
     HK3->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
     Fl_Box *HK4 = new Fl_Box(x_packet_offset + 580, y_packet_offset + 65, 50, 20, "BUSvmon:");
     Fl_Output *HKbusvmon = new Fl_Output(x_packet_offset + 682, y_packet_offset + 65, 60, 20);
-    HKbusvmon->color(FL_BACKGROUND_COLOR);
+    HKbusvmon->color(box);
     snprintf(buffer, sizeof(buffer), "%f", hk_busvmon);
     HKbusvmon->value(buffer);
     HKbusvmon->box(FL_FLAT_BOX);
+    HKbusvmon->textcolor(output);
     HK4->box(FL_FLAT_BOX);
-    HK4->labelfont(FL_BOLD);
+    HK4->color(box);
+    HK4->labelfont();
+    HK4->labelcolor(text);
     HK4->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
     Fl_Box *HK5 = new Fl_Box(x_packet_offset + 580, y_packet_offset + 85, 50, 20, "3v3mon:");
     Fl_Output *HK3v3mon = new Fl_Output(x_packet_offset + 682, y_packet_offset + 85, 60, 20);
-    HK3v3mon->color(FL_BACKGROUND_COLOR);
+    HK3v3mon->color(box);
     snprintf(buffer, sizeof(buffer), "%f", hk_n3v3mon);
     HK3v3mon->value(buffer);
     HK3v3mon->box(FL_FLAT_BOX);
+    HK3v3mon->textcolor(output);
     HK5->box(FL_FLAT_BOX);
-    HK5->labelfont(FL_BOLD);
+    HK5->color(box);
+    HK5->labelfont();
+    HK5->labelcolor(text);
     HK5->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
     Fl_Box *HK6 = new Fl_Box(x_packet_offset + 580, y_packet_offset + 105, 50, 20, "n150vmon:");
     Fl_Output *HKn150vmon = new Fl_Output(x_packet_offset + 682, y_packet_offset + 105, 60, 20);
-    HKn150vmon->color(FL_BACKGROUND_COLOR);
+    HKn150vmon->color(box);
     snprintf(buffer, sizeof(buffer), "%f", hk_n150vmon);
     HKn150vmon->value(buffer);
     HKn150vmon->box(FL_FLAT_BOX);
+    HKn150vmon->textcolor(output);
     HK6->box(FL_FLAT_BOX);
-    HK6->labelfont(FL_BOLD);
+    HK6->color(box);
+    HK6->labelfont();
+    HK6->labelcolor(text);
     HK6->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
     Fl_Box *HK7 = new Fl_Box(x_packet_offset + 580, y_packet_offset + 125, 50, 20, "n800vmon:");
     Fl_Output *HKn800vmon = new Fl_Output(x_packet_offset + 682, y_packet_offset + 125, 60, 20);
-    HKn800vmon->color(FL_BACKGROUND_COLOR);
+    HKn800vmon->color(box);
     snprintf(buffer, sizeof(buffer), "%f", hk_n800vmon);
     HKn800vmon->value(buffer);
     HKn800vmon->box(FL_FLAT_BOX);
+    HKn800vmon->textcolor(output);
     HK7->box(FL_FLAT_BOX);
-    HK7->labelfont(FL_BOLD);
+    HK7->color(box);
+    HK7->labelfont();
+    HK7->labelcolor(text);
     HK7->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
     Fl_Box *HK8 = new Fl_Box(x_packet_offset + 580, y_packet_offset + 145, 50, 20, "2v5mon:");
     Fl_Output *HK2v5mon = new Fl_Output(x_packet_offset + 682, y_packet_offset + 145, 60, 20);
-    HK2v5mon->color(FL_BACKGROUND_COLOR);
+    HK2v5mon->color(box);
     snprintf(buffer, sizeof(buffer), "%f", hk_2v5mon);
     HK2v5mon->value(buffer);
     HK2v5mon->box(FL_FLAT_BOX);
+    HK2v5mon->textcolor(output);
     HK8->box(FL_FLAT_BOX);
-    HK8->labelfont(FL_BOLD);
+    HK8->color(box);
+    HK8->labelfont();
+    HK8->labelcolor(text);
     HK8->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
     Fl_Box *HK9 = new Fl_Box(x_packet_offset + 580, y_packet_offset + 165, 50, 20, "n5vmon:");
     Fl_Output *HKn5vmon = new Fl_Output(x_packet_offset + 682, y_packet_offset + 165, 60, 20);
-    HKn5vmon->color(FL_BACKGROUND_COLOR);
+    HKn5vmon->color(box);
     snprintf(buffer, sizeof(buffer), "%f", hk_n5vmon);
     HKn5vmon->value(buffer);
     HKn5vmon->box(FL_FLAT_BOX);
+    HKn5vmon->textcolor(output);
     HK9->box(FL_FLAT_BOX);
-    HK9->labelfont(FL_BOLD);
+    HK9->color(box);
+    HK9->labelfont();
+    HK9->labelcolor(text);
     HK9->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
     Fl_Box *HK10 = new Fl_Box(x_packet_offset + 580, y_packet_offset + 185, 50, 20, "5vmon:");
     Fl_Output *HK5vmon = new Fl_Output(x_packet_offset + 682, y_packet_offset + 185, 60, 20);
-    HK5vmon->color(FL_BACKGROUND_COLOR);
+    HK5vmon->color(box);
     snprintf(buffer, sizeof(buffer), "%f", hk_5vmon);
     HK5vmon->value(buffer);
     HK5vmon->box(FL_FLAT_BOX);
+    HK5vmon->textcolor(output);
     HK10->box(FL_FLAT_BOX);
-    HK10->labelfont(FL_BOLD);
+    HK10->color(box);
+    HK10->labelfont();
+    HK10->labelcolor(text);
     HK10->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
     Fl_Box *HK11 = new Fl_Box(x_packet_offset + 580, y_packet_offset + 205, 50, 20, "n3v3mon:");
     Fl_Output *HKn3v3mon = new Fl_Output(x_packet_offset + 682, y_packet_offset + 205, 60, 20);
-    HKn3v3mon->color(FL_BACKGROUND_COLOR);
+    HKn3v3mon->color(box);
     snprintf(buffer, sizeof(buffer), "%f", hk_n3v3mon);
     HKn3v3mon->value(buffer);
     HKn3v3mon->box(FL_FLAT_BOX);
+    HKn3v3mon->textcolor(output);
     HK11->box(FL_FLAT_BOX);
-    HK11->labelfont(FL_BOLD);
+    HK11->color(box);
+    HK11->labelfont();
+    HK11->labelcolor(text);
     HK11->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
 
     Fl_Box *HK12 = new Fl_Box(x_packet_offset + 580, y_packet_offset + 225, 50, 20, "5vrefmon:");
     Fl_Output *HK5vrefmon = new Fl_Output(x_packet_offset + 682, y_packet_offset + 225, 60, 20);
-    HK5vrefmon->color(FL_BACKGROUND_COLOR);
+    HK5vrefmon->color(box);
     snprintf(buffer, sizeof(buffer), "%f", hk_5vrefmon);
     HK5vrefmon->value(buffer);
     HK5vrefmon->box(FL_FLAT_BOX);
+    HK5vrefmon->textcolor(output);
     HK12->box(FL_FLAT_BOX);
-    HK12->labelfont(FL_BOLD);
+    HK12->color(box);
+    HK12->labelfont();
+    HK12->labelcolor(text);
     HK12->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
 
     Fl_Box *HK13 = new Fl_Box(x_packet_offset + 580, y_packet_offset + 245, 50, 20, "15vmon:");
     Fl_Output *HK15vmon = new Fl_Output(x_packet_offset + 682, y_packet_offset + 245, 60, 20);
-    HK15vmon->color(FL_BACKGROUND_COLOR);
+    HK15vmon->color(box);
     snprintf(buffer, sizeof(buffer), "%f", hk_15vmon);
     HK15vmon->value(buffer);
     HK15vmon->box(FL_FLAT_BOX);
+    HK15vmon->textcolor(output);
+    HK13->color(box);
     HK13->box(FL_FLAT_BOX);
-    HK13->labelfont(FL_BOLD);
+    HK13->labelfont();
+    HK13->labelcolor(text);
     HK13->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
 
     Fl_Box *HK14 = new Fl_Box(x_packet_offset + 580, y_packet_offset + 265, 50, 20, "vsense:");
     Fl_Output *HKvsense = new Fl_Output(x_packet_offset + 682, y_packet_offset + 265, 60, 20);
-    HKvsense->color(FL_BACKGROUND_COLOR);
+    HKvsense->color(box);
     snprintf(buffer, sizeof(buffer), "%f", hk_vsense);
     HKvsense->value(buffer);
     HKvsense->box(FL_FLAT_BOX);
+    HKvsense->textcolor(output);
     HK14->box(FL_FLAT_BOX);
-    HK14->labelfont(FL_BOLD);
+    HK14->color(box);
+    HK14->labelfont();
+    HK14->labelcolor(text);
     HK14->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
 
     Fl_Box *HK15 = new Fl_Box(x_packet_offset + 580, y_packet_offset + 285, 50, 20, "vrefint:");
     Fl_Output *HKvrefint = new Fl_Output(x_packet_offset + 682, y_packet_offset + 285, 60, 20);
-    HKvrefint->color(FL_BACKGROUND_COLOR);
+    HKvrefint->color(box);
     snprintf(buffer, sizeof(buffer), "%f", hk_vrefint);
     HKvrefint->value(buffer);
     HKvrefint->box(FL_FLAT_BOX);
+    HKvrefint->textcolor(output);
     HK15->box(FL_FLAT_BOX);
-    HK15->labelfont(FL_BOLD);
+    HK15->color(box);
+    HK15->labelfont();
+    HK15->labelcolor(text);
     HK15->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
 
 // Show the GUI before entering the main loop
