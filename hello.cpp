@@ -142,32 +142,32 @@ int main(int argc, char **argv)
     std::thread readingThread([&serialPort, &stopFlag, &outputFile]
                               { return readSerialData(serialPort, std::ref(stopFlag), std::ref(outputFile)); });
 
-    int width = 900; // Width and Height of Main Window
-    int height = 700;
-    int x_packet_offset = 55; // X and Y offsets for the three packet groups
-    int y_packet_offset = 350;
+    int width = 1100; // Width and Height of Main Window
+    int height = 600;
+    int x_packet_offset = 250; // X and Y offsets for the three packet groups
+    int y_packet_offset = 150;
 
     Fl_Window *window = new Fl_Window(width, height, "IS Packet Interpreter"); // Create main window
 
-
+    Fl_Button* quit = new Fl_Button(15, 10, 40, 40, "ⓧ");
+    Fl_Round_Button *PMT_ON = new Fl_Round_Button(x_packet_offset + 165, y_packet_offset - 18, 20, 20);
+    Fl_Round_Button *ERPA_ON = new Fl_Round_Button(x_packet_offset + 450, y_packet_offset - 18, 20, 20);
+    Fl_Round_Button *HK_ON = new Fl_Round_Button(x_packet_offset + 725, y_packet_offset - 18, 20, 20);
 
     // -------------- CONTROLS GROUP --------------
-    Fl_Group *group4 = new Fl_Group(15, 100, 870, 120, "CONTROLS");
+    Fl_Group *group4 = new Fl_Group(15, 100, 130, 410, "CONTROLS");
     group4->box(FL_BORDER_BOX);
     group4->labelfont(FL_BOLD);
     Fl_Round_Button *PB5 = new Fl_Round_Button(20, 105, 100, 50, "sys_on PB5");
-    Fl_Round_Button *PB6 = new Fl_Round_Button(160, 105, 100, 50, "800v_en PB6");
-    Fl_Round_Button *PC10 = new Fl_Round_Button(300, 105, 100, 50, "3v3_en PC10");
-    Fl_Round_Button *PC13 = new Fl_Round_Button(440, 105, 100, 50, "n150v_en PC13");
-    Fl_Round_Button *PC7 = new Fl_Round_Button(580, 105, 100, 50, "15v_en PC7");
-    Fl_Round_Button *PC8 = new Fl_Round_Button(720, 105, 100, 50, "n5v_en PC8");
+    Fl_Round_Button *PB6 = new Fl_Round_Button(20, 155, 100, 50, "800v_en PB6");
+    Fl_Round_Button *PC10 = new Fl_Round_Button(20, 205, 100, 50, "3v3_en PC10");
+    Fl_Round_Button *PC13 = new Fl_Round_Button(20, 255, 100, 50, "n150v_en PC13");
+    Fl_Round_Button *PC7 = new Fl_Round_Button(20, 305, 100, 50, "15v_en PC7");
+    Fl_Round_Button *PC8 = new Fl_Round_Button(20, 355, 100, 50, "n5v_en PC8");
 
-    Fl_Round_Button *PC9 = new Fl_Round_Button(20, 150, 100, 50, "5v_en PC9");
-    Fl_Round_Button *PC6 = new Fl_Round_Button(160, 150, 100, 50, "n3v3_en PC6");
-    Fl_Round_Button *PMT_ON = new Fl_Round_Button(300, 150, 100, 50, "PMT ON");
-    Fl_Round_Button *ERPA_ON = new Fl_Round_Button(440, 150, 100, 50, "ERPA ON");
-    Fl_Round_Button *HK_ON = new Fl_Round_Button(580, 150, 100, 50, "HK ON");
-    Fl_Button* quit = new Fl_Button(725, 155, 40, 40, "ⓧ");
+    Fl_Round_Button *PC9 = new Fl_Round_Button(20, 405, 100, 50, "5v_en PC9");
+    Fl_Round_Button *PC6 = new Fl_Round_Button(20, 455, 100, 50, "n3v3_en PC6");
+
     
     PB6->deactivate();
     PC10->deactivate();
