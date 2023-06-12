@@ -5,14 +5,14 @@
 
 using namespace std;
 
-double intToVoltage(int value, int resolution, int ref) {
+double intToVoltage(int value, int resolution, int ref, float mult) {
     double voltage;
     if (resolution == 12) {
-        voltage = (double) (value * ref) / 4095;
+        voltage = (double) (value * ref) / 4095 * mult;
     }
 
     if (resolution == 16) {
-        voltage = (double) (value * ref) / 65535;
+        voltage = (double) (value * ref) / 65535 * mult;
     }
     return voltage;
 }
@@ -21,12 +21,12 @@ double intToCelsius(int value, int resolution, int ref) {
     double mVoltage;
     double temperature;
     if (resolution == 12) {
-        mVoltage = (intToVoltage(value, resolution, ref) * 1000);
+        mVoltage = (intToVoltage(value, resolution, ref, 1) * 1000);
         temperature = (mVoltage - 2035) / -4.5;
     }
 
     if (resolution == 16) {
-        mVoltage = (intToVoltage(value, resolution, ref) * 1000);
+        mVoltage = (intToVoltage(value, resolution, ref, 1) * 1000);
         temperature = (mVoltage - 2035) / -4.5;
     }
     return temperature;
@@ -34,7 +34,7 @@ double intToCelsius(int value, int resolution, int ref) {
 
 vector<string> interpret(const string& inputStr) {
     vector<string> strings;
-//    char strings[1000][1000];
+//  char strings[1000][1000];
     char result[1000];
     int arrCounter = 0;
     std::ifstream inputFile(inputStr, std::ios::binary);
@@ -58,10 +58,10 @@ vector<string> interpret(const string& inputStr) {
     int pmtIndex = 0;
     int pmtValid = 0;
 
-    string hkLabels[15] = {"l", "m", "n", "o", "p",
+    string hkLabels[16] = {"l", "m", "n", "o", "p",
                            "q", "r", "s", "t",
-                           "u", "v", "w", "x", "y", "z"};
-    int hkValues[15];
+                           "u", "v", "w", "x", "y", "z", "4"};
+    int hkValues[16];
     int hkIndex = 0;
     int hkValid = 0;
 
@@ -107,21 +107,21 @@ vector<string> interpret(const string& inputStr) {
                     case 2:
                         /* ERPA eADC Bytes; Interpreted as Volts */
                         sprintf(result, "%s:%.3f", erpaLabels[erpaIndex].c_str(),
-                                intToVoltage(erpaValues[erpaIndex], 16, 5));
+                                intToVoltage(erpaValues[erpaIndex], 16, 5,1.0));
                         strings.push_back(result);
                         arrCounter++;
                         break;
                     case 3:
                         /* SWP Commanded */
                         sprintf(result, "%s:%.1f", erpaLabels[erpaIndex].c_str(),
-                                intToVoltage(erpaValues[erpaIndex], 12, 3));
+                                intToVoltage(erpaValues[erpaIndex], 12, 3,1.0));
                         strings.push_back(result);
                         arrCounter++;
                         break;
                     case 4:
                         /* SWP Monitored */
                         sprintf(result, "%s:%.1f", erpaLabels[erpaIndex].c_str(),
-                                intToVoltage(erpaValues[erpaIndex], 12, 3));
+                                intToVoltage(erpaValues[erpaIndex], 12, 3, 1.0));
                         strings.push_back(result);
                         arrCounter++;
                         break;
@@ -142,7 +142,7 @@ vector<string> interpret(const string& inputStr) {
                     case 7:
                         /* ENDMon */
                         sprintf(result, "%s:%06.3f", erpaLabels[erpaIndex].c_str(),
-                                intToVoltage(erpaValues[erpaIndex], 12, 3));
+                                intToVoltage(erpaValues[erpaIndex], 12, 3,1.0));
                         strings.push_back(result);
                         arrCounter++;
                         break;
@@ -169,7 +169,7 @@ vector<string> interpret(const string& inputStr) {
                     case 2:
                         /* PMT eADC Bytes; Interpreted as Volts */
                         sprintf(result, "%s:%.3f", pmtLabels[pmtIndex].c_str(),
-                                intToVoltage(pmtValues[pmtIndex], 16, 5));
+                                intToVoltage(pmtValues[pmtIndex], 16, 5,1.0));
                         strings.push_back(result);
                         arrCounter++;
                         break;
@@ -180,8 +180,9 @@ vector<string> interpret(const string& inputStr) {
         } else if (packet == 3) {
             if (hkValid) {
                 hkValues[hkIndex] = ((sync[0] & 0xFF) << 8) | (sync[1] & 0xFF);
-                switch (hkIndex) {
+                cout << "HKINDEX = " << hkIndex << endl;
 
+                switch (hkIndex) {
                     case 0:
                         /* SYNC Bytes; should be 0xCCCC */
                         sprintf(result, "%s:0x%X ", hkLabels[hkIndex].c_str(), hkValues[hkIndex]);
@@ -196,84 +197,90 @@ vector<string> interpret(const string& inputStr) {
                         break;
                     case 2:
                         /* BUS_Imon */
-                        sprintf(result, "%s:%.3f", hkLabels[hkIndex].c_str(), intToVoltage(hkValues[hkIndex], 12, 3));
+                        sprintf(result, "%s:%.3f", hkLabels[hkIndex].c_str(), intToVoltage(hkValues[hkIndex], 12, 3,1.0));
                         strings.push_back(result);
                         arrCounter++;
                         break;
                     case 3:
                         /* BUS_Vmon */
-                        sprintf(result, "%s:%.3f", hkLabels[hkIndex].c_str(), intToVoltage(hkValues[hkIndex], 12, 3));
+                        sprintf(result, "%s:%.3f", hkLabels[hkIndex].c_str(), intToVoltage(hkValues[hkIndex], 12, 3,1.0));
                         strings.push_back(result);
                         arrCounter++;
                         break;
                     case 4:
                         /* 3v3_mon */
-                        sprintf(result, "%s:%.3f", hkLabels[hkIndex].c_str(), intToVoltage(hkValues[hkIndex], 12, 3));
+                        sprintf(result, "%s:%.3f", hkLabels[hkIndex].c_str(), intToVoltage(hkValues[hkIndex], 12, 3,1.0));
                         strings.push_back(result);
                         arrCounter++;
                         break;
                     case 5:
                         /* n150v_mon */
-                        sprintf(result, "%s:%.3f", hkLabels[hkIndex].c_str(), intToVoltage(hkValues[hkIndex], 12, 3));
+                        sprintf(result, "%s:%.3f", hkLabels[hkIndex].c_str(), intToVoltage(hkValues[hkIndex], 12, 3,1.0));
                         strings.push_back(result);
                         arrCounter++;
                         break;
                     case 6:
                         /* n800v_mon */
-                        sprintf(result, "%s:%.3f", hkLabels[hkIndex].c_str(), intToVoltage(hkValues[hkIndex], 12, 3));
+                        sprintf(result, "%s:%.3f", hkLabels[hkIndex].c_str(), intToVoltage(hkValues[hkIndex], 12, 3,1.0));
                         strings.push_back(result);
                         arrCounter++;
                         break;
                     case 7:
                         /* 2v5_mon */
-                        sprintf(result, "%s:%.3f", hkLabels[hkIndex].c_str(), intToVoltage(hkValues[hkIndex], 12, 3));
+                        sprintf(result, "%s:%.3f", hkLabels[hkIndex].c_str(), intToVoltage(hkValues[hkIndex], 12, 3, 1.0));
                         strings.push_back(result);
                         arrCounter++;
                         break;
                     case 8:
                         /* n5v_mon */
-                        sprintf(result, "%s:%.3f", hkLabels[hkIndex].c_str(), intToVoltage(hkValues[hkIndex], 12, 3));
+                        sprintf(result, "%s:%.3f", hkLabels[hkIndex].c_str(), intToVoltage(hkValues[hkIndex], 12, 3,-1.65));
                         strings.push_back(result);
                         arrCounter++;
                         break;
                     case 9:
                         /* 5v_mon */
-                        sprintf(result, "%s:%.3f", hkLabels[hkIndex].c_str(), intToVoltage(hkValues[hkIndex], 12, 3));
+                        sprintf(result, "%s:%.3f", hkLabels[hkIndex].c_str(), intToVoltage(hkValues[hkIndex], 12, 3,1.67));
                         strings.push_back(result);
                         arrCounter++;
                         break;
                     case 10:
                         /* n3v3_mon */
-                        sprintf(result, "%s:%.3f", hkLabels[hkIndex].c_str(), intToVoltage(hkValues[hkIndex], 12, 3));
+                        sprintf(result, "%s:%.3f", hkLabels[hkIndex].c_str(), intToVoltage(hkValues[hkIndex], 12, 3,-1.05));
                         strings.push_back(result);
                         arrCounter++;
                         break;
                     case 11:
                         /* 5vref_mon */
-                        sprintf(result, "%s:%.3f", hkLabels[hkIndex].c_str(), intToVoltage(hkValues[hkIndex], 12, 3));
+                        sprintf(result, "%s:%.3f", hkLabels[hkIndex].c_str(), intToVoltage(hkValues[hkIndex], 12, 3,1.67));
                         strings.push_back(result);
                         arrCounter++;
                         break;
                     case 12:
                         /* 15v_mon */
-                        sprintf(result, "%s:%.3f", hkLabels[hkIndex].c_str(), intToVoltage(hkValues[hkIndex], 12, 3));
+                        sprintf(result, "%s:%.3f", hkLabels[hkIndex].c_str(), intToVoltage(hkValues[hkIndex], 12, 3,5.0));
                         strings.push_back(result);
                         arrCounter++;
                         break;
                     case 13:
                         /* vsense */
-                        sprintf(result, "%s:%.3f", hkLabels[hkIndex].c_str(), intToVoltage(hkValues[hkIndex], 12, 3));
+                        sprintf(result, "%s:%.3f", hkLabels[hkIndex].c_str(), intToVoltage(hkValues[hkIndex], 12, 3,1.0));
                         strings.push_back(result);
                         arrCounter++;
                         break;
                     case 14:
                         /* vrefint */
-                        sprintf(result, "%s:%.3f", hkLabels[hkIndex].c_str(), intToVoltage(hkValues[hkIndex], 12, 3));
+                        sprintf(result, "%s:%.3f", hkLabels[hkIndex].c_str(), intToVoltage(hkValues[hkIndex], 12, 3,1.0));
+                        strings.push_back(result);
+                        arrCounter++;
+                        break;
+                    case 15:
+                        /* tmp1 */
+                        sprintf(result, "%s:%.3f", hkLabels[hkIndex].c_str(), hkValues[hkIndex]);
                         strings.push_back(result);
                         arrCounter++;
                         break;
                 }
-                hkIndex = (hkIndex + 1) % 15;
+                hkIndex = hkIndex + 1;
             }
             hkValid = !hkValid;
         }

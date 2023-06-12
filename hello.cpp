@@ -107,6 +107,9 @@ int main(int argc, char **argv)
     float hk_15vmon = 0;
     float hk_vsense = 0;
     float hk_vrefint = 0;
+    float hk_temp1 = 0;
+    float hk_temp2 = 0;
+    float hk_temp3 = 0;
 
     // ------- Vars Keeping Track Of Packet States --------
     unsigned char valPMT;
@@ -344,7 +347,7 @@ int main(int argc, char **argv)
     ERPA7->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
 
     // ------------------ HK Packet Group -----------------
-    Fl_Group *group3 = new Fl_Group(x_packet_offset + 575, y_packet_offset, 200, 320,
+    Fl_Group *group3 = new Fl_Group(x_packet_offset + 575, y_packet_offset, 200, 400,
                                     "HK PACKET");
     group3->color(box);
     group3->box(FL_BORDER_BOX);
@@ -530,6 +533,22 @@ int main(int argc, char **argv)
     HK15->labelfont();
     HK15->labelcolor(text);
     HK15->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+
+    Fl_Box *HK16 = new Fl_Box(x_packet_offset + 580, y_packet_offset + 305, 50, 20, "temp1:");
+    Fl_Output *HKtemp1 = new Fl_Output(x_packet_offset + 682, y_packet_offset + 305, 60, 20);
+    HKtemp1->color(box);
+    snprintf(buffer, sizeof(buffer), "%f", hk_temp1);
+    HKtemp1->value(buffer);
+    HKtemp1->box(FL_FLAT_BOX);
+    HKtemp1->textcolor(output);
+    HK16->box(FL_FLAT_BOX);
+    HK16->color(box);
+    HK16->labelfont();
+    HK16->labelcolor(text);
+    HK16->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+
+
+
 
     window->show(); // Opening main window before entering main loop
     Fl::check();
@@ -801,6 +820,12 @@ int main(int argc, char **argv)
                         {
                             snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
                             HKvrefint->value(buffer);
+                            break;
+                        }
+                        case '4':
+                        {
+                            snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
+                            HKtemp1->value(buffer);
                             break;
                         }
                         }

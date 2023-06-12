@@ -3,6 +3,7 @@
         "filesystem": "cpp",
         "stdexcept": "cpp",
         "string": "cpp",
-        "ostream": "cpp"
+        "ostream": "cpp",
+        "vector": "cpp"
     }
 }
