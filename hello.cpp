@@ -105,6 +105,7 @@ int main(int argc, char **argv)
     float hk_temp1 = 0;
     float hk_temp2 = 0;
     float hk_temp3 = 0;
+    float hk_temp4 = 0;
 
     // ------- Vars Keeping Track Of Packet States --------
     unsigned char valPMT;
@@ -555,6 +556,35 @@ int main(int argc, char **argv)
     HK17->labelcolor(text);
     HK17->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
 
+    Fl_Box *HK18 = new Fl_Box(x_packet_offset + 580, y_packet_offset + 345, 50, 20, "temp3:");
+    Fl_Output *HKtemp3 = new Fl_Output(x_packet_offset + 682, y_packet_offset + 345, 60, 20);
+    HKtemp3->color(box);
+    snprintf(buffer, sizeof(buffer), "%f", hk_temp3);
+    HKtemp3->value(buffer);
+    HKtemp3->box(FL_FLAT_BOX);
+    HKtemp3->textcolor(output);
+    HK18->box(FL_FLAT_BOX);
+    HK18->color(box);
+    HK18->labelfont();
+    HK18->labelcolor(text);
+    HK18->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+
+    Fl_Box *HK19 = new Fl_Box(x_packet_offset + 580, y_packet_offset + 365, 50, 20, "temp4:");
+    Fl_Output *HKtemp4 = new Fl_Output(x_packet_offset + 682, y_packet_offset + 365, 60, 20);
+    HKtemp4->color(box);
+    snprintf(buffer, sizeof(buffer), "%f", hk_temp4);
+    HKtemp4->value(buffer);
+    HKtemp4->box(FL_FLAT_BOX);
+    HKtemp4->textcolor(output);
+    HK19->box(FL_FLAT_BOX);
+    HK19->color(box);
+    HK19->labelfont();
+    HK19->labelcolor(text);
+    HK19->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+
+
+
+
     window->show(); // Opening main window before entering main loop
     Fl::check();
 
@@ -753,6 +783,18 @@ int main(int argc, char **argv)
                         {
                             snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
                             HKtemp2->value(buffer);
+                            break;
+                        }
+                        case 'E':
+                        {
+                            snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
+                            HKtemp3->value(buffer);
+                            break;
+                        }
+                        case 'F':
+                        {
+                            snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
+                            HKtemp4->value(buffer);
                             break;
                         }
                         case 'l':

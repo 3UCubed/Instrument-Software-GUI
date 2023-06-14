@@ -100,8 +100,8 @@ vector<string> interpret(const string &inputStr)
     int hkIndex = 0;
     int hkValid = 0;
 
-    string tempsLabels[4] = {"A", "B", "C", "D"};
-    int tempsValues[4];
+    string tempsLabels[6] = {"A", "B", "C", "D", "E", "F"};
+    int tempsValues[6];
     int tempsIndex = 0;
     int tempsValid = 0;
 
@@ -365,10 +365,20 @@ vector<string> interpret(const string &inputStr)
                     strings.push_back(result);
                     arrCounter++;
                     break;
-                
+                case 4:
+                    /* temp3 */
+                    sprintf(result, "%s:%.3f", tempsLabels[tempsIndex].c_str(), tempsToCelsius(tempsValues[tempsIndex]));
+                    strings.push_back(result);
+                    arrCounter++;
+                    break;
+                case 5:
+                    /* temp4 */
+                    sprintf(result, "%s:%.3f", tempsLabels[tempsIndex].c_str(), tempsToCelsius(tempsValues[tempsIndex]));
+                    strings.push_back(result);
+                    arrCounter++;
+                    break;
                 }
-                
-                tempsIndex = (tempsIndex + 1) % 4;
+                tempsIndex = (tempsIndex + 1) % 6;
             }
             tempsValid = !tempsValid;
         }
