@@ -1,7 +1,6 @@
 // ------------------------- README -----------------------
 // If you get error "Failed to open serial port" go to line 120
 
-
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Box.H>
@@ -25,13 +24,11 @@
 
 using namespace std;
 
-
 // ------------------- Quit button event ------------------
 void buttonCallback(Fl_Widget *widget)
 {
     exit(0);
 }
-
 
 // --------------- Write data to serial port --------------
 void writeSerialData(const int &serialPort, const std::string &data)
@@ -42,7 +39,6 @@ void writeSerialData(const int &serialPort, const std::string &data)
         std::cerr << "Error writing to the serial port." << std::endl;
     }
 }
-
 
 // ----- Continuously reads data from the serial port -----
 void readSerialData(const int &serialPort, std::atomic<bool> &stopFlag, std::ofstream &outputFile)
@@ -75,7 +71,6 @@ void readSerialData(const int &serialPort, std::atomic<bool> &stopFlag, std::ofs
         }
     }
 }
-
 
 // ----------------- Main Program Function ----------------
 int main(int argc, char **argv)
@@ -547,8 +542,18 @@ int main(int argc, char **argv)
     HK16->labelcolor(text);
     HK16->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
 
-
-
+    Fl_Box *HK17 = new Fl_Box(x_packet_offset + 580, y_packet_offset + 325, 50, 20, "temp2:");
+    Fl_Output *HKtemp2 = new Fl_Output(x_packet_offset + 682, y_packet_offset + 325, 60, 20);
+    HKtemp2->color(box);
+    snprintf(buffer, sizeof(buffer), "%f", hk_temp2);
+    HKtemp2->value(buffer);
+    HKtemp2->box(FL_FLAT_BOX);
+    HKtemp2->textcolor(output);
+    HK17->box(FL_FLAT_BOX);
+    HK17->color(box);
+    HK17->labelfont();
+    HK17->labelcolor(text);
+    HK17->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
 
     window->show(); // Opening main window before entering main loop
     Fl::check();
@@ -732,6 +737,24 @@ int main(int argc, char **argv)
                     {
                         switch (letter)
                         {
+                        case 'B':
+                        {
+                            snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
+                            HKvrefint->value(buffer);
+                            break;
+                        }
+                        case 'C':
+                        {
+                            snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
+                            HKtemp1->value(buffer);
+                            break;
+                        }
+                        case 'D':
+                        {
+                            snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
+                            HKtemp2->value(buffer);
+                            break;
+                        }
                         case 'l':
                         {
                             snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
@@ -814,18 +837,6 @@ int main(int argc, char **argv)
                         {
                             snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
                             HKvsense->value(buffer);
-                            break;
-                        }
-                        case 'z':
-                        {
-                            snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
-                            HKvrefint->value(buffer);
-                            break;
-                        }
-                        case '4':
-                        {
-                            snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
-                            HKtemp1->value(buffer);
                             break;
                         }
                         }
