@@ -23,9 +23,11 @@
 #include "interpreter/interpreter.cpp"
 
 using namespace std;
+const char *portName = "/dev/cu.usbserial-FT6E0L8J"; // CHANGE TO YOUR PORT NAME
+int serialPort = open(portName, O_RDWR | O_NOCTTY); // Opening serial port
 
 // ------------------- Quit button event ------------------
-void buttonCallback(Fl_Widget *widget)
+void quitCallback(Fl_Widget *)
 {
     exit(0);
 }
@@ -39,6 +41,7 @@ void writeSerialData(const int &serialPort, const std::string &data)
         std::cerr << "Error writing to the serial port." << std::endl;
     }
 }
+
 
 // ----- Continuously reads data from the serial port -----
 void readSerialData(const int &serialPort, std::atomic<bool> &stopFlag, std::ofstream &outputFile)
@@ -155,7 +158,8 @@ int main(int argc, char **argv)
     quit->color(darkBackground);
     quit->labelcolor(FL_RED);
     quit->labelsize(40);
-    quit->callback(buttonCallback);
+    quit->callback(quitCallback);
+
     Fl_Round_Button *PMT_ON = new Fl_Round_Button(x_packet_offset + 165, y_packet_offset - 18, 20, 20);
     Fl_Round_Button *ERPA_ON = new Fl_Round_Button(x_packet_offset + 450, y_packet_offset - 18, 20, 20);
     Fl_Round_Button *HK_ON = new Fl_Round_Button(x_packet_offset + 725, y_packet_offset - 18, 20, 20);
@@ -175,6 +179,7 @@ int main(int argc, char **argv)
     Fl_Round_Button *PC8 = new Fl_Round_Button(20, 355, 100, 50, "n5v_en PC8");
     Fl_Round_Button *PC9 = new Fl_Round_Button(20, 405, 100, 50, "5v_en PC9");
     Fl_Round_Button *PC6 = new Fl_Round_Button(20, 455, 100, 50, "n3v3_en PC6");
+
     PB5->labelcolor(text);
     PB6->labelcolor(text);
     PC10->labelcolor(text);
@@ -190,9 +195,9 @@ int main(int argc, char **argv)
     PC8->deactivate();
     PC9->deactivate();
     PC6->deactivate();
-    PMT_ON->value(1);
-    ERPA_ON->value(1);
-    HK_ON->value(1);
+    PMT_ON->value(0);
+    ERPA_ON->value(0);
+    HK_ON->value(0);
     unsigned char valPB6 = PB6->value();
     unsigned char valPB5 = PB5->value();
     unsigned char valPC10 = PC10->value();
@@ -582,8 +587,27 @@ int main(int argc, char **argv)
     HK19->labelcolor(text);
     HK19->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
 
-
-
+    writeSerialData(serialPort, "!");
+    usleep(10000);
+    writeSerialData(serialPort, "@");
+    usleep(10000);
+    writeSerialData(serialPort, "#");
+    usleep(10000);
+    writeSerialData(serialPort, "$");
+    usleep(10000);
+    writeSerialData(serialPort, "%");
+    usleep(10000);
+    writeSerialData(serialPort, "^");
+    usleep(10000);
+    writeSerialData(serialPort, "&");
+    usleep(10000);
+    writeSerialData(serialPort, "*");
+    usleep(10000);
+    writeSerialData(serialPort, "(");
+    usleep(10000);
+    writeSerialData(serialPort, ")");
+    usleep(10000);
+    writeSerialData(serialPort, "-");
 
     window->show(); // Opening main window before entering main loop
     Fl::check();
@@ -599,23 +623,37 @@ int main(int argc, char **argv)
         {
             turnedOff = 0;
         }
-        if (PMT_ON->value() != valPMT) // Toggling individual packet data
+        if (PMT_ON->value() != valPMT && PMT_ON->value() == 1) // Toggling individual packet data
         {
             valPMT = PMT_ON->value();
             writeSerialData(serialPort, "1");
         }
-        if (ERPA_ON->value() != valERPA)
+        else if (PMT_ON->value() != valPMT && PMT_ON->value() == 0) // Toggling individual packet data
+        {
+            valPMT = PMT_ON->value();
+            writeSerialData(serialPort, "!");
+        }
+        if (ERPA_ON->value() != valERPA && ERPA_ON->value() == 1)
         {
             valERPA = ERPA_ON->value();
             writeSerialData(serialPort, "2");
         }
-        if (HK_ON->value() != valHK)
+        else if (ERPA_ON->value() != valERPA && ERPA_ON->value() == 0)
+        {
+            valERPA = ERPA_ON->value();
+            writeSerialData(serialPort, "@");
+        }
+        if (HK_ON->value() != valHK && HK_ON->value() == 1)
         {
             valHK = HK_ON->value();
             writeSerialData(serialPort, "3");
         }
-
-        if (PB5->value() != valPB5) // Making sure sys_on (PB5) is on before activating other GPIO buttons
+        else if (HK_ON->value() != valHK && HK_ON->value() == 0)
+        {
+            valHK = HK_ON->value();
+            writeSerialData(serialPort, "#");
+        }
+        if (PB5->value() != valPB5 && PB5->value() == 1) // Making sure sys_on (PB5) is on before activating other GPIO buttons
         {
             valPB5 = PB5->value();
             writeSerialData(serialPort, "a");
@@ -640,42 +678,102 @@ int main(int argc, char **argv)
                 PC6->deactivate();
             }
         }
+        else if (PB5->value() != valPB5 && PB5->value() == 0) // Making sure sys_on (PB5) is on before activating other GPIO buttons
+        {
+            valPB5 = PB5->value();
+            writeSerialData(serialPort, "$");
+            if (PB5->value())
+            {
+                PB6->activate();
+                PC10->activate();
+                PC13->activate();
+                PC7->activate();
+                PC8->activate();
+                PC9->activate();
+                PC6->activate();
+            }
+            else
+            {
+                PB6->deactivate();
+                PC10->deactivate();
+                PC13->deactivate();
+                PC7->deactivate();
+                PC8->deactivate();
+                PC9->deactivate();
+                PC6->deactivate();
+            }
+        }
         if (PB5->value())
         {
-            if (PB6->value() != valPB6)
+            if (PB6->value() != valPB6 && PB6->value() == 1)
             {
                 valPB6 = PB6->value();
                 writeSerialData(serialPort, "b");
             }
-            if (PC10->value() != valPC10)
+            else if (PB6->value() != valPB6 && PB6->value() == 0)
+            {
+                valPB6 = PB6->value();
+                writeSerialData(serialPort, "%");
+            }
+            if (PC10->value() != valPC10 && PC10->value() == 1)
             {
                 valPC10 = PC10->value();
                 writeSerialData(serialPort, "c");
             }
-            if (PC13->value() != valPC13)
+            else if (PC10->value() != valPC10 && PC10->value() == 0)
+            {
+                valPC10 = PC10->value();
+                writeSerialData(serialPort, "^");
+            }
+            if (PC13->value() != valPC13 && PC13->value() == 1)
             {
                 valPC13 = PC13->value();
                 writeSerialData(serialPort, "d");
             }
-            if (PC7->value() != valPC7)
+            else if (PC13->value() != valPC13 && PC13->value() == 0)
+            {
+                valPC13 = PC13->value();
+                writeSerialData(serialPort, "&");
+            }
+            if (PC7->value() != valPC7 && PC7->value() == 1)
             {
                 valPC7 = PC7->value();
                 writeSerialData(serialPort, "e");
             }
-            if (PC8->value() != valPC8)
+            else if (PC7->value() != valPC7 && PC7->value() == 0)
+            {
+                valPC7 = PC7->value();
+                writeSerialData(serialPort, "*");
+            }
+            if (PC8->value() != valPC8 && PC8->value() == 1)
             {
                 valPC8 = PC8->value();
                 writeSerialData(serialPort, "f");
             }
-            if (PC9->value() != valPC9)
+            else if (PC8->value() != valPC8 && PC8->value() == 0)
+            {
+                valPC8 = PC8->value();
+                writeSerialData(serialPort, "(");
+            }
+            if (PC9->value() != valPC9 && PC9->value() == 1)
             {
                 valPC9 = PC9->value();
                 writeSerialData(serialPort, "g");
             }
-            if (PC6->value() != valPC6)
+            else if (PC9->value() != valPC9 && PC9->value() == 0)
+            {
+                valPC9 = PC9->value();
+                writeSerialData(serialPort, ")");
+            }
+            if (PC6->value() != valPC6 && PC6->value() == 1)
             {
                 valPC6 = PC6->value();
                 writeSerialData(serialPort, "h");
+            }
+            if (PC6->value() != valPC6 && PC6->value() == 0)
+            {
+                valPC6 = PC6->value();
+                writeSerialData(serialPort, "-");
             }
         }
 
