@@ -8,6 +8,7 @@
 #include <FL/Fl_PNG_Image.H>
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Round_Button.H>
+#include <Fl/Fl_Value_Slider.H>
 #include <string>
 #include <iostream>
 #include <fstream>
@@ -140,8 +141,8 @@ int main(int argc, char **argv)
                               { return readSerialData(serialPort, std::ref(stopFlag), std::ref(outputFile)); });
 
     // ------------ Main Window Elements Setup ------------
-    int width = 1100; // Width and Height of Main Window
-    int height = 600;
+    int width = 1300; // Width and Height of Main Window
+    int height = 900;
     int x_packet_offset = 250; // X and Y offsets for the three packet groups
     int y_packet_offset = 150;
 
@@ -348,7 +349,7 @@ int main(int argc, char **argv)
     ERPA7->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
 
     // ------------------ HK Packet Group -----------------
-    Fl_Group *group3 = new Fl_Group(x_packet_offset + 575, y_packet_offset, 200, 400,
+    Fl_Group *group3 = new Fl_Group(x_packet_offset + 575, y_packet_offset, 200, 320,
                                     "HK PACKET");
     group3->color(box);
     group3->box(FL_BORDER_BOX);
@@ -535,57 +536,41 @@ int main(int argc, char **argv)
     HK15->labelcolor(text);
     HK15->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
 
-    Fl_Box *HK16 = new Fl_Box(x_packet_offset + 580, y_packet_offset + 305, 50, 20, "temp1:");
-    Fl_Output *HKtemp1 = new Fl_Output(x_packet_offset + 682, y_packet_offset + 305, 60, 20);
+    Fl_Value_Slider *HKtemp1 = new Fl_Value_Slider(x_packet_offset + 20, y_packet_offset + 400, 30, 200);
     HKtemp1->color(box);
     snprintf(buffer, sizeof(buffer), "%f", hk_temp1);
-    HKtemp1->value(buffer);
+    HKtemp1->range(30, 24);  // Replace minVoltage and maxVoltage with appropriate values
+    HKtemp1->value(27);
     HKtemp1->box(FL_FLAT_BOX);
     HKtemp1->textcolor(output);
-    HK16->box(FL_FLAT_BOX);
-    HK16->color(box);
-    HK16->labelfont();
-    HK16->labelcolor(text);
-    HK16->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
 
-    Fl_Box *HK17 = new Fl_Box(x_packet_offset + 580, y_packet_offset + 325, 50, 20, "temp2:");
-    Fl_Output *HKtemp2 = new Fl_Output(x_packet_offset + 682, y_packet_offset + 325, 60, 20);
+    Fl_Value_Slider *HKtemp2 = new Fl_Value_Slider(x_packet_offset + 80, y_packet_offset + 400, 30, 200);
     HKtemp2->color(box);
     snprintf(buffer, sizeof(buffer), "%f", hk_temp2);
-    HKtemp2->value(buffer);
+    HKtemp2->range(30, 24);  // Replace minVoltage and maxVoltage with appropriate values
+    HKtemp2->value(27);
     HKtemp2->box(FL_FLAT_BOX);
     HKtemp2->textcolor(output);
-    HK17->box(FL_FLAT_BOX);
-    HK17->color(box);
-    HK17->labelfont();
-    HK17->labelcolor(text);
-    HK17->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
 
-    Fl_Box *HK18 = new Fl_Box(x_packet_offset + 580, y_packet_offset + 345, 50, 20, "temp3:");
-    Fl_Output *HKtemp3 = new Fl_Output(x_packet_offset + 682, y_packet_offset + 345, 60, 20);
+
+    Fl_Value_Slider *HKtemp3 = new Fl_Value_Slider(x_packet_offset + 140, y_packet_offset + 400, 30, 200);
     HKtemp3->color(box);
     snprintf(buffer, sizeof(buffer), "%f", hk_temp3);
-    HKtemp3->value(buffer);
+    HKtemp3->range(30, 24);  // Replace minVoltage and maxVoltage with appropriate values
+    HKtemp3->value(27);
     HKtemp3->box(FL_FLAT_BOX);
     HKtemp3->textcolor(output);
-    HK18->box(FL_FLAT_BOX);
-    HK18->color(box);
-    HK18->labelfont();
-    HK18->labelcolor(text);
-    HK18->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
 
-    Fl_Box *HK19 = new Fl_Box(x_packet_offset + 580, y_packet_offset + 365, 50, 20, "temp4:");
-    Fl_Output *HKtemp4 = new Fl_Output(x_packet_offset + 682, y_packet_offset + 365, 60, 20);
+    
+    Fl_Value_Slider *HKtemp4 = new Fl_Value_Slider(x_packet_offset + 200, y_packet_offset + 400, 30, 200);
     HKtemp4->color(box);
     snprintf(buffer, sizeof(buffer), "%f", hk_temp4);
-    HKtemp4->value(buffer);
     HKtemp4->box(FL_FLAT_BOX);
     HKtemp4->textcolor(output);
-    HK19->box(FL_FLAT_BOX);
-    HK19->color(box);
-    HK19->labelfont();
-    HK19->labelcolor(text);
-    HK19->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+    HKtemp4->range(30, 24);  // Replace minVoltage and maxVoltage with appropriate values
+    HKtemp4->value(27);
+
+
 
     writeSerialData(serialPort, "!");
     usleep(10000);
@@ -874,25 +859,25 @@ int main(int argc, char **argv)
                         case 'C':
                         {
                             snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
-                            HKtemp1->value(buffer);
+                            HKtemp1->value(std::stof(buffer));
                             break;
                         }
                         case 'D':
                         {
                             snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
-                            HKtemp2->value(buffer);
+                            HKtemp2->value(std::stof(buffer));
                             break;
                         }
                         case 'E':
                         {
                             snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
-                            HKtemp3->value(buffer);
+                            HKtemp3->value(std::stof(buffer));
                             break;
                         }
                         case 'F':
                         {
                             snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
-                            HKtemp4->value(buffer);
+                            HKtemp4->value(std::stof(buffer));
                             break;
                         }
                         case 'l':
