@@ -8,7 +8,7 @@
 #include <FL/Fl_PNG_Image.H>
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Round_Button.H>
-#include <Fl/Fl_Value_Slider.H>
+#include <FL/Fl_Value_Slider.H>
 #include <string>
 #include <iostream>
 #include <fstream>
@@ -121,6 +121,7 @@ int main(int argc, char **argv)
     struct termios options = {};
     std::atomic<bool> stopFlag(false);
     const char *portName = "/dev/cu.usbserial-FT6E0L8J"; // CHANGE TO YOUR PORT NAME
+//    const char *portName = "/dev/cu.usbserial-FT6E8SZC"; // CHANGE TO YOUR PORT NAME
     std::ofstream outputFile("mylog.0", std::ios::out | std::ios::trunc);
 
     // ------------------ Thread/Port Setup ---------------
