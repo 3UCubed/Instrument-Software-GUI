@@ -821,17 +821,17 @@ int main(int argc, char **argv) {
                                 ERPAendmon->value(buffer);
                                 break;
                             }
-                            case 'f': {
+                            case 'e': {
                                 snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
                                 ERPAtemp1->value(buffer);
                                 break;
                             }
-                            case 'g': {
+                            case 'f': {
                                 snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
                                 ERPAtemp2->value(buffer);
                                 break;
                             }
-                            case 'h': {
+                            case 'g': {
                                 snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
                                 ERPAswp->value(buffer);
                                 break;

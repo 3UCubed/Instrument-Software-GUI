@@ -145,34 +145,34 @@ vector <string> interpret(const string &inputStr) {
                         arrCounter++;
                         break;
                     case 3:
-                        /* SWP Commanded */
-                        sprintf(result, "%s:%.1f", erpaLabels[erpaIndex].c_str(),
-                                intToVoltage(erpaValues[erpaIndex], 12, 3, 1.0));
-                        strings.push_back(result);
-                        arrCounter++;
-                        break;
-                    case 4:
+                        // /* SWP Commanded */
+                        // sprintf(result, "%s:%.1f", erpaLabels[erpaIndex].c_str(),
+                        //         intToVoltage(erpaValues[erpaIndex], 12, 3, 1.0));
+                        // strings.push_back(result);
+                        // arrCounter++;
+                        // break;
+                        
                         /* ENDMon */
                         sprintf(result, "%s:%06.3f", erpaLabels[erpaIndex].c_str(),
                                 intToVoltage(erpaValues[erpaIndex], 12, 3, 1.0));
                         strings.push_back(result);
                         arrCounter++;
                         break;
-                    case 5:
+                    case 4:
                         /* TEMP Op-Amp1 */
                         sprintf(result, "%s:%07.3f", erpaLabels[erpaIndex].c_str(),
                                 intToCelsius(erpaValues[erpaIndex], 12, 3));
                         strings.push_back(result);
                         arrCounter++;
                         break;
-                    case 6:
+                    case 5:
                         /* TEMP Op-Amp2 */
                         sprintf(result, "%s:%07.3f", erpaLabels[erpaIndex].c_str(),
                                 intToCelsius(erpaValues[erpaIndex], 12, 3));
                         strings.push_back(result);
                         arrCounter++;
                         break;
-                    case 7:
+                    case 6:
                         /* SWP Monitored */
                         sprintf(result, "%s:%.1f", erpaLabels[erpaIndex].c_str(),
                                 intToVoltage(erpaValues[erpaIndex], 12, 3, 1.0));
