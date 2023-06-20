@@ -22,15 +22,17 @@
 #include <chrono>
 #include <mutex>
 #include "interpreter/interpreter.cpp"
-
-using namespace std;
 const char *portName = "/dev/cu.usbserial-FT6E0L8J"; // CHANGE TO YOUR PORT NAME
 int serialPort = open(portName, O_RDWR | O_NOCTTY); // Opening serial port
+int step = 0;
+using namespace std;
 
 // ------------------- Quit button event ------------------
 void quitCallback(Fl_Widget *) {
     exit(0);
 }
+
+
 
 // --------------- Write data to serial port --------------
 void writeSerialData(const int &serialPort, const std::string &data) {
@@ -69,8 +71,26 @@ void readSerialData(const int &serialPort, std::atomic<bool> &stopFlag, std::ofs
     }
 }
 
+// ------------------- Step Up button event ------------------
+void stepUpCallback(Fl_Widget *) {
+    writeSerialData(serialPort, "<");
+    if (step < 5){
+        step++;
+    }
+}
+
+// ------------------- Step Down button event ------------------
+void stepDownCallback(Fl_Widget *) {
+    writeSerialData(serialPort, ">");
+    if (step > 0){
+        step--;
+    }
+}
+
+
 // ----------------- Main Program Function ----------------
 int main(int argc, char **argv) {
+    float stepVoltages[6] = {0, 0.5, 1, 1.5, 2, 2.5};
     // ---------------- Output Field Vars -----------------
     char buffer[32];
     float pmt_sync = 0;
@@ -112,7 +132,6 @@ int main(int argc, char **argv) {
     // --------------------- Thread Vars ------------------
     struct termios options = {};
     std::atomic<bool> stopFlag(false);
-    const char *portName = "/dev/cu.usbserial-FT6E0L8J"; // CHANGE TO YOUR PORT NAME
 //    const char *portName = "/dev/cu.usbserial-FT6E8SZC"; // CHANGE TO YOUR PORT NAME
     std::ofstream outputFile("mylog.0", std::ios::out | std::ios::trunc);
 
@@ -124,8 +143,8 @@ int main(int argc, char **argv) {
     }
 
     tcgetattr(serialPort, &options);
-    cfsetispeed(&options, B115200);
-    cfsetospeed(&options, B115200);
+    cfsetispeed(&options, B9600);
+    cfsetospeed(&options, B9600);
     options.c_cflag |= O_NONBLOCK;
     tcsetattr(serialPort, TCSANOW, &options);
 
@@ -159,7 +178,7 @@ int main(int argc, char **argv) {
     Fl_Round_Button *HK_ON = new Fl_Round_Button(x_packet_offset + 725, y_packet_offset - 18, 20, 20);
 
     // ------------------- CONTROLS GROUP -----------------
-    Fl_Box *group4 = new Fl_Box(15, 100, 130, 410, "CONTROLS");
+    Fl_Box *group4 = new Fl_Box(15, 100, 130, 550, "CONTROLS");
     group4->color(box);
     group4->box(FL_BORDER_BOX);
     group4->labelcolor(text);
@@ -173,6 +192,28 @@ int main(int argc, char **argv) {
     Fl_Round_Button *PC8 = new Fl_Round_Button(20, 355, 100, 50, "n5v_en PC8");
     Fl_Round_Button *PC9 = new Fl_Round_Button(20, 405, 100, 50, "5v_en PC9");
     Fl_Round_Button *PC6 = new Fl_Round_Button(20, 455, 100, 50, "n3v3_en PC6");
+    Fl_Button *stepUp = new Fl_Button(25, 505, 110, 50, "Step Up");
+    Fl_Button *stepDown = new Fl_Button(25, 590, 110, 50, "Step Down");
+    stepDown->callback(stepDownCallback);
+    stepUp->label("Step Up      @8->");
+    stepUp->align(FL_ALIGN_CENTER);
+    stepDown->label("Step Down  @2->");
+    stepDown->align(FL_ALIGN_CENTER);
+    Fl_Output *currStep = new Fl_Output(112, 560, 20, 20);
+    Fl_Output *stepVoltage = new Fl_Output(40, 560, 20, 20);
+
+    stepUp->callback(stepUpCallback);
+
+    currStep->color(box);
+    currStep->value(buffer);
+    currStep->box(FL_FLAT_BOX);
+    currStep->textcolor(output);
+
+    stepVoltage->color(box);
+    stepVoltage->value(buffer);
+    stepVoltage->box(FL_FLAT_BOX);
+    stepVoltage->textcolor(output);
+
 
     PB5->labelcolor(text);
     PB6->labelcolor(text);
@@ -292,7 +333,7 @@ int main(int argc, char **argv) {
     ERPA3->labelfont();
     ERPA3->labelcolor(text);
     ERPA3->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
-    Fl_Box *ERPA4 = new Fl_Box(x_packet_offset + 300, y_packet_offset + 65, 50, 20, "SWP:");
+    Fl_Box *ERPA4 = new Fl_Box(x_packet_offset + 300, y_packet_offset + 65, 50, 20, "SWP MON:");
     Fl_Output *ERPAswp = new Fl_Output(x_packet_offset + 417, y_packet_offset + 65, 60, 20);
     ERPAswp->color(box);
     snprintf(buffer, sizeof(buffer), "%f", erpa_swp);
@@ -613,6 +654,13 @@ int main(int argc, char **argv) {
 
     // -------------- MAIN PROGRAM EVENT LOOP -------------
     while (1) {
+        char tempBuf[8];
+        snprintf(tempBuf, sizeof(tempBuf), "%d", step);
+        currStep->value(tempBuf);
+
+        snprintf(tempBuf, sizeof(tempBuf), "%f", stepVoltages[step]);
+        stepVoltage->value(tempBuf);
+
         if (valPMT == '0' && valERPA == '0' && valHK == '0' &&
             turnedOff == 0) // Checking if all packet data is toggled off
         {
