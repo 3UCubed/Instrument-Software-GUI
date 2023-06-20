@@ -143,8 +143,8 @@ int main(int argc, char **argv) {
     }
 
     tcgetattr(serialPort, &options);
-    cfsetispeed(&options, B115200);
-    cfsetospeed(&options, B115200);
+    cfsetispeed(&options, B19200);
+    cfsetospeed(&options, B19200);
     options.c_cflag |= O_NONBLOCK;
     tcsetattr(serialPort, TCSANOW, &options);
 
@@ -818,7 +818,7 @@ int main(int argc, char **argv) {
                             }
                             case 'd': {
                                 snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
-                                ERPAswp->value(buffer);
+                                ERPAendmon->value(buffer);
                                 break;
                             }
                             case 'f': {
@@ -833,7 +833,7 @@ int main(int argc, char **argv) {
                             }
                             case 'h': {
                                 snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
-                                ERPAendmon->value(buffer);
+                                ERPAswp->value(buffer);
                                 break;
                             }
                         }

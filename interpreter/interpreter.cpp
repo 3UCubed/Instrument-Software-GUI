@@ -152,8 +152,8 @@ vector <string> interpret(const string &inputStr) {
                         arrCounter++;
                         break;
                     case 4:
-                        /* SWP Monitored */
-                        sprintf(result, "%s:%.1f", erpaLabels[erpaIndex].c_str(),
+                        /* ENDMon */
+                        sprintf(result, "%s:%06.3f", erpaLabels[erpaIndex].c_str(),
                                 intToVoltage(erpaValues[erpaIndex], 12, 3, 1.0));
                         strings.push_back(result);
                         arrCounter++;
@@ -173,8 +173,8 @@ vector <string> interpret(const string &inputStr) {
                         arrCounter++;
                         break;
                     case 7:
-                        /* ENDMon */
-                        sprintf(result, "%s:%06.3f", erpaLabels[erpaIndex].c_str(),
+                        /* SWP Monitored */
+                        sprintf(result, "%s:%.1f", erpaLabels[erpaIndex].c_str(),
                                 intToVoltage(erpaValues[erpaIndex], 12, 3, 1.0));
                         strings.push_back(result);
                         arrCounter++;
