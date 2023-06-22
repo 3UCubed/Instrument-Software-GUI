@@ -23,6 +23,11 @@
 #include <mutex>
 #include "interpreter/interpreter.cpp"
 const char *portName = "/dev/cu.usbserial-FT6E0L8J"; // CHANGE TO YOUR PORT NAME
+const float erpaBPS = 140.0;
+const float hkBPS = 5.6;
+const float pmtBPS = 48.0;
+const float tempsBPS = 2.4;
+float totalBPS = 0;
 int serialPort = open(portName, O_RDWR | O_NOCTTY); // Opening serial port
 int step = 0;
 using namespace std;
@@ -155,7 +160,7 @@ int main(int argc, char **argv) {
     // ------------ Main Window Elements Setup ------------
     int width = 1300; // Width and Height of Main Window
     int height = 900;
-    int x_packet_offset = 460; // X and Y offsets for the three packet groups
+    int x_packet_offset = 485; // X and Y offsets for the three packet groups
     int y_packet_offset = 200;
 
     Fl_Window *window = new Fl_Window(width, height, "IS Packet Interpreter");
@@ -597,13 +602,13 @@ int main(int argc, char **argv) {
     HK15->labelcolor(text);
     HK15->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
 
-    Fl_Box *tempLabel1 = new Fl_Box(178, 100, 75, 20, "TMP1");
+    Fl_Box *tempLabel1 = new Fl_Box(165, 100, 75, 20, "TMP1");
     tempLabel1->color(box);
     tempLabel1->box(FL_NO_BOX);
     tempLabel1->labelcolor(text);
     tempLabel1->labelfont(FL_BOLD);
     tempLabel1->align(FL_ALIGN_TOP);
-    Fl_Value_Slider *HKtemp1 = new Fl_Value_Slider(200, 100, 30, 550);
+    Fl_Value_Slider *HKtemp1 = new Fl_Value_Slider(185, 100, 30, 550);
     HKtemp1->color(box);
     snprintf(buffer, sizeof(buffer), "%f", hk_temp1);
     HKtemp1->range(30, 24);  // Replace minVoltage and maxVoltage with appropriate values
@@ -611,13 +616,13 @@ int main(int argc, char **argv) {
     HKtemp1->box(FL_FLAT_BOX);
     HKtemp1->textcolor(output);
 
-    Fl_Box *tempLabel2 = new Fl_Box(238, 100, 75, 20, "TMP2");
+    Fl_Box *tempLabel2 = new Fl_Box(225, 100, 75, 20, "TMP2");
     tempLabel2->color(box);
     tempLabel2->box(FL_NO_BOX);
     tempLabel2->labelcolor(text);
     tempLabel2->labelfont(FL_BOLD);
     tempLabel2->align(FL_ALIGN_TOP);
-    Fl_Value_Slider *HKtemp2 = new Fl_Value_Slider(260, 100, 30, 550);
+    Fl_Value_Slider *HKtemp2 = new Fl_Value_Slider(245, 100, 30, 550);
     HKtemp2->color(box);
     snprintf(buffer, sizeof(buffer), "%f", hk_temp2);
     HKtemp2->range(30, 24);  // Replace minVoltage and maxVoltage with appropriate values
@@ -625,13 +630,13 @@ int main(int argc, char **argv) {
     HKtemp2->box(FL_FLAT_BOX);
     HKtemp2->textcolor(output);
 
-    Fl_Box *tempLabel3 = new Fl_Box(298, 100, 75, 20, "TMP3");
+    Fl_Box *tempLabel3 = new Fl_Box(283, 100, 75, 20, "TMP3");
     tempLabel3->color(box);
     tempLabel3->box(FL_NO_BOX);
     tempLabel3->labelcolor(text);
     tempLabel3->labelfont(FL_BOLD);
     tempLabel3->align(FL_ALIGN_TOP);
-    Fl_Value_Slider *HKtemp3 = new Fl_Value_Slider(320, 100, 30, 550);
+    Fl_Value_Slider *HKtemp3 = new Fl_Value_Slider(305, 100, 30, 550);
     HKtemp3->color(box);
     snprintf(buffer, sizeof(buffer), "%f", hk_temp3);
     HKtemp3->range(30, 24);  // Replace minVoltage and maxVoltage with appropriate values
@@ -639,19 +644,32 @@ int main(int argc, char **argv) {
     HKtemp3->box(FL_FLAT_BOX);
     HKtemp3->textcolor(output);
 
-    Fl_Box *tempLabel4 = new Fl_Box(358, 100, 75, 20, "TMP4");
+    Fl_Box *tempLabel4 = new Fl_Box(345, 100, 75, 20, "TMP4");
     tempLabel4->color(box);
     tempLabel4->box(FL_NO_BOX);
     tempLabel4->labelcolor(text);
     tempLabel4->labelfont(FL_BOLD);
     tempLabel4->align(FL_ALIGN_TOP);
-    Fl_Value_Slider *HKtemp4 = new Fl_Value_Slider(380, 100, 30, 550);
+    Fl_Value_Slider *HKtemp4 = new Fl_Value_Slider(365, 100, 30, 550);
     HKtemp4->color(box);
     snprintf(buffer, sizeof(buffer), "%f", hk_temp4);
     HKtemp4->box(FL_FLAT_BOX);
     HKtemp4->textcolor(output);
     HKtemp4->range(30, 24);  // Replace minVoltage and maxVoltage with appropriate values
     HKtemp4->value(27);
+
+    Fl_Box *dataSent = new Fl_Box(403, 100, 75, 20, "BPS");
+    dataSent->color(box);
+    dataSent->box(FL_NO_BOX);
+    dataSent->labelcolor(text);
+    dataSent->labelfont(FL_BOLD);
+    dataSent->align(FL_ALIGN_TOP);
+    Fl_Value_Slider *BPS = new Fl_Value_Slider(425, 100, 30, 550);
+    BPS->color(box);
+    BPS->box(FL_FLAT_BOX);
+    BPS->textcolor(output);
+    BPS->range(196, 0);  // Replace minVoltage and maxVoltage with appropriate values
+    BPS->value(27);
 
 
     writeSerialData(serialPort, "!");
@@ -675,6 +693,10 @@ int main(int argc, char **argv) {
     writeSerialData(serialPort, ")");
     usleep(10000);
     writeSerialData(serialPort, "-");
+    usleep(10000);
+    writeSerialData(serialPort, "H");
+    usleep(10000);
+    writeSerialData(serialPort, "J");
 
     window->show(); // Opening main window before entering main loop
     Fl::check();
@@ -697,27 +719,38 @@ int main(int argc, char **argv) {
         }
         if (PMT_ON->value() != valPMT && PMT_ON->value() == 1) // Toggling individual packet data
         {
+            totalBPS += pmtBPS;
             valPMT = PMT_ON->value();
             writeSerialData(serialPort, "1");
         } else if (PMT_ON->value() != valPMT && PMT_ON->value() == 0) // Toggling individual packet data
         {
+            totalBPS -= pmtBPS;
             valPMT = PMT_ON->value();
             writeSerialData(serialPort, "!");
         }
         if (ERPA_ON->value() != valERPA && ERPA_ON->value() == 1) {
+            totalBPS += erpaBPS;
             valERPA = ERPA_ON->value();
             writeSerialData(serialPort, "2");
         } else if (ERPA_ON->value() != valERPA && ERPA_ON->value() == 0) {
+            totalBPS -= erpaBPS;
             valERPA = ERPA_ON->value();
             writeSerialData(serialPort, "@");
         }
         if (HK_ON->value() != valHK && HK_ON->value() == 1) {
+            totalBPS += hkBPS;
+            totalBPS += tempsBPS;
             valHK = HK_ON->value();
             writeSerialData(serialPort, "3");
         } else if (HK_ON->value() != valHK && HK_ON->value() == 0) {
+            totalBPS -= hkBPS;
+            totalBPS -= tempsBPS;
             valHK = HK_ON->value();
             writeSerialData(serialPort, "#");
         }
+
+        BPS->value(totalBPS);
+
         if (PB5->value() != valPB5 &&
             PB5->value() == 1) // Making sure sys_on (PB5) is on before activating other GPIO buttons
         {
@@ -816,10 +849,22 @@ int main(int argc, char **argv) {
             }
         }
 
-        // if (SDN1->value() != valSDN1 && SDN1->value() == 0) {                            // ---------------------- TODO -------------------------
-        //     valSDN1 = SDN1->value();                                                     // * Figure out signal code to send for SDN1 and SDN2
-        //     writeSerialData(serialPort, "")                                              // 
-        // }
+        if (SDN1->value() != valSDN1 && SDN1->value() == 1) {  
+            valSDN1 = SDN1->value();                                           
+            writeSerialData(serialPort, "G");                                              
+        }
+        else if(SDN1->value() != valSDN1 && SDN1->value() == 0){
+            valSDN1 = SDN1->value();
+            writeSerialData(serialPort, "H");
+        }
+        if (SDN2->value() != valSDN2 && SDN2->value() == 1) {  
+            valSDN2 = SDN2->value();                                           
+            writeSerialData(serialPort, "I");                                              
+        }
+        else if(SDN2->value() != valSDN2 && SDN2->value() == 0){
+            valSDN2 = SDN2->value();
+            writeSerialData(serialPort, "J");
+        }
 
         if (turnedOff == 0) // Checking if data is being received before going through packet data
         {
