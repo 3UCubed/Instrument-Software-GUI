@@ -155,8 +155,8 @@ int main(int argc, char **argv) {
     // ------------ Main Window Elements Setup ------------
     int width = 1300; // Width and Height of Main Window
     int height = 900;
-    int x_packet_offset = 250; // X and Y offsets for the three packet groups
-    int y_packet_offset = 150;
+    int x_packet_offset = 460; // X and Y offsets for the three packet groups
+    int y_packet_offset = 200;
 
     Fl_Window *window = new Fl_Window(width, height, "IS Packet Interpreter");
     Fl_Color darkBackground = fl_rgb_color(28, 28, 30);
@@ -172,6 +172,8 @@ int main(int argc, char **argv) {
     quit->labelcolor(FL_RED);
     quit->labelsize(40);
     quit->callback(quitCallback);
+
+
 
     Fl_Round_Button *PMT_ON = new Fl_Round_Button(x_packet_offset + 165, y_packet_offset - 18, 20, 20);
     Fl_Round_Button *ERPA_ON = new Fl_Round_Button(x_packet_offset + 450, y_packet_offset - 18, 20, 20);
@@ -192,6 +194,7 @@ int main(int argc, char **argv) {
     Fl_Round_Button *PC8 = new Fl_Round_Button(20, 355, 100, 50, "n5v_en PC8");
     Fl_Round_Button *PC9 = new Fl_Round_Button(20, 405, 100, 50, "5v_en PC9");
     Fl_Round_Button *PC6 = new Fl_Round_Button(20, 455, 100, 50, "n3v3_en PC6");
+    
     Fl_Button *stepUp = new Fl_Button(25, 505, 110, 50, "Step Up");
     Fl_Button *stepDown = new Fl_Button(25, 590, 110, 50, "Step Down");
     stepDown->callback(stepDownCallback);
@@ -246,57 +249,33 @@ int main(int argc, char **argv) {
     valHK = HK_ON->value();
     turnedOff = 0;
 
-    // ---------------- PMT Packet Group ------------------
-    Fl_Group *group1 = new Fl_Group(x_packet_offset + 15, y_packet_offset, 200, 320,
-                                    "PMT PACKET");
-    group1->color(box);
-    group1->box(FL_BORDER_BOX);
-    group1->labelfont(FL_BOLD);
-    group1->labelcolor(text);
-    Fl_Box *PMT1 = new Fl_Box(x_packet_offset + 18, y_packet_offset + 5, 50, 20, "SYNC:");
-    Fl_Output *PMTsync = new Fl_Output(x_packet_offset + 135, y_packet_offset + 5, 60, 20);
-    PMTsync->color(box);
-    snprintf(buffer, sizeof(buffer), "%f", pmt_sync);
-    PMTsync->value(buffer);
-    PMTsync->box(FL_FLAT_BOX);
-    PMTsync->textcolor(output);
-    PMT1->box(FL_FLAT_BOX);
-    PMT1->color(box);
-    PMT1->labelfont();
-    PMT1->labelcolor(text);
-    PMT1->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
-    Fl_Box *PMT2 = new Fl_Box(x_packet_offset + 18, y_packet_offset + 25, 50, 20, "SEQ:");
-    Fl_Output *PMTseq = new Fl_Output(x_packet_offset + 135, y_packet_offset + 25, 60, 20);
-    PMTseq->color(box);
-    snprintf(buffer, sizeof(buffer), "%f", pmt_seq);
-    PMTseq->value(buffer);
-    PMTseq->box(FL_FLAT_BOX);
-    PMTseq->textcolor(output);
-    PMT2->box(FL_FLAT_BOX);
-    PMT2->color(box);
-    PMT2->labelfont();
-    PMT2->labelcolor(text);
-    PMT2->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
-    Fl_Box *PMT3 = new Fl_Box(x_packet_offset + 18, y_packet_offset + 45, 50, 20, "ADC:");
-    Fl_Output *PMTadc = new Fl_Output(x_packet_offset + 135, y_packet_offset + 45, 60, 20);
-    PMTadc->color(box);
-    snprintf(buffer, sizeof(buffer), "%f", pmt_adc);
-    PMTadc->value(buffer);
-    PMTadc->box(FL_FLAT_BOX);
-    PMTadc->textcolor(output);
-    PMT3->box(FL_FLAT_BOX);
-    PMT3->color(box);
-    PMT3->labelfont();
-    PMT3->labelcolor(text);
-    PMT3->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
-
     // ------------------ ERPA Packet Group ---------------
-    Fl_Group *group2 = new Fl_Group(x_packet_offset + 295, y_packet_offset, 200, 320,
+
+    Fl_Box *group2 = new Fl_Box(x_packet_offset + 295, y_packet_offset, 200, 320,
                                     "ERPA PACKET");
     group2->color(box);
     group2->box(FL_BORDER_BOX);
-    group2->labelfont(FL_BOLD);
     group2->labelcolor(text);
+    group2->labelfont(FL_BOLD);
+    group2->align(FL_ALIGN_TOP);
+
+    Fl_Light_Button *SDN1 = new Fl_Light_Button(x_packet_offset + 305, y_packet_offset + 185, 150, 50, " SDN1 HIGH");
+    SDN1->selection_color(FL_GREEN);
+    SDN1->box(FL_FLAT_BOX);
+    SDN1->color(box);
+    SDN1->labelcolor(text);
+    SDN1->labelsize(17);
+    unsigned char valSDN1 = SDN1->value();
+
+    Fl_Light_Button *SDN2 = new Fl_Light_Button(x_packet_offset + 305, y_packet_offset + 235, 150, 50, " SDN2 HIGH");
+    SDN2->selection_color(FL_GREEN);
+    SDN2->box(FL_FLAT_BOX);
+    SDN2->color(box);
+    SDN2->labelcolor(text);
+    SDN2->labelsize(17);
+    unsigned char valSDN2 = SDN2->value();
+
+
     Fl_Box *ERPA1 = new Fl_Box(x_packet_offset + 300, y_packet_offset + 5, 50, 20, "SYNC:");
     Fl_Output *ERPAsync = new Fl_Output(x_packet_offset + 417, y_packet_offset + 5, 60, 20);
     ERPAsync->color(box);
@@ -381,6 +360,54 @@ int main(int argc, char **argv) {
     ERPA7->labelfont();
     ERPA7->labelcolor(text);
     ERPA7->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+
+    // ---------------- PMT Packet Group ------------------
+    Fl_Group *group1 = new Fl_Group(x_packet_offset + 15, y_packet_offset, 200, 320,
+                                    "PMT PACKET");
+    group1->color(box);
+    group1->box(FL_BORDER_BOX);
+    group1->labelfont(FL_BOLD);
+    group1->labelcolor(text);
+    Fl_Box *PMT1 = new Fl_Box(x_packet_offset + 18, y_packet_offset + 5, 50, 20, "SYNC:");
+    Fl_Output *PMTsync = new Fl_Output(x_packet_offset + 135, y_packet_offset + 5, 60, 20);
+    PMTsync->color(box);
+    snprintf(buffer, sizeof(buffer), "%f", pmt_sync);
+    PMTsync->value(buffer);
+    PMTsync->box(FL_FLAT_BOX);
+    PMTsync->textcolor(output);
+    PMT1->box(FL_FLAT_BOX);
+    PMT1->color(box);
+    PMT1->labelfont();
+    PMT1->labelcolor(text);
+    PMT1->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+    Fl_Box *PMT2 = new Fl_Box(x_packet_offset + 18, y_packet_offset + 25, 50, 20, "SEQ:");
+    Fl_Output *PMTseq = new Fl_Output(x_packet_offset + 135, y_packet_offset + 25, 60, 20);
+    PMTseq->color(box);
+    snprintf(buffer, sizeof(buffer), "%f", pmt_seq);
+    PMTseq->value(buffer);
+    PMTseq->box(FL_FLAT_BOX);
+    PMTseq->textcolor(output);
+    PMT2->box(FL_FLAT_BOX);
+    PMT2->color(box);
+    PMT2->labelfont();
+    PMT2->labelcolor(text);
+    PMT2->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+    Fl_Box *PMT3 = new Fl_Box(x_packet_offset + 18, y_packet_offset + 45, 50, 20, "ADC:");
+    Fl_Output *PMTadc = new Fl_Output(x_packet_offset + 135, y_packet_offset + 45, 60, 20);
+    PMTadc->color(box);
+    snprintf(buffer, sizeof(buffer), "%f", pmt_adc);
+    PMTadc->value(buffer);
+    PMTadc->box(FL_FLAT_BOX);
+    PMTadc->textcolor(output);
+    PMT3->box(FL_FLAT_BOX);
+    PMT3->color(box);
+    PMT3->labelfont();
+    PMT3->labelcolor(text);
+    PMT3->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+
+
+
+
 
     // ------------------ HK Packet Group -----------------
     Fl_Group *group3 = new Fl_Group(x_packet_offset + 575, y_packet_offset, 200, 320,
@@ -570,13 +597,13 @@ int main(int argc, char **argv) {
     HK15->labelcolor(text);
     HK15->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
 
-    Fl_Box *tempLabel1 = new Fl_Box(x_packet_offset + 20, y_packet_offset + 400, 30, 200, "Temp1");
+    Fl_Box *tempLabel1 = new Fl_Box(178, 100, 75, 20, "TMP1");
     tempLabel1->color(box);
-    tempLabel1->box(FL_BORDER_BOX);
+    tempLabel1->box(FL_NO_BOX);
     tempLabel1->labelcolor(text);
     tempLabel1->labelfont(FL_BOLD);
     tempLabel1->align(FL_ALIGN_TOP);
-    Fl_Value_Slider *HKtemp1 = new Fl_Value_Slider(x_packet_offset + 20, y_packet_offset + 400, 30, 200);
+    Fl_Value_Slider *HKtemp1 = new Fl_Value_Slider(200, 100, 30, 550);
     HKtemp1->color(box);
     snprintf(buffer, sizeof(buffer), "%f", hk_temp1);
     HKtemp1->range(30, 24);  // Replace minVoltage and maxVoltage with appropriate values
@@ -584,13 +611,13 @@ int main(int argc, char **argv) {
     HKtemp1->box(FL_FLAT_BOX);
     HKtemp1->textcolor(output);
 
-    Fl_Box *tempLabel2 = new Fl_Box(x_packet_offset + 80, y_packet_offset + 400, 30, 200, "Temp2");
+    Fl_Box *tempLabel2 = new Fl_Box(238, 100, 75, 20, "TMP2");
     tempLabel2->color(box);
-    tempLabel2->box(FL_BORDER_BOX);
+    tempLabel2->box(FL_NO_BOX);
     tempLabel2->labelcolor(text);
     tempLabel2->labelfont(FL_BOLD);
     tempLabel2->align(FL_ALIGN_TOP);
-    Fl_Value_Slider *HKtemp2 = new Fl_Value_Slider(x_packet_offset + 80, y_packet_offset + 400, 30, 200);
+    Fl_Value_Slider *HKtemp2 = new Fl_Value_Slider(260, 100, 30, 550);
     HKtemp2->color(box);
     snprintf(buffer, sizeof(buffer), "%f", hk_temp2);
     HKtemp2->range(30, 24);  // Replace minVoltage and maxVoltage with appropriate values
@@ -598,13 +625,13 @@ int main(int argc, char **argv) {
     HKtemp2->box(FL_FLAT_BOX);
     HKtemp2->textcolor(output);
 
-    Fl_Box *tempLabel3 = new Fl_Box(x_packet_offset + 140, y_packet_offset + 400, 30, 200, "Temp3");
+    Fl_Box *tempLabel3 = new Fl_Box(298, 100, 75, 20, "TMP3");
     tempLabel3->color(box);
-    tempLabel3->box(FL_BORDER_BOX);
+    tempLabel3->box(FL_NO_BOX);
     tempLabel3->labelcolor(text);
     tempLabel3->labelfont(FL_BOLD);
     tempLabel3->align(FL_ALIGN_TOP);
-    Fl_Value_Slider *HKtemp3 = new Fl_Value_Slider(x_packet_offset + 140, y_packet_offset + 400, 30, 200);
+    Fl_Value_Slider *HKtemp3 = new Fl_Value_Slider(320, 100, 30, 550);
     HKtemp3->color(box);
     snprintf(buffer, sizeof(buffer), "%f", hk_temp3);
     HKtemp3->range(30, 24);  // Replace minVoltage and maxVoltage with appropriate values
@@ -612,13 +639,13 @@ int main(int argc, char **argv) {
     HKtemp3->box(FL_FLAT_BOX);
     HKtemp3->textcolor(output);
 
-    Fl_Box *tempLabel4 = new Fl_Box(x_packet_offset + 200, y_packet_offset + 400, 30, 200, "Temp4");
+    Fl_Box *tempLabel4 = new Fl_Box(358, 100, 75, 20, "TMP4");
     tempLabel4->color(box);
-    tempLabel4->box(FL_BORDER_BOX);
+    tempLabel4->box(FL_NO_BOX);
     tempLabel4->labelcolor(text);
     tempLabel4->labelfont(FL_BOLD);
     tempLabel4->align(FL_ALIGN_TOP);
-    Fl_Value_Slider *HKtemp4 = new Fl_Value_Slider(x_packet_offset + 200, y_packet_offset + 400, 30, 200);
+    Fl_Value_Slider *HKtemp4 = new Fl_Value_Slider(380, 100, 30, 550);
     HKtemp4->color(box);
     snprintf(buffer, sizeof(buffer), "%f", hk_temp4);
     HKtemp4->box(FL_FLAT_BOX);
@@ -788,6 +815,11 @@ int main(int argc, char **argv) {
                 writeSerialData(serialPort, "-");
             }
         }
+
+        // if (SDN1->value() != valSDN1 && SDN1->value() == 0) {                            // ---------------------- TODO -------------------------
+        //     valSDN1 = SDN1->value();                                                     // * Figure out signal code to send for SDN1 and SDN2
+        //     writeSerialData(serialPort, "")                                              // 
+        // }
 
         if (turnedOff == 0) // Checking if data is being received before going through packet data
         {
