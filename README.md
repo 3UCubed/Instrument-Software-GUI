@@ -15,7 +15,8 @@ If you get "Failed to open the serial port", run $ls /dev/cu.usbserial* and upda
 
 
 ### DETAILED INSTRUCTIONS
-* Install FLTK library on mac: `brew install fltk`
+#### Mac OS
+* Install FLTK library: `brew install fltk`
 * Connect ST-LINK to STM32F0 board
 * Connect UART: Black on GND, Yellow on PA9, Orange on PA10
 * Create two new folders on desktop, Firmware and GUI
@@ -30,8 +31,8 @@ If you get "Failed to open the serial port", run $ls /dev/cu.usbserial* and upda
 * Compile with: $g++ -std=c++11 \`fltk-config --cxxflags\` hello.cpp \`fltk-config --ldflags\` -o hello
 * Run with: $./hello
 
-#
+##
 
 
 ### NOTE
-You can not turn on the other GPIO's unless PB6 (tied to SYS_ON) is toggled on. This is by design and purposeful.
+You can not turn on the other GPIO's unless PB5 (tied to SYS_ON) is toggled on. This is by design and purposeful.
