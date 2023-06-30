@@ -31,7 +31,10 @@ If you get "Failed to open the serial port", run $ls /dev/cu.usbserial* and upda
 * Compile with: $g++ -std=c++11 \`fltk-config --cxxflags\` hello.cpp \`fltk-config --ldflags\` -o hello
 * Run with: $./hello
 
-##
+#### Linux
+* Install FLTK library with command: git clone https://github.com/fltk/fltk.git
+* Follow readme at this link to configure and build FLTK for the first time on unix/linux: https://github.com/fltk/fltk/blob/master/README.Unix.txt
+* TODO: CREATE NEW BRANCH IN GUI REPO FOR LINUX BUILD
 
 
 ### NOTE
