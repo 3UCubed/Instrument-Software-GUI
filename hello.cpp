@@ -33,13 +33,13 @@ int step = 0;
 using namespace std;
 const float tolerance = 0.01;
 
-// ------------------- Quit button event ------------------
+// --------------------- Quit button event ---------------------
 void quitCallback(Fl_Widget *)
 {
     exit(0);
 }
 
-// --------------- Write data to serial port --------------
+// ----------------- Write data to serial port -----------------
 void writeSerialData(const int &serialPort, const std::string &data)
 {
     ssize_t bytesWritten = write(serialPort, data.c_str(), data.length());
@@ -49,11 +49,13 @@ void writeSerialData(const int &serialPort, const std::string &data)
     }
 }
 
+// --------------------- Stop Callback -------------------------
 void stopModeCallback(Fl_Widget *)
 {
     writeSerialData(serialPort, "s");
 }
 
+// ---------------------- Wake-Up Callback ---------------------
 void exitStopModeCallback(Fl_Widget *)
 {
     for (int i = 0; i < 12; i++)
@@ -62,7 +64,7 @@ void exitStopModeCallback(Fl_Widget *)
     }
 }
 
-// ----- Continuously reads data from the serial port -----
+// ------- Continuously reads data from the serial port --------
 void readSerialData(const int &serialPort, std::atomic<bool> &stopFlag, std::ofstream &outputFile)
 {
     const int bufferSize = 64;
@@ -95,7 +97,7 @@ void readSerialData(const int &serialPort, std::atomic<bool> &stopFlag, std::ofs
     }
 }
 
-// ------------------- Step Up button event ------------------
+// ------------------- Step Up button event --------------------
 void stepUpCallback(Fl_Widget *)
 {
     writeSerialData(serialPort, "<");
@@ -115,48 +117,61 @@ void stepDownCallback(Fl_Widget *)
     }
 }
 
-
-void toleranceCheck(Fl_Output *widgetToCheck, Fl_Box *widgetToAlarm, float initialValue){
+// ----------- Check If Value Is In Tolerance Range ------------
+bool toleranceCheck(Fl_Output *widgetToCheck, Fl_Box *widgetToAlarm, float initialValue)
+{ // Returns true if current value is outside of tolerance range, false otherwise
     float currVal = stof(widgetToCheck->value());
     float allowedTolerance = initialValue * tolerance;
     float min = initialValue - allowedTolerance;
     float max = initialValue + allowedTolerance;
-    if (currVal > max){
+    if (currVal > max)
+    {
         widgetToAlarm->color(FL_RED);
+        return true;
     }
-    else if (currVal < min){
+    else if (currVal < min)
+    {
         widgetToAlarm->color(FL_BLUE);
+        return true;
     }
-    else{
+    else
+    {
         Fl_Color box = fl_rgb_color(46, 47, 56);
         widgetToAlarm->color(box);
+        return false;
     }
 }
 
-void toleranceCheck(Fl_Value_Slider *widgetToCheck, Fl_Box *widgetToAlarm, float initialValue){ 
+// ------ Check If Value Is In Tolerance Range Overloaded ------
+bool toleranceCheck(Fl_Value_Slider *widgetToCheck, Fl_Box *widgetToAlarm, float initialValue)
+{ // Function overloaded for temperature sliders
     float currVal = (float)widgetToCheck->value();
     float allowedTolerance = initialValue * tolerance;
     float min = initialValue - allowedTolerance;
     float max = initialValue + allowedTolerance;
-    if (currVal > max){
+    if (currVal > max)
+    {
         widgetToCheck->color(FL_RED);
+        return true;
     }
-    else if (currVal < min){
+    else if (currVal < min)
+    {
         widgetToCheck->color(FL_BLUE);
-
+        return true;
     }
-    else{
+    else
+    {
         Fl_Color box = fl_rgb_color(46, 47, 56);
         widgetToCheck->color(box);
+        return false;
     }
 }
 
-
-// ----------------- Main Program Function ----------------
+// ------------------- Main Program Function -------------------
 int main(int argc, char **argv)
 {
     float stepVoltages[6] = {0, 0.5, 1, 1.5, 2, 2.5};
-    // ---------------- Output Field Vars -----------------
+    // ------------------ Output Field Vars --------------------
     char buffer[32];
     float pmt_sync = 0;
     float pmt_seq = 0;
@@ -188,19 +203,19 @@ int main(int argc, char **argv)
     float hk_temp3 = 0;
     float hk_temp4 = 0;
 
-    // ------- Vars Keeping Track Of Packet States --------
+    // --------- Vars Keeping Track Of Packet States -----------
     unsigned char valPMT;
     unsigned char valERPA;
     unsigned char valHK;
     int turnedOff = 0;
 
-    // --------------------- Thread Vars ------------------
+    // ------------------------ Thread Vars --------------------
     struct termios options = {};
     std::atomic<bool> stopFlag(false);
     //    const char *portName = "/dev/cu.usbserial-FT6E8SZC"; // CHANGE TO YOUR PORT NAME
     std::ofstream outputFile("mylog.0", std::ios::out | std::ios::trunc);
 
-    // ------------------ Thread/Port Setup ---------------
+    // -------------------- Thread/Port Setup ------------------
     int serialPort = open(portName, O_RDWR | O_NOCTTY); // Opening serial port
     if (serialPort == -1)
     {
@@ -217,7 +232,7 @@ int main(int argc, char **argv)
     std::thread readingThread([&serialPort, &stopFlag, &outputFile]
                               { return readSerialData(serialPort, std::ref(stopFlag), std::ref(outputFile)); });
 
-    // ------------ Main Window Elements Setup ------------
+    // --------------- Main Window Elements Setup --------------
     int width = 1300; // Width and Height of Main Window
     int height = 900;
     int x_packet_offset = 485; // X and Y offsets for the three packet groups
@@ -242,7 +257,7 @@ int main(int argc, char **argv)
     Fl_Round_Button *ERPA_ON = new Fl_Round_Button(x_packet_offset + 450, y_packet_offset - 18, 20, 20);
     Fl_Round_Button *HK_ON = new Fl_Round_Button(x_packet_offset + 725, y_packet_offset - 18, 20, 20);
 
-    // ------------------- CONTROLS GROUP -----------------
+    // --------------------- CONTROLS GROUP --------------------
     Fl_Box *group4 = new Fl_Box(15, 100, 130, 750, "CONTROLS");
     group4->color(box);
     group4->box(FL_BORDER_BOX);
@@ -317,8 +332,7 @@ int main(int argc, char **argv)
     valHK = HK_ON->value();
     turnedOff = 0;
 
-    // ------------------ ERPA Packet Group ---------------
-
+    // -------------------- ERPA Packet Group ------------------
     Fl_Box *group2 = new Fl_Box(x_packet_offset + 295, y_packet_offset, 200, 320,
                                 "ERPA PACKET");
     group2->color(box);
@@ -429,9 +443,7 @@ int main(int argc, char **argv)
     ERPA7->labelcolor(text);
     ERPA7->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
 
-
-
-    // ---------------- PMT Packet Group ------------------
+    // ------------------ PMT Packet Group ---------------------
     Fl_Group *group1 = new Fl_Group(x_packet_offset + 15, y_packet_offset, 200, 320,
                                     "PMT PACKET");
     group1->color(box);
@@ -475,7 +487,7 @@ int main(int argc, char **argv)
     PMT3->labelcolor(text);
     PMT3->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
 
-    // ------------------ HK Packet Group -----------------
+    // -------------------- HK Packet Group --------------------
     Fl_Group *group3 = new Fl_Group(x_packet_offset + 575, y_packet_offset, 200, 320,
                                     "HK PACKET");
     group3->color(box);
@@ -761,16 +773,37 @@ int main(int argc, char **argv)
     window->show(); // Opening main window before entering main loop
     Fl::check();
 
-    // -------------- MAIN PROGRAM EVENT LOOP -------------
+    // ---------------- MAIN PROGRAM EVENT LOOP ----------------
     while (1)
     {
-        toleranceCheck(HKn800vmon, HK7, 800); // Should it be 800v or n800v?
-        toleranceCheck(HK3v3mon, HK11, 3.3);
-        toleranceCheck(HKn150vmon, HK6, 150);
-        toleranceCheck(HK15vmon, HK13, 15);
-        toleranceCheck(HKn5vmon, HK9, 5);
-        toleranceCheck(HK5vmon, HK10, 5);
-        toleranceCheck(HKn3v3mon, HK11, 3.3);
+        if (toleranceCheck(HKn800vmon, HK7, 800))
+        {
+            PB6->value(0);
+        }
+        if (toleranceCheck(HK3v3mon, HK11, 3.3))
+        {
+            PC10->value(0);
+        }
+        if (toleranceCheck(HKn150vmon, HK6, 1.54))
+        {
+            PC13->value(0);
+        }
+        if (toleranceCheck(HK15vmon, HK13, 15))
+        {
+            PC7->value(0);
+        }
+        if (toleranceCheck(HKn5vmon, HK9, 5))
+        {
+            PC8->value(0);
+        }
+        if (toleranceCheck(HK5vmon, HK10, 5))
+        {
+            PC9->value(0);
+        }
+        if (toleranceCheck(HKn3v3mon, HK11, 3.3))
+        {
+            PC6->value(0);
+        }
         toleranceCheck(HKtemp1, tempLabel1, 27);
         toleranceCheck(HKtemp2, tempLabel2, 27);
         toleranceCheck(HKtemp3, tempLabel3, 27);
@@ -781,7 +814,6 @@ int main(int argc, char **argv)
         // - 5vref mon
         // - vsense
         // - vrefint
-
 
         char tempBuf[8];
         snprintf(tempBuf, sizeof(tempBuf), "%d", step);
@@ -1195,7 +1227,7 @@ int main(int argc, char **argv)
         Fl::check();
     }
 
-    // ---------------------- Cleanup ---------------------
+    // ------------------------ Cleanup ------------------------
     stopFlag = true;
     readingThread.join();
     outputFile << '\0';
