@@ -31,6 +31,7 @@ float totalBPS = 0;
 int serialPort = open(portName, O_RDWR | O_NOCTTY); // Opening serial port
 int step = 0;
 using namespace std;
+const float tolerance = 0.01;
 
 // ------------------- Quit button event ------------------
 void quitCallback(Fl_Widget *)
@@ -113,6 +114,43 @@ void stepDownCallback(Fl_Widget *)
         step--;
     }
 }
+
+
+void toleranceCheck(Fl_Output *widgetToCheck, Fl_Box *widgetToAlarm, float initialValue){
+    float currVal = stof(widgetToCheck->value());
+    float allowedTolerance = initialValue * tolerance;
+    float min = initialValue - allowedTolerance;
+    float max = initialValue + allowedTolerance;
+    if (currVal > max){
+        widgetToAlarm->color(FL_RED);
+    }
+    else if (currVal < min){
+        widgetToAlarm->color(FL_BLUE);
+    }
+    else{
+        Fl_Color box = fl_rgb_color(46, 47, 56);
+        widgetToAlarm->color(box);
+    }
+}
+
+void toleranceCheck(Fl_Value_Slider *widgetToCheck, Fl_Box *widgetToAlarm, float initialValue){ 
+    float currVal = (float)widgetToCheck->value();
+    float allowedTolerance = initialValue * tolerance;
+    float min = initialValue - allowedTolerance;
+    float max = initialValue + allowedTolerance;
+    if (currVal > max){
+        widgetToCheck->color(FL_RED);
+    }
+    else if (currVal < min){
+        widgetToCheck->color(FL_BLUE);
+
+    }
+    else{
+        Fl_Color box = fl_rgb_color(46, 47, 56);
+        widgetToCheck->color(box);
+    }
+}
+
 
 // ----------------- Main Program Function ----------------
 int main(int argc, char **argv)
@@ -317,6 +355,7 @@ int main(int argc, char **argv)
     ERPA1->labelfont();
     ERPA1->labelcolor(text);
     ERPA1->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+
     Fl_Box *ERPA2 = new Fl_Box(x_packet_offset + 300, y_packet_offset + 25, 50, 20, "SEQ:");
     Fl_Output *ERPAseq = new Fl_Output(x_packet_offset + 417, y_packet_offset + 25, 60, 20);
     ERPAseq->color(box);
@@ -389,6 +428,8 @@ int main(int argc, char **argv)
     ERPA7->labelfont();
     ERPA7->labelcolor(text);
     ERPA7->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+
+
 
     // ---------------- PMT Packet Group ------------------
     Fl_Group *group1 = new Fl_Group(x_packet_offset + 15, y_packet_offset, 200, 320,
@@ -665,7 +706,7 @@ int main(int argc, char **argv)
     HKtemp3->textcolor(output);
 
     Fl_Box *tempLabel4 = new Fl_Box(345, 100, 75, 20, "TMP4");
-    tempLabel4->color(box);
+    tempLabel4->color(FL_RED);
     tempLabel4->box(FL_NO_BOX);
     tempLabel4->labelcolor(text);
     tempLabel4->labelfont(FL_BOLD);
@@ -723,6 +764,25 @@ int main(int argc, char **argv)
     // -------------- MAIN PROGRAM EVENT LOOP -------------
     while (1)
     {
+        toleranceCheck(HKn800vmon, HK7, 800); // Should it be 800v or n800v?
+        toleranceCheck(HK3v3mon, HK11, 3.3);
+        toleranceCheck(HKn150vmon, HK6, 150);
+        toleranceCheck(HK15vmon, HK13, 15);
+        toleranceCheck(HKn5vmon, HK9, 5);
+        toleranceCheck(HK5vmon, HK10, 5);
+        toleranceCheck(HKn3v3mon, HK11, 3.3);
+        toleranceCheck(HKtemp1, tempLabel1, 27);
+        toleranceCheck(HKtemp2, tempLabel2, 27);
+        toleranceCheck(HKtemp3, tempLabel3, 27);
+        toleranceCheck(HKtemp4, tempLabel4, 27);
+
+        // No GPIO associated with the following:
+        // - 2v5 mon
+        // - 5vref mon
+        // - vsense
+        // - vrefint
+
+
         char tempBuf[8];
         snprintf(tempBuf, sizeof(tempBuf), "%d", step);
         currStep->value(tempBuf);
