@@ -234,7 +234,7 @@ int main(int argc, char **argv)
 
     // --------------- Main Window Elements Setup --------------
     int width = 1300; // Width and Height of Main Window
-    int height = 900;
+    int height = 750;
     int x_packet_offset = 485; // X and Y offsets for the three packet groups
     int y_packet_offset = 200;
 
@@ -258,34 +258,34 @@ int main(int argc, char **argv)
     Fl_Round_Button *HK_ON = new Fl_Round_Button(x_packet_offset + 725, y_packet_offset - 18, 20, 20);
 
     // --------------------- CONTROLS GROUP --------------------
-    Fl_Box *group4 = new Fl_Box(15, 100, 130, 750, "CONTROLS");
+    Fl_Box *group4 = new Fl_Box(15, 75, 130, 650, "CONTROLS");
     group4->color(box);
     group4->box(FL_BORDER_BOX);
     group4->labelcolor(text);
     group4->labelfont(FL_BOLD);
     group4->align(FL_ALIGN_TOP);
-    Fl_Round_Button *PB5 = new Fl_Round_Button(20, 105, 100, 50, "sys_on PB5");
-    Fl_Round_Button *PB6 = new Fl_Round_Button(20, 155, 100, 50, "800v_en PB6");
-    Fl_Round_Button *PC10 = new Fl_Round_Button(20, 205, 100, 50, "3v3_en PC10");
-    Fl_Round_Button *PC13 = new Fl_Round_Button(20, 255, 100, 50, "n150v_en PC13");
-    Fl_Round_Button *PC7 = new Fl_Round_Button(20, 305, 100, 50, "15v_en PC7");
-    Fl_Round_Button *PC8 = new Fl_Round_Button(20, 355, 100, 50, "n5v_en PC8");
-    Fl_Round_Button *PC9 = new Fl_Round_Button(20, 405, 100, 50, "5v_en PC9");
-    Fl_Round_Button *PC6 = new Fl_Round_Button(20, 455, 100, 50, "n3v3_en PC6");
+    Fl_Round_Button *PB5 = new Fl_Round_Button(20, 80, 100, 50, "sys_on PB5");
+    Fl_Round_Button *PB6 = new Fl_Round_Button(20, 130, 100, 50, "800v_en PB6");
+    Fl_Round_Button *PC10 = new Fl_Round_Button(20, 180, 100, 50, "3v3_en PC10");
+    Fl_Round_Button *PC13 = new Fl_Round_Button(20, 230, 100, 50, "n150v_en PC13");
+    Fl_Round_Button *PC7 = new Fl_Round_Button(20, 280, 100, 50, "15v_en PC7");
+    Fl_Round_Button *PC8 = new Fl_Round_Button(20, 330, 100, 50, "n5v_en PC8");
+    Fl_Round_Button *PC9 = new Fl_Round_Button(20, 380, 100, 50, "5v_en PC9");
+    Fl_Round_Button *PC6 = new Fl_Round_Button(20, 430, 100, 50, "n3v3_en PC6");
 
-    Fl_Button *stepUp = new Fl_Button(25, 505, 110, 50, "Step Up");
-    Fl_Button *stepDown = new Fl_Button(25, 590, 110, 50, "Step Down");
+    Fl_Button *stepUp = new Fl_Button(25, 490, 110, 35, "Step Up");
+    Fl_Button *stepDown = new Fl_Button(25, 555, 110, 35, "Step Down");
 
-    Fl_Button *enterStopMode = new Fl_Button(25, 690, 110, 50, "Sleep");
-    Fl_Button *exitStopMode = new Fl_Button(25, 750, 110, 50, "Wake Up");
+    Fl_Button *enterStopMode = new Fl_Button(25, 610, 110, 35, "Sleep");
+    Fl_Button *exitStopMode = new Fl_Button(25, 660, 110, 35, "Wake Up");
 
     stepDown->callback(stepDownCallback);
     stepUp->label("Step Up      @8->");
     stepUp->align(FL_ALIGN_CENTER);
     stepDown->label("Step Down  @2->");
     stepDown->align(FL_ALIGN_CENTER);
-    Fl_Output *currStep = new Fl_Output(112, 560, 20, 20);
-    Fl_Output *stepVoltage = new Fl_Output(40, 560, 20, 20);
+    Fl_Output *currStep = new Fl_Output(112, 530, 20, 20);
+    Fl_Output *stepVoltage = new Fl_Output(40, 530, 20, 20);
 
     stepUp->callback(stepUpCallback);
     enterStopMode->callback(stopModeCallback);
