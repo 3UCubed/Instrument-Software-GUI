@@ -22,6 +22,7 @@
 #include <string>
 #include <chrono>
 #include <mutex>
+#include <sstream>
 #include "interpreter/interpreter.cpp"
 const char *portName = "/dev/cu.usbserial-FT6E0L8J"; // CHANGE TO YOUR PORT NAME
 const float erpaBPS = 140.0;
@@ -37,29 +38,58 @@ string hkLabels[19] = {"HK sync       ", "HK seq        ", "HK busimon   ", "HK 
 string erpaFrame[7];
 string pmtFrame[3];
 string hkFrame[19];
-
-
 using namespace std;
 const float tolerance = 0.01;
+bool recording = false;
+string LogName = "logs/eventLog.txt";
 
+// --------------------- Generate New Log Name -----------------
+string newLogName(){
+    auto t = std::time(nullptr);
+    auto tm = *std::localtime(&t);
+    ostringstream oss;
+    oss << put_time(&tm, "logs/%m-%d-%Y %H-%M-%S");
+    return(oss.str());
+}
+
+// ---------------- Start Recording button event ---------------
+void startRecordingCallback(Fl_Widget *widget)
+{
+    if (!recording)
+    {
+        recording = true;
+        ((Fl_Button*)widget)->label("RECORDING @square");
+        LogName = newLogName();
+    }
+    else{
+        recording = false;
+        ((Fl_Button*)widget)->label("RECORD @circle");
+    }
+}
+
+// --------------------- Write to Event Log --------------------
 void writeToLog(string label, string msg)
 {
-    string outputFile = "eventLog.txt";
     ofstream outStream;
     auto t = std::time(nullptr);
     auto tm = *std::localtime(&t);
 
-    outStream.open(outputFile, ios::app);
-    outStream << put_time(&tm, "%m-%d-%Y %H:%M:%S \t");
+    outStream.open(LogName, ios::app);
+
+    auto now = chrono::system_clock::now();
+    time_t now_c = chrono::system_clock::to_time_t(now);
+    auto ms = chrono::duration_cast<chrono::milliseconds>(now.time_since_epoch()) % 1000;
+    //outStream << ctime(&now_c) << ms.count();
+    outStream << put_time(&tm, "%m-%d-%Y %H:%M:%S:") << ms.count() << "\t";
     outStream << label << "\t" << msg << endl;
     outStream.close();
 }
-
+// ------------------ Insert New Line Into Log -----------------
 void newLine()
 {
-    string outputFile = "eventLog.txt";
+    ;
     ofstream outStream;
-    outStream.open(outputFile, ios::app);
+    outStream.open(LogName, ios::app);
     outStream << endl;
     outStream.close();
 }
@@ -265,7 +295,7 @@ int main(int argc, char **argv)
 
     // --------------- Main Window Elements Setup --------------
     int width = 1300; // Width and Height of Main Window
-    int height = 750;
+    int height = 800;
     int x_packet_offset = 485; // X and Y offsets for the three packet groups
     int y_packet_offset = 200;
 
@@ -289,7 +319,7 @@ int main(int argc, char **argv)
     Fl_Round_Button *HK_ON = new Fl_Round_Button(x_packet_offset + 725, y_packet_offset - 18, 20, 20);
 
     // --------------------- CONTROLS GROUP --------------------
-    Fl_Box *group4 = new Fl_Box(15, 75, 130, 650, "CONTROLS");
+    Fl_Box *group4 = new Fl_Box(15, 75, 130, 700, "CONTROLS");
     group4->color(box);
     group4->box(FL_BORDER_BOX);
     group4->labelcolor(text);
@@ -309,6 +339,10 @@ int main(int argc, char **argv)
 
     Fl_Button *enterStopMode = new Fl_Button(25, 610, 110, 35, "Sleep");
     Fl_Button *exitStopMode = new Fl_Button(25, 660, 110, 35, "Wake Up");
+
+    Fl_Button *startRecording = new Fl_Button(25, 720, 110, 35, "RECORD @circle");
+    startRecording->labelcolor(FL_RED);
+    startRecording->callback(startRecordingCallback);
 
     stepDown->callback(stepDownCallback);
     stepUp->label("Step Up      @8->");
@@ -807,38 +841,38 @@ int main(int argc, char **argv)
     // ---------------- MAIN PROGRAM EVENT LOOP ----------------
     while (1)
     {
-        if (toleranceCheck(HKn800vmon, HK7, 800))
-        {
-            PB6->value(0);
-        }
-        if (toleranceCheck(HK3v3mon, HK11, 3.3))
-        {
-            PC10->value(0);
-        }
-        if (toleranceCheck(HKn150vmon, HK6, 1.54))
-        {
-            PC13->value(0);
-        }
-        if (toleranceCheck(HK15vmon, HK13, 15))
-        {
-            PC7->value(0);
-        }
-        if (toleranceCheck(HKn5vmon, HK9, 5))
-        {
-            PC8->value(0);
-        }
-        if (toleranceCheck(HK5vmon, HK10, 5))
-        {
-            PC9->value(0);
-        }
-        if (toleranceCheck(HKn3v3mon, HK11, 3.3))
-        {
-            PC6->value(0);
-        }
-        toleranceCheck(HKtemp1, tempLabel1, 27);
-        toleranceCheck(HKtemp2, tempLabel2, 27);
-        toleranceCheck(HKtemp3, tempLabel3, 27);
-        toleranceCheck(HKtemp4, tempLabel4, 27);
+        // if (toleranceCheck(HKn800vmon, HK7, 800))
+        // {
+        //     PB6->value(0);
+        // }
+        // if (toleranceCheck(HK3v3mon, HK11, 3.3))
+        // {
+        //     PC10->value(0);
+        // }
+        // if (toleranceCheck(HKn150vmon, HK6, 1.54))
+        // {
+        //     PC13->value(0);
+        // }
+        // if (toleranceCheck(HK15vmon, HK13, 15))
+        // {
+        //     PC7->value(0);
+        // }
+        // if (toleranceCheck(HKn5vmon, HK9, 5))
+        // {
+        //     PC8->value(0);
+        // }
+        // if (toleranceCheck(HK5vmon, HK10, 5))
+        // {
+        //     PC9->value(0);
+        // }
+        // if (toleranceCheck(HKn3v3mon, HK11, 3.3))
+        // {
+        //     PC6->value(0);
+        // }
+        // toleranceCheck(HKtemp1, tempLabel1, 27);
+        // toleranceCheck(HKtemp2, tempLabel2, 27);
+        // toleranceCheck(HKtemp3, tempLabel3, 27);
+        // toleranceCheck(HKtemp4, tempLabel4, 27);
 
         // No GPIO associated with the following:
         // - 2v5 mon
@@ -1065,11 +1099,14 @@ int main(int argc, char **argv)
                         {
                         case 'a':
                         {
-                            for (int i = 0; i < 7; i++)
+                            if (recording)
                             {
-                                writeToLog(erpaLabels[i], erpaFrame[i]);
+                                for (int i = 0; i < 7; i++)
+                                {
+                                    writeToLog(erpaLabels[i], erpaFrame[i]);
+                                }
+                                newLine();
                             }
-                            newLine();
                             snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
                             ERPAsync->value(buffer);
                             string logMsg(buffer);
@@ -1132,11 +1169,15 @@ int main(int argc, char **argv)
                         {
                         case 'i':
                         {
-                            for (int i = 0; i < 3; i++)
+                            if (recording)
                             {
-                                writeToLog(pmtLabels[i], pmtFrame[i]);
+
+                                for (int i = 0; i < 3; i++)
+                                {
+                                    writeToLog(pmtLabels[i], pmtFrame[i]);
+                                }
+                                newLine();
                             }
-                            newLine();
                             snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
                             PMTsync->value(buffer);
                             string logMsg(buffer);
@@ -1207,11 +1248,15 @@ int main(int argc, char **argv)
                         }
                         case 'l':
                         {
-                            for (int i = 0; i < 19; i++)
+                            if (recording)
                             {
-                                writeToLog(hkLabels[i], hkFrame[i]);
+
+                                for (int i = 0; i < 19; i++)
+                                {
+                                    writeToLog(hkLabels[i], hkFrame[i]);
+                                }
+                                newLine();
                             }
-                            newLine();
                             snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
                             HKsync->value(buffer);
                             string logMsg(buffer);
