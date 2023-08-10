@@ -9,6 +9,7 @@
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Round_Button.H>
 #include <FL/Fl_Value_Slider.H>
+#include <iomanip>
 #include <string>
 #include <iostream>
 #include <fstream>
@@ -30,8 +31,38 @@ const float tempsBPS = 2.4;
 float totalBPS = 0;
 int serialPort = open(portName, O_RDWR | O_NOCTTY); // Opening serial port
 int step = 0;
+string erpaLabels[7] = {"ERPA sync", "ERPA seq", "ERPA adc", "ERPA swp-mon", "ERPA temp1", "ERPA temp2", "ERPA endmon"};
+string pmtLabels[3] = {"PMT sync", "PMT seq ", "PMT adc "};
+string hkLabels[19] = {"HK sync       ", "HK seq        ", "HK busimon   ", "HK busvmon    ", "HK 3v3mon     ", "HK n150vmon   ", "HK n800vmon   ", "HK 2v5mon     ", "HK n5vmon     ", "HK 5vmon      ", "HK n3v3mon    ", "HK 5vrefmon   ", "HK 15vmon     ", "HK vsense     ", "HK vrefint    ", "TMP 1         ", "TMP 2         ", "TMP 3         ", "TMP 4         "};
+string erpaFrame[7];
+string pmtFrame[3];
+string hkFrame[19];
+
+
 using namespace std;
 const float tolerance = 0.01;
+
+void writeToLog(string label, string msg)
+{
+    string outputFile = "eventLog.txt";
+    ofstream outStream;
+    auto t = std::time(nullptr);
+    auto tm = *std::localtime(&t);
+
+    outStream.open(outputFile, ios::app);
+    outStream << put_time(&tm, "%m-%d-%Y %H:%M:%S \t");
+    outStream << label << "\t" << msg << endl;
+    outStream.close();
+}
+
+void newLine()
+{
+    string outputFile = "eventLog.txt";
+    ofstream outStream;
+    outStream.open(outputFile, ios::app);
+    outStream << endl;
+    outStream.close();
+}
 
 // --------------------- Quit button event ---------------------
 void quitCallback(Fl_Widget *)
@@ -1034,44 +1065,63 @@ int main(int argc, char **argv)
                         {
                         case 'a':
                         {
+                            for (int i = 0; i < 7; i++)
+                            {
+                                writeToLog(erpaLabels[i], erpaFrame[i]);
+                            }
+                            newLine();
                             snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
                             ERPAsync->value(buffer);
+                            string logMsg(buffer);
+                            erpaFrame[0] = logMsg;
                             break;
                         }
                         case 'b':
                         {
                             snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
                             ERPAseq->value(buffer);
+                            string logMsg(buffer);
+                            erpaFrame[1] = logMsg;
                             break;
                         }
                         case 'c':
                         {
                             snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
                             ERPAadc->value(buffer);
+                            string logMsg(buffer);
+                            erpaFrame[2] = logMsg;
                             break;
                         }
                         case 'd':
                         {
                             snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
                             ERPAendmon->value(buffer);
+                            string logMsg(buffer);
+                            erpaFrame[6] = logMsg;
                             break;
                         }
                         case 'e':
                         {
                             snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
                             ERPAtemp1->value(buffer);
+                            string logMsg(buffer);
+                            erpaFrame[4] = logMsg;
                             break;
                         }
                         case 'f':
                         {
                             snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
                             ERPAtemp2->value(buffer);
+                            string logMsg(buffer);
+                            erpaFrame[5] = logMsg;
                             break;
                         }
                         case 'g':
                         {
                             snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
                             ERPAswp->value(buffer);
+                            string logMsg(buffer);
+                            erpaFrame[3] = logMsg;
                             break;
                         }
                         }
@@ -1082,20 +1132,31 @@ int main(int argc, char **argv)
                         {
                         case 'i':
                         {
+                            for (int i = 0; i < 3; i++)
+                            {
+                                writeToLog(pmtLabels[i], pmtFrame[i]);
+                            }
+                            newLine();
                             snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
                             PMTsync->value(buffer);
+                            string logMsg(buffer);
+                            pmtFrame[0] = logMsg;
                             break;
                         }
                         case 'j':
                         {
                             snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
                             PMTseq->value(buffer);
+                            string logMsg(buffer);
+                            pmtFrame[1] = logMsg;
                             break;
                         }
                         case 'k':
                         {
                             snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
                             PMTadc->value(buffer);
+                            string logMsg(buffer);
+                            pmtFrame[2] = logMsg;
                             break;
                         }
                         }
@@ -1108,114 +1169,157 @@ int main(int argc, char **argv)
                         {
                             snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
                             HKvrefint->value(buffer);
+                            string logMsg(buffer);
+                            hkFrame[14] = logMsg;
                             break;
                         }
                         case 'C':
                         {
                             snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
                             HKtemp1->value(std::stof(buffer));
+                            string logMsg(buffer);
+                            hkFrame[15] = logMsg;
                             break;
                         }
                         case 'D':
                         {
                             snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
                             HKtemp2->value(std::stof(buffer));
+                            string logMsg(buffer);
+                            hkFrame[16] = logMsg;
                             break;
                         }
                         case 'E':
                         {
                             snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
                             HKtemp3->value(std::stof(buffer));
+                            string logMsg(buffer);
+                            hkFrame[17] = logMsg;
                             break;
                         }
                         case 'F':
                         {
                             snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
                             HKtemp4->value(std::stof(buffer));
+                            string logMsg(buffer);
+                            hkFrame[18] = logMsg;
                             break;
                         }
                         case 'l':
                         {
+                            for (int i = 0; i < 19; i++)
+                            {
+                                writeToLog(hkLabels[i], hkFrame[i]);
+                            }
+                            newLine();
                             snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
                             HKsync->value(buffer);
+                            string logMsg(buffer);
+                            hkFrame[0] = logMsg;
                             break;
                         }
                         case 'm':
                         {
                             snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
                             HKseq->value(buffer);
+                            string logMsg(buffer);
+                            hkFrame[1] = logMsg;
                             break;
                         }
                         case 'n':
                         {
                             snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
                             HKbusimon->value(buffer);
+                            string logMsg(buffer);
+                            hkFrame[2] = logMsg;
                             break;
                         }
                         case 'o':
                         {
                             snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
                             HKbusvmon->value(buffer);
+                            string logMsg(buffer);
+                            hkFrame[3] = logMsg;
                             break;
                         }
                         case 'p':
                         {
                             snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
                             HK3v3mon->value(buffer);
+                            string logMsg(buffer);
+                            hkFrame[4] = logMsg;
                             break;
                         }
                         case 'q':
                         {
                             snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
                             HKn150vmon->value(buffer);
+                            string logMsg(buffer);
+                            hkFrame[5] = logMsg;
                             break;
                         }
                         case 'r':
                         {
                             snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
                             HKn800vmon->value(buffer);
+                            string logMsg(buffer);
+                            hkFrame[6] = logMsg;
                             break;
                         }
                         case 's':
                         {
                             snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
                             HK2v5mon->value(buffer);
+                            string logMsg(buffer);
+                            hkFrame[7] = logMsg;
                             break;
                         }
                         case 't':
                         {
                             snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
                             HKn5vmon->value(buffer);
+                            string logMsg(buffer);
+                            hkFrame[8] = logMsg;
                             break;
                         }
                         case 'u':
                         {
                             snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
                             HK5vmon->value(buffer);
+                            string logMsg(buffer);
+                            hkFrame[9] = logMsg;
                             break;
                         }
                         case 'v':
                         {
                             snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
                             HKn3v3mon->value(buffer);
+                            string logMsg(buffer);
+                            hkFrame[10] = logMsg;
                             break;
                         }
                         case 'w':
                         {
                             snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
                             HK5vrefmon->value(buffer);
+                            string logMsg(buffer);
+                            hkFrame[11] = logMsg;
                             break;
                         }
                         case 'x':
                         {
                             snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
                             HK15vmon->value(buffer);
+                            string logMsg(buffer);
+                            hkFrame[12] = logMsg;
                             break;
                         }
                         case 'y':
                         {
                             snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
                             HKvsense->value(buffer);
+                            string logMsg(buffer);
+                            hkFrame[13] = logMsg;
                             break;
                         }
                         }
