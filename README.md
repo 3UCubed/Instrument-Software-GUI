@@ -7,7 +7,7 @@ You need to have FTDI connected and be running code found in https://github.com/
 
 To compile: $g++ -std=c++11 `fltk-config --cxxflags` instrumentGUI.cpp `fltk-config --ldflags` -o instrumentGUI
 
-To run: $./hello
+To run: $./instrumentGUI
 
 If you get "Failed to open the serial port", run $ls /dev/cu.usbserial* and update line 65 in hello.cpp with yours
 
