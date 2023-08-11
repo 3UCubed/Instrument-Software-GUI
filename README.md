@@ -28,7 +28,7 @@ If you get "Failed to open the serial port", run $ls /dev/cu.usbserial* and upda
 * CubeIDE can now be closed
 * Open a new terminal and navigate to your new GUI folder
 * Compile with: $g++ -std=c++11 `fltk-config --cxxflags` instrumentGUI.cpp `fltk-config --ldflags` -o instrumentGUI
-* Run with: $./hello
+* Run with: $./instrumentGUI
 
 #
 
