@@ -5,9 +5,9 @@ To install needed software on mac: `brew install fltk`
 
 You need to have FTDI connected and be running code found in https://github.com/3UCubed/Instrument-Software/tree/non-experimental-firmware/Firmware
 
-To compile: $g++ -std=c++11 `fltk-config --cxxflags` instrumentGUI.cpp `fltk-config --ldflags` -o instrumentGUI
+To compile: $g++ -std=c++11 \`fltk-config --cxxflags\` hello.cpp \`fltk-config --ldflags\` -o hello
 
-To run: $./instrumentGUI
+To run: $./hello
 
 If you get "Failed to open the serial port", run $ls /dev/cu.usbserial* and update line 65 in hello.cpp with yours
 
@@ -27,8 +27,8 @@ If you get "Failed to open the serial port", run $ls /dev/cu.usbserial* and upda
 * Open your new Firmware folder with the cloned repository in the STM32CubeIDE and run it once
 * CubeIDE can now be closed
 * Open a new terminal and navigate to your new GUI folder
-* Compile with: $g++ -std=c++11 `fltk-config --cxxflags` instrumentGUI.cpp `fltk-config --ldflags` -o instrumentGUI
-* Run with: $./instrumentGUI
+* Compile with: $g++ -std=c++11 \`fltk-config --cxxflags\` hello.cpp \`fltk-config --ldflags\` -o hello
+* Run with: $./hello
 
 #
 

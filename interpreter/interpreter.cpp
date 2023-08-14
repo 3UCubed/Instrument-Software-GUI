@@ -271,35 +271,35 @@ vector <string> interpret(const string &inputStr) {
                     case 8:
                         /* n5v_mon */
                         sprintf(result, "%s:%.3f", hkLabels[hkIndex].c_str(),
-                                intToVoltage(hkValues[hkIndex], 12, 3, -1.65));
+                                intToVoltage(hkValues[hkIndex], 12, 3, 1.0));
                         strings.push_back(result);
                         arrCounter++;
                         break;
                     case 9:
                         /* 5v_mon */
                         sprintf(result, "%s:%.3f", hkLabels[hkIndex].c_str(),
-                                intToVoltage(hkValues[hkIndex], 12, 3, 1.67));
+                                intToVoltage(hkValues[hkIndex], 12, 3, 1.0));
                         strings.push_back(result);
                         arrCounter++;
                         break;
                     case 10:
                         /* n3v3_mon */
                         sprintf(result, "%s:%.3f", hkLabels[hkIndex].c_str(),
-                                intToVoltage(hkValues[hkIndex], 12, 3, -1.05));
+                                intToVoltage(hkValues[hkIndex], 12, 3, 1.0));
                         strings.push_back(result);
                         arrCounter++;
                         break;
                     case 11:
                         /* 5vref_mon */
                         sprintf(result, "%s:%.3f", hkLabels[hkIndex].c_str(),
-                                intToVoltage(hkValues[hkIndex], 12, 3, 1.67));
+                                intToVoltage(hkValues[hkIndex], 12, 3, 1.0));
                         strings.push_back(result);
                         arrCounter++;
                         break;
                     case 12:
                         /* 15v_mon */
                         sprintf(result, "%s:%.3f", hkLabels[hkIndex].c_str(),
-                                intToVoltage(hkValues[hkIndex], 12, 3, 5.0));
+                                intToVoltage(hkValues[hkIndex], 12, 3, 1.0));
                         strings.push_back(result);
                         arrCounter++;
                         break;
