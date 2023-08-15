@@ -227,14 +227,14 @@ vector <string> interpret(const string &inputStr) {
                         arrCounter++;
                         break;
                     case 2:
-                        /* BUS_Imon */
+                        /* BUS_Vmon */
                         sprintf(result, "%s:%.3f", hkLabels[hkIndex].c_str(),
                                 intToVoltage(hkValues[hkIndex], 12, 3, 1.0));
                         strings.push_back(result);
                         arrCounter++;
                         break;
                     case 3:
-                        /* BUS_Vmon */
+                        /* BUS_Imon */
                         sprintf(result, "%s:%.3f", hkLabels[hkIndex].c_str(),
                                 intToVoltage(hkValues[hkIndex], 12, 3, 1.0));
                         strings.push_back(result);

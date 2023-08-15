@@ -34,7 +34,7 @@ int serialPort = open(portName, O_RDWR | O_NOCTTY); // Opening serial port
 int step = 0;
 string erpaLabels[7] = {"ERPA sync", "ERPA seq", "ERPA adc", "ERPA swp-mon", "ERPA temp1", "ERPA temp2", "ERPA endmon"};
 string pmtLabels[3] = {"PMT sync", "PMT seq ", "PMT adc "};
-string hkLabels[19] = {"HK sync       ", "HK seq        ", "HK busimon   ", "HK busvmon    ", "HK 3v3mon     ", "HK n150vmon   ", "HK n800vmon   ", "HK 2v5mon     ", "HK n5vmon     ", "HK 5vmon      ", "HK n3v3mon    ", "HK 5vrefmon   ", "HK 15vmon     ", "HK vsense     ", "HK vrefint    ", "TMP 1         ", "TMP 2         ", "TMP 3         ", "TMP 4         "};
+string hkLabels[19] = {"HK sync       ", "HK seq        ", "HK busvmon   ", "HK busimon    ", "HK 3v3mon     ", "HK n150vmon   ", "HK n800vmon   ", "HK 2v5mon     ", "HK n5vmon     ", "HK 5vmon      ", "HK n3v3mon    ", "HK 5vrefmon   ", "HK 15vmon     ", "HK vsense     ", "HK vrefint    ", "TMP 1         ", "TMP 2         ", "TMP 3         ", "TMP 4         "};
 string erpaFrame[7];
 string pmtFrame[3];
 string hkFrame[19];
@@ -246,8 +246,8 @@ int main(int argc, char **argv)
     float erpa_endmon = 0;
     float hk_sync = 0;
     float hk_seq = 0;
-    float hk_busimon = 0;
     float hk_busvmon = 0;
+    float hk_busimon = 0;
     float hk_3v3vmon = 0;
     float hk_n150vmon = 0;
     float hk_n800vmon = 0;
@@ -584,25 +584,25 @@ int main(int argc, char **argv)
     HK2->labelfont();
     HK2->labelcolor(text);
     HK2->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
-    Fl_Box *HK3 = new Fl_Box(x_packet_offset + 580, y_packet_offset + 45, 50, 20, "BUSimon:");
-    Fl_Output *HKbusimon = new Fl_Output(x_packet_offset + 682, y_packet_offset + 45, 60, 20);
-    HKbusimon->color(box);
-    snprintf(buffer, sizeof(buffer), "%f", hk_busimon);
-    HKbusimon->value(buffer);
-    HKbusimon->box(FL_FLAT_BOX);
-    HKbusimon->textcolor(output);
-    HK3->box(FL_FLAT_BOX);
-    HK3->color(box);
-    HK3->labelfont();
-    HK3->labelcolor(text);
-    HK3->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
-    Fl_Box *HK4 = new Fl_Box(x_packet_offset + 580, y_packet_offset + 65, 50, 20, "BUSvmon:");
-    Fl_Output *HKbusvmon = new Fl_Output(x_packet_offset + 682, y_packet_offset + 65, 60, 20);
+    Fl_Box *HK3 = new Fl_Box(x_packet_offset + 580, y_packet_offset + 45, 50, 20, "BUSvmon:");
+    Fl_Output *HKbusvmon = new Fl_Output(x_packet_offset + 682, y_packet_offset + 45, 60, 20);
     HKbusvmon->color(box);
     snprintf(buffer, sizeof(buffer), "%f", hk_busvmon);
     HKbusvmon->value(buffer);
     HKbusvmon->box(FL_FLAT_BOX);
     HKbusvmon->textcolor(output);
+    HK3->box(FL_FLAT_BOX);
+    HK3->color(box);
+    HK3->labelfont();
+    HK3->labelcolor(text);
+    HK3->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+    Fl_Box *HK4 = new Fl_Box(x_packet_offset + 580, y_packet_offset + 65, 50, 20, "BUSimon:");
+    Fl_Output *HKbusimon = new Fl_Output(x_packet_offset + 682, y_packet_offset + 65, 60, 20);
+    HKbusimon->color(box);
+    snprintf(buffer, sizeof(buffer), "%f", hk_busimon);
+    HKbusimon->value(buffer);
+    HKbusimon->box(FL_FLAT_BOX);
+    HKbusimon->textcolor(output);
     HK4->box(FL_FLAT_BOX);
     HK4->color(box);
     HK4->labelfont();
@@ -1275,7 +1275,7 @@ int main(int argc, char **argv)
                         case 'n':
                         {
                             snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
-                            HKbusimon->value(buffer);
+                            HKbusvmon->value(buffer);
                             string logMsg(buffer);
                             hkFrame[2] = logMsg;
                             break;
@@ -1283,7 +1283,7 @@ int main(int argc, char **argv)
                         case 'o':
                         {
                             snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
-                            HKbusvmon->value(buffer);
+                            HKbusimon->value(buffer);
                             string logMsg(buffer);
                             hkFrame[3] = logMsg;
                             break;
