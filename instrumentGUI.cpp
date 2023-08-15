@@ -87,7 +87,7 @@ void writeToLog(string label, string msg)
 // ------------------ Insert New Line Into Log -----------------
 void newLine()
 {
-    ;
+    
     ofstream outStream;
     outStream.open(LogName, ios::app);
     outStream << endl;
@@ -902,24 +902,32 @@ int main(int argc, char **argv)
             totalBPS += pmtBPS;
             valPMT = PMT_ON->value();
             writeSerialData(serialPort, "1");
+            writeToLog("", "PMT TOGGLED ON");
+            newLine();
         }
         else if (PMT_ON->value() != valPMT && PMT_ON->value() == 0) // Toggling individual packet data
         {
             totalBPS -= pmtBPS;
             valPMT = PMT_ON->value();
             writeSerialData(serialPort, "!");
+            writeToLog("", "PMT TOGGLED OFF");
+            newLine();
         }
         if (ERPA_ON->value() != valERPA && ERPA_ON->value() == 1)
         {
             totalBPS += erpaBPS;
             valERPA = ERPA_ON->value();
             writeSerialData(serialPort, "2");
+            writeToLog("", "ERPA TOGGLED ON");
+            newLine();
         }
         else if (ERPA_ON->value() != valERPA && ERPA_ON->value() == 0)
         {
             totalBPS -= erpaBPS;
             valERPA = ERPA_ON->value();
             writeSerialData(serialPort, "@");
+            writeToLog("", "ERPA TOGGLED OFF");
+            newLine();
         }
         if (HK_ON->value() != valHK && HK_ON->value() == 1)
         {
@@ -927,6 +935,8 @@ int main(int argc, char **argv)
             totalBPS += tempsBPS;
             valHK = HK_ON->value();
             writeSerialData(serialPort, "3");
+            writeToLog("", "HK TOGGLED ON");
+            newLine();
         }
         else if (HK_ON->value() != valHK && HK_ON->value() == 0)
         {
@@ -934,6 +944,8 @@ int main(int argc, char **argv)
             totalBPS -= tempsBPS;
             valHK = HK_ON->value();
             writeSerialData(serialPort, "#");
+            writeToLog("", "HK TOGGLED OFF");
+            newLine();
         }
 
         BPS->value(totalBPS);
@@ -941,6 +953,8 @@ int main(int argc, char **argv)
         if (PB5->value() != valPB5 &&
             PB5->value() == 1) // Making sure sys_on (PB5) is on before activating other GPIO buttons
         {
+            writeToLog("", "SYS_ON TOGGLED HIGH");
+            newLine();
             valPB5 = PB5->value();
             writeSerialData(serialPort, "a");
             PB6->activate();
@@ -954,6 +968,8 @@ int main(int argc, char **argv)
         else if (PB5->value() != valPB5 &&
                  PB5->value() == 0)
         {
+            writeToLog("", "SYS_ON TOGGLED LOW");
+            newLine();
             valPB5 = PB5->value();
             writeSerialData(serialPort, "$");
 
@@ -993,71 +1009,99 @@ int main(int argc, char **argv)
             {
                 valPB6 = PB6->value();
                 writeSerialData(serialPort, "b");
+                writeToLog("", "800v_en TOGGLED HIGH");
+                newLine();
             }
             else if (PB6->value() != valPB6 && PB6->value() == 0)
             {
                 valPB6 = PB6->value();
                 writeSerialData(serialPort, "%");
+                writeToLog("", "800v_en TOGGLED LOW");
+                newLine();
             }
             if (PC10->value() != valPC10 && PC10->value() == 1)
             {
                 valPC10 = PC10->value();
                 writeSerialData(serialPort, "c");
+                writeToLog("", "5v_en TOGGLED HIGH");
+                newLine();
             }
             else if (PC10->value() != valPC10 && PC10->value() == 0)
             {
                 valPC10 = PC10->value();
                 writeSerialData(serialPort, "^");
+                writeToLog("", "5v_en TOGGLED LOW");
+                newLine();
             }
             if (PC13->value() != valPC13 && PC13->value() == 1)
             {
                 valPC13 = PC13->value();
                 writeSerialData(serialPort, "d");
+                writeToLog("", "n150v_en TOGGLED HIGH");
+                newLine();
             }
             else if (PC13->value() != valPC13 && PC13->value() == 0)
             {
                 valPC13 = PC13->value();
                 writeSerialData(serialPort, "&");
+                writeToLog("", "n150v_en TOGGLED LOW");
+                newLine();
             }
             if (PC7->value() != valPC7 && PC7->value() == 1)
             {
                 valPC7 = PC7->value();
                 writeSerialData(serialPort, "e");
+                writeToLog("", "3v3_en TOGGLED HIGH");
+                newLine();
             }
             else if (PC7->value() != valPC7 && PC7->value() == 0)
             {
                 valPC7 = PC7->value();
                 writeSerialData(serialPort, "*");
+                writeToLog("", "3v3_en TOGGLED LOW");
+                newLine();
             }
             if (PC8->value() != valPC8 && PC8->value() == 1)
             {
                 valPC8 = PC8->value();
                 writeSerialData(serialPort, "f");
+                writeToLog("", "n5v_en TOGGLED HIGH");
+                newLine();
             }
             else if (PC8->value() != valPC8 && PC8->value() == 0)
             {
                 valPC8 = PC8->value();
                 writeSerialData(serialPort, "(");
+                writeToLog("", "n5v_en TOGGLED LOW");
+                newLine();
             }
             if (PC9->value() != valPC9 && PC9->value() == 1)
             {
                 valPC9 = PC9->value();
                 writeSerialData(serialPort, "g");
+                writeToLog("", "15v_en TOGGLED HIGH");
+                newLine();
             }
             else if (PC9->value() != valPC9 && PC9->value() == 0)
             {
                 valPC9 = PC9->value();
                 writeSerialData(serialPort, ")");
+                writeToLog("", "15v_en TOGGLED LOW");
+                newLine();
             }
             if (PC6->value() != valPC6 && PC6->value() == 1)
             {
                 valPC6 = PC6->value();
                 writeSerialData(serialPort, "h");
+                writeToLog("", "n3v3_en TOGGLED HIGH");
+                newLine();
             }
             if (PC6->value() != valPC6 && PC6->value() == 0)
             {
                 valPC6 = PC6->value();
                 writeSerialData(serialPort, "-");
+                writeToLog("", "n3v3_en TOGGLED LOW");
+                newLine();
             }
         }
 
@@ -1065,21 +1109,29 @@ int main(int argc, char **argv)
         {
             valSDN1 = SDN1->value();
             writeSerialData(serialPort, "G");
+            writeToLog("", "SDN1 TOGGLED ON");
+            newLine();
         }
         else if (SDN1->value() != valSDN1 && SDN1->value() == 0)
         {
             valSDN1 = SDN1->value();
             writeSerialData(serialPort, "H");
+            writeToLog("", "SDN1 TOGGLED OFF");
+            newLine();
         }
         if (SDN2->value() != valSDN2 && SDN2->value() == 1)
         {
             valSDN2 = SDN2->value();
             writeSerialData(serialPort, "I");
+            writeToLog("", "SDN2 TOGGLED ON");
+            newLine();
         }
         else if (SDN2->value() != valSDN2 && SDN2->value() == 0)
         {
             valSDN2 = SDN2->value();
             writeSerialData(serialPort, "J");
+            writeToLog("", "SDN2 TOGGLED OFF");
+            newLine();
         }
 
         if (turnedOff == 0) // Checking if data is being received before going through packet data
