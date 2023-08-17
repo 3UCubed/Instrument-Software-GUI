@@ -332,7 +332,7 @@ int main(int argc, char **argv)
     Fl_Round_Button *PC6 = new Fl_Round_Button(20, 230, 100, 50, "n3v3_en PC6");
     Fl_Round_Button *PC8 = new Fl_Round_Button(20, 280, 100, 50, "n5v_en PC8");
     Fl_Round_Button *PC9 = new Fl_Round_Button(20, 330, 100, 50, "15v_en PC9");
-    Fl_Round_Button *PC13 = new Fl_Round_Button(20, 380, 100, 50, "n150v_en PC13");
+    Fl_Round_Button *PC13 = new Fl_Round_Button(20, 380, 100, 50, "n200v_en PC13");
     Fl_Round_Button *PB6 = new Fl_Round_Button(20, 430, 100, 50, "800v_en PB6");
 
     Fl_Button *stepUp = new Fl_Button(25, 490, 110, 35, "Step Up");
@@ -620,7 +620,7 @@ int main(int argc, char **argv)
     HK5->labelfont();
     HK5->labelcolor(text);
     HK5->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
-    Fl_Box *HK6 = new Fl_Box(x_packet_offset + 580, y_packet_offset + 105, 50, 20, "n150vmon:");
+    Fl_Box *HK6 = new Fl_Box(x_packet_offset + 580, y_packet_offset + 105, 50, 20, "n200vmon:");
     Fl_Output *HKn150vmon = new Fl_Output(x_packet_offset + 682, y_packet_offset + 105, 60, 20);
     HKn150vmon->color(box);
     snprintf(buffer, sizeof(buffer), "%f", hk_n150vmon);
