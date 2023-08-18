@@ -285,8 +285,8 @@ int main(int argc, char **argv)
     }
 
     tcgetattr(serialPort, &options);
-    cfsetispeed(&options, B19200);
-    cfsetospeed(&options, B19200);
+    cfsetispeed(&options, B57600);
+    cfsetospeed(&options, B57600);
     options.c_cflag |= O_NONBLOCK;
     tcsetattr(serialPort, TCSANOW, &options);
 
