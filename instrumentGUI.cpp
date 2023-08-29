@@ -263,7 +263,13 @@ int main(int argc, char **argv)
     float hk_temp2 = 0;
     float hk_temp3 = 0;
     float hk_temp4 = 0;
-
+// 2v5 above 3.3
+// 5vref below 15
+// resolve zero issue
+// averaging on on board MCU
+// timing for different packets
+// RTC
+// separate data into separate CSV's
     // --------- Vars Keeping Track Of Packet States -----------
     unsigned char valPMT;
     unsigned char valERPA;
@@ -296,7 +302,7 @@ int main(int argc, char **argv)
     // --------------- Main Window Elements Setup --------------
     int width = 1300; // Width and Height of Main Window
     int height = 800;
-    int x_packet_offset = 485; // X and Y offsets for the three packet groups
+    int x_packet_offset = 320; // X and Y offsets for the three packet groups
     int y_packet_offset = 200;
 
     Fl_Window *window = new Fl_Window(width, height, "IS Packet Interpreter");
@@ -399,7 +405,7 @@ int main(int argc, char **argv)
     turnedOff = 0;
 
     // -------------------- ERPA Packet Group ------------------
-    Fl_Box *group2 = new Fl_Box(x_packet_offset + 295, y_packet_offset, 200, 320,
+    Fl_Box *group2 = new Fl_Box(x_packet_offset + 295, y_packet_offset, 200, 400,
                                 "ERPA PACKET");
     group2->color(box);
     group2->box(FL_BORDER_BOX);
@@ -510,7 +516,7 @@ int main(int argc, char **argv)
     ERPA7->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
 
     // ------------------ PMT Packet Group ---------------------
-    Fl_Group *group1 = new Fl_Group(x_packet_offset + 15, y_packet_offset, 200, 320,
+    Fl_Group *group1 = new Fl_Group(x_packet_offset + 15, y_packet_offset, 200, 400,
                                     "PMT PACKET");
     group1->color(box);
     group1->box(FL_BORDER_BOX);
@@ -554,7 +560,7 @@ int main(int argc, char **argv)
     PMT3->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
 
     // -------------------- HK Packet Group --------------------
-    Fl_Group *group3 = new Fl_Group(x_packet_offset + 575, y_packet_offset, 200, 320,
+    Fl_Group *group3 = new Fl_Group(x_packet_offset + 575, y_packet_offset, 200, 400,
                                     "HK PACKET");
     group3->color(box);
     group3->box(FL_BORDER_BOX);
@@ -584,140 +590,8 @@ int main(int argc, char **argv)
     HK2->labelfont();
     HK2->labelcolor(text);
     HK2->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
-    Fl_Box *HK3 = new Fl_Box(x_packet_offset + 580, y_packet_offset + 45, 50, 20, "BUSvmon:");
-    Fl_Output *HKbusvmon = new Fl_Output(x_packet_offset + 682, y_packet_offset + 45, 60, 20);
-    HKbusvmon->color(box);
-    snprintf(buffer, sizeof(buffer), "%f", hk_busvmon);
-    HKbusvmon->value(buffer);
-    HKbusvmon->box(FL_FLAT_BOX);
-    HKbusvmon->textcolor(output);
-    HK3->box(FL_FLAT_BOX);
-    HK3->color(box);
-    HK3->labelfont();
-    HK3->labelcolor(text);
-    HK3->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
-    Fl_Box *HK4 = new Fl_Box(x_packet_offset + 580, y_packet_offset + 65, 50, 20, "BUSimon:");
-    Fl_Output *HKbusimon = new Fl_Output(x_packet_offset + 682, y_packet_offset + 65, 60, 20);
-    HKbusimon->color(box);
-    snprintf(buffer, sizeof(buffer), "%f", hk_busimon);
-    HKbusimon->value(buffer);
-    HKbusimon->box(FL_FLAT_BOX);
-    HKbusimon->textcolor(output);
-    HK4->box(FL_FLAT_BOX);
-    HK4->color(box);
-    HK4->labelfont();
-    HK4->labelcolor(text);
-    HK4->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
-    Fl_Box *HK5 = new Fl_Box(x_packet_offset + 580, y_packet_offset + 85, 50, 20, "3v3mon:");
-    Fl_Output *HK3v3mon = new Fl_Output(x_packet_offset + 682, y_packet_offset + 85, 60, 20);
-    HK3v3mon->color(box);
-    snprintf(buffer, sizeof(buffer), "%f", hk_n3v3mon);
-    HK3v3mon->value(buffer);
-    HK3v3mon->box(FL_FLAT_BOX);
-    HK3v3mon->textcolor(output);
-    HK5->box(FL_FLAT_BOX);
-    HK5->color(box);
-    HK5->labelfont();
-    HK5->labelcolor(text);
-    HK5->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
-    Fl_Box *HK6 = new Fl_Box(x_packet_offset + 580, y_packet_offset + 105, 50, 20, "n200vmon:");
-    Fl_Output *HKn150vmon = new Fl_Output(x_packet_offset + 682, y_packet_offset + 105, 60, 20);
-    HKn150vmon->color(box);
-    snprintf(buffer, sizeof(buffer), "%f", hk_n150vmon);
-    HKn150vmon->value(buffer);
-    HKn150vmon->box(FL_FLAT_BOX);
-    HKn150vmon->textcolor(output);
-    HK6->box(FL_FLAT_BOX);
-    HK6->color(box);
-    HK6->labelfont();
-    HK6->labelcolor(text);
-    HK6->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
-    Fl_Box *HK7 = new Fl_Box(x_packet_offset + 580, y_packet_offset + 125, 50, 20, "n800vmon:");
-    Fl_Output *HKn800vmon = new Fl_Output(x_packet_offset + 682, y_packet_offset + 125, 60, 20);
-    HKn800vmon->color(box);
-    snprintf(buffer, sizeof(buffer), "%f", hk_n800vmon);
-    HKn800vmon->value(buffer);
-    HKn800vmon->box(FL_FLAT_BOX);
-    HKn800vmon->textcolor(output);
-    HK7->box(FL_FLAT_BOX);
-    HK7->color(box);
-    HK7->labelfont();
-    HK7->labelcolor(text);
-    HK7->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
-    Fl_Box *HK8 = new Fl_Box(x_packet_offset + 580, y_packet_offset + 145, 50, 20, "2v5mon:");
-    Fl_Output *HK2v5mon = new Fl_Output(x_packet_offset + 682, y_packet_offset + 145, 60, 20);
-    HK2v5mon->color(box);
-    snprintf(buffer, sizeof(buffer), "%f", hk_2v5mon);
-    HK2v5mon->value(buffer);
-    HK2v5mon->box(FL_FLAT_BOX);
-    HK2v5mon->textcolor(output);
-    HK8->box(FL_FLAT_BOX);
-    HK8->color(box);
-    HK8->labelfont();
-    HK8->labelcolor(text);
-    HK8->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
-    Fl_Box *HK9 = new Fl_Box(x_packet_offset + 580, y_packet_offset + 165, 50, 20, "n5vmon:");
-    Fl_Output *HKn5vmon = new Fl_Output(x_packet_offset + 682, y_packet_offset + 165, 60, 20);
-    HKn5vmon->color(box);
-    snprintf(buffer, sizeof(buffer), "%f", hk_n5vmon);
-    HKn5vmon->value(buffer);
-    HKn5vmon->box(FL_FLAT_BOX);
-    HKn5vmon->textcolor(output);
-    HK9->box(FL_FLAT_BOX);
-    HK9->color(box);
-    HK9->labelfont();
-    HK9->labelcolor(text);
-    HK9->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
-    Fl_Box *HK10 = new Fl_Box(x_packet_offset + 580, y_packet_offset + 185, 50, 20, "5vmon:");
-    Fl_Output *HK5vmon = new Fl_Output(x_packet_offset + 682, y_packet_offset + 185, 60, 20);
-    HK5vmon->color(box);
-    snprintf(buffer, sizeof(buffer), "%f", hk_5vmon);
-    HK5vmon->value(buffer);
-    HK5vmon->box(FL_FLAT_BOX);
-    HK5vmon->textcolor(output);
-    HK10->box(FL_FLAT_BOX);
-    HK10->color(box);
-    HK10->labelfont();
-    HK10->labelcolor(text);
-    HK10->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
-    Fl_Box *HK11 = new Fl_Box(x_packet_offset + 580, y_packet_offset + 205, 50, 20, "n3v3mon:");
-    Fl_Output *HKn3v3mon = new Fl_Output(x_packet_offset + 682, y_packet_offset + 205, 60, 20);
-    HKn3v3mon->color(box);
-    snprintf(buffer, sizeof(buffer), "%f", hk_n3v3mon);
-    HKn3v3mon->value(buffer);
-    HKn3v3mon->box(FL_FLAT_BOX);
-    HKn3v3mon->textcolor(output);
-    HK11->box(FL_FLAT_BOX);
-    HK11->color(box);
-    HK11->labelfont();
-    HK11->labelcolor(text);
-    HK11->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
-    Fl_Box *HK12 = new Fl_Box(x_packet_offset + 580, y_packet_offset + 225, 50, 20, "5vrefmon:");
-    Fl_Output *HK5vrefmon = new Fl_Output(x_packet_offset + 682, y_packet_offset + 225, 60, 20);
-    HK5vrefmon->color(box);
-    snprintf(buffer, sizeof(buffer), "%f", hk_5vrefmon);
-    HK5vrefmon->value(buffer);
-    HK5vrefmon->box(FL_FLAT_BOX);
-    HK5vrefmon->textcolor(output);
-    HK12->box(FL_FLAT_BOX);
-    HK12->color(box);
-    HK12->labelfont();
-    HK12->labelcolor(text);
-    HK12->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
-    Fl_Box *HK13 = new Fl_Box(x_packet_offset + 580, y_packet_offset + 245, 50, 20, "15vmon:");
-    Fl_Output *HK15vmon = new Fl_Output(x_packet_offset + 682, y_packet_offset + 245, 60, 20);
-    HK15vmon->color(box);
-    snprintf(buffer, sizeof(buffer), "%f", hk_15vmon);
-    HK15vmon->value(buffer);
-    HK15vmon->box(FL_FLAT_BOX);
-    HK15vmon->textcolor(output);
-    HK13->color(box);
-    HK13->box(FL_FLAT_BOX);
-    HK13->labelfont();
-    HK13->labelcolor(text);
-    HK13->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
-    Fl_Box *HK14 = new Fl_Box(x_packet_offset + 580, y_packet_offset + 265, 50, 20, "vsense:");
-    Fl_Output *HKvsense = new Fl_Output(x_packet_offset + 682, y_packet_offset + 265, 60, 20);
+    Fl_Box *HK14 = new Fl_Box(x_packet_offset + 580, y_packet_offset + 45, 50, 20, "vsense:");
+    Fl_Output *HKvsense = new Fl_Output(x_packet_offset + 682, y_packet_offset + 45, 60, 20);
     HKvsense->color(box);
     snprintf(buffer, sizeof(buffer), "%f", hk_vsense);
     HKvsense->value(buffer);
@@ -728,8 +602,8 @@ int main(int argc, char **argv)
     HK14->labelfont();
     HK14->labelcolor(text);
     HK14->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
-    Fl_Box *HK15 = new Fl_Box(x_packet_offset + 580, y_packet_offset + 285, 50, 20, "vrefint:");
-    Fl_Output *HKvrefint = new Fl_Output(x_packet_offset + 682, y_packet_offset + 285, 60, 20);
+    Fl_Box *HK15 = new Fl_Box(x_packet_offset + 580, y_packet_offset + 65, 50, 20, "vrefint:");
+    Fl_Output *HKvrefint = new Fl_Output(x_packet_offset + 682, y_packet_offset + 65, 60, 20);
     HKvrefint->color(box);
     snprintf(buffer, sizeof(buffer), "%f", hk_vrefint);
     HKvrefint->value(buffer);
@@ -741,75 +615,193 @@ int main(int argc, char **argv)
     HK15->labelcolor(text);
     HK15->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
 
-    Fl_Box *tempLabel1 = new Fl_Box(165, 100, 75, 20, "TMP1");
-    tempLabel1->color(box);
-    tempLabel1->box(FL_NO_BOX);
-    tempLabel1->labelcolor(text);
-    tempLabel1->labelfont(FL_BOLD);
-    tempLabel1->align(FL_ALIGN_TOP);
-    Fl_Value_Slider *HKtemp1 = new Fl_Value_Slider(185, 100, 30, 550);
+    Fl_Box *tempLabel1 = new Fl_Box(x_packet_offset + 580, y_packet_offset + 85, 50, 20, "TMP1:");
+    Fl_Output *HKtemp1 = new Fl_Output(x_packet_offset + 682, y_packet_offset + 85, 60, 20);
     HKtemp1->color(box);
     snprintf(buffer, sizeof(buffer), "%f", hk_temp1);
-    HKtemp1->range(30, 24); // Replace minVoltage and maxVoltage with appropriate values
-    HKtemp1->value(27);
+    HKtemp1->value(buffer);
     HKtemp1->box(FL_FLAT_BOX);
     HKtemp1->textcolor(output);
+    tempLabel1->box(FL_FLAT_BOX);
+    tempLabel1->color(box);
+    tempLabel1->labelfont();
+    tempLabel1->labelcolor(text);
+    tempLabel1->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
 
-    Fl_Box *tempLabel2 = new Fl_Box(225, 100, 75, 20, "TMP2");
-    tempLabel2->color(box);
-    tempLabel2->box(FL_NO_BOX);
-    tempLabel2->labelcolor(text);
-    tempLabel2->labelfont(FL_BOLD);
-    tempLabel2->align(FL_ALIGN_TOP);
-    Fl_Value_Slider *HKtemp2 = new Fl_Value_Slider(245, 100, 30, 550);
+    Fl_Box *tempLabel2 = new Fl_Box(x_packet_offset + 580, y_packet_offset + 105, 50, 20, "TMP2:");
+    Fl_Output *HKtemp2 = new Fl_Output(x_packet_offset + 682, y_packet_offset + 105, 60, 20);
     HKtemp2->color(box);
     snprintf(buffer, sizeof(buffer), "%f", hk_temp2);
-    HKtemp2->range(30, 24); // Replace minVoltage and maxVoltage with appropriate values
-    HKtemp2->value(27);
+    HKtemp2->value(buffer);
     HKtemp2->box(FL_FLAT_BOX);
     HKtemp2->textcolor(output);
+    tempLabel2->color(box);
+    tempLabel2->box(FL_FLAT_BOX);
+    tempLabel2->labelfont();
+    tempLabel2->labelcolor(text);
+    tempLabel2->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
 
-    Fl_Box *tempLabel3 = new Fl_Box(283, 100, 75, 20, "TMP3");
-    tempLabel3->color(box);
-    tempLabel3->box(FL_NO_BOX);
-    tempLabel3->labelcolor(text);
-    tempLabel3->labelfont(FL_BOLD);
-    tempLabel3->align(FL_ALIGN_TOP);
-    Fl_Value_Slider *HKtemp3 = new Fl_Value_Slider(305, 100, 30, 550);
+    Fl_Box *tempLabel3 = new Fl_Box(x_packet_offset + 580, y_packet_offset + 125, 50, 20, "TMP3:");
+    Fl_Output *HKtemp3 = new Fl_Output(x_packet_offset + 682, y_packet_offset + 125, 60, 20);
     HKtemp3->color(box);
     snprintf(buffer, sizeof(buffer), "%f", hk_temp3);
-    HKtemp3->range(30, 24); // Replace minVoltage and maxVoltage with appropriate values
-    HKtemp3->value(27);
+    HKtemp3->value(buffer);
     HKtemp3->box(FL_FLAT_BOX);
     HKtemp3->textcolor(output);
+    tempLabel3->color(box);
+    tempLabel3->box(FL_FLAT_BOX);
+    tempLabel3->labelfont();
+    tempLabel3->labelcolor(text);
+    tempLabel3->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
 
-    Fl_Box *tempLabel4 = new Fl_Box(345, 100, 75, 20, "TMP4");
-    tempLabel4->color(FL_RED);
-    tempLabel4->box(FL_NO_BOX);
-    tempLabel4->labelcolor(text);
-    tempLabel4->labelfont(FL_BOLD);
-    tempLabel4->align(FL_ALIGN_TOP);
-    Fl_Value_Slider *HKtemp4 = new Fl_Value_Slider(365, 100, 30, 550);
+    Fl_Box *tempLabel4 = new Fl_Box(x_packet_offset + 580, y_packet_offset + 145, 50, 20, "TMP4:");
+    Fl_Output *HKtemp4 = new Fl_Output(x_packet_offset + 682, y_packet_offset + 145, 60, 20);
     HKtemp4->color(box);
     snprintf(buffer, sizeof(buffer), "%f", hk_temp4);
+    HKtemp4->value(buffer);
     HKtemp4->box(FL_FLAT_BOX);
     HKtemp4->textcolor(output);
-    HKtemp4->range(30, 24); // Replace minVoltage and maxVoltage with appropriate values
-    HKtemp4->value(27);
+    tempLabel4->color(box);
+    tempLabel4->box(FL_FLAT_BOX);
+    tempLabel4->labelfont();
+    tempLabel4->labelcolor(text);
+    tempLabel4->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+    Fl_Box *HK3 = new Fl_Box(x_packet_offset + 580, y_packet_offset + 165, 50, 20, "BUSvmon:");
+    Fl_Output *HKbusvmon = new Fl_Output(x_packet_offset + 682, y_packet_offset + 165, 60, 20);
+    HKbusvmon->color(box);
+    snprintf(buffer, sizeof(buffer), "%f", hk_busvmon);
+    HKbusvmon->value(buffer);
+    HKbusvmon->box(FL_FLAT_BOX);
+    HKbusvmon->textcolor(output);
+    HK3->box(FL_FLAT_BOX);
+    HK3->color(box);
+    HK3->labelfont();
+    HK3->labelcolor(text);
+    HK3->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+    Fl_Box *HK4 = new Fl_Box(x_packet_offset + 580, y_packet_offset + 185, 50, 20, "BUSimon:");
+    Fl_Output *HKbusimon = new Fl_Output(x_packet_offset + 682, y_packet_offset + 185, 60, 20);
+    HKbusimon->color(box);
+    snprintf(buffer, sizeof(buffer), "%f", hk_busimon);
+    HKbusimon->value(buffer);
+    HKbusimon->box(FL_FLAT_BOX);
+    HKbusimon->textcolor(output);
+    HK4->box(FL_FLAT_BOX);
+    HK4->color(box);
+    HK4->labelfont();
+    HK4->labelcolor(text);
+    HK4->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+    Fl_Box *HK8 = new Fl_Box(x_packet_offset + 580, y_packet_offset + 205, 50, 20, "2v5mon:");
+    Fl_Output *HK2v5mon = new Fl_Output(x_packet_offset + 682, y_packet_offset + 205, 60, 20);
+    HK2v5mon->color(box);
+    snprintf(buffer, sizeof(buffer), "%f", hk_2v5mon);
+    HK2v5mon->value(buffer);
+    HK2v5mon->box(FL_FLAT_BOX);
+    HK2v5mon->textcolor(output);
+    HK8->box(FL_FLAT_BOX);
+    HK8->color(box);
+    HK8->labelfont();
+    HK8->labelcolor(text);
+    HK8->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+    Fl_Box *HK5 = new Fl_Box(x_packet_offset + 580, y_packet_offset + 225, 50, 20, "3v3mon:");
+    Fl_Output *HK3v3mon = new Fl_Output(x_packet_offset + 682, y_packet_offset + 225, 60, 20);
+    HK3v3mon->color(box);
+    snprintf(buffer, sizeof(buffer), "%f", hk_n3v3mon);
+    HK3v3mon->value(buffer);
+    HK3v3mon->box(FL_FLAT_BOX);
+    HK3v3mon->textcolor(output);
+    HK5->box(FL_FLAT_BOX);
+    HK5->color(box);
+    HK5->labelfont();
+    HK5->labelcolor(text);
+    HK5->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+    Fl_Box *HK10 = new Fl_Box(x_packet_offset + 580, y_packet_offset + 245, 50, 20, "5vmon:");
+    Fl_Output *HK5vmon = new Fl_Output(x_packet_offset + 682, y_packet_offset + 245, 60, 20);
+    HK5vmon->color(box);
+    snprintf(buffer, sizeof(buffer), "%f", hk_5vmon);
+    HK5vmon->value(buffer);
+    HK5vmon->box(FL_FLAT_BOX);
+    HK5vmon->textcolor(output);
+    HK10->box(FL_FLAT_BOX);
+    HK10->color(box);
+    HK10->labelfont();
+    HK10->labelcolor(text);
+    HK10->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+    Fl_Box *HK11 = new Fl_Box(x_packet_offset + 580, y_packet_offset + 265, 50, 20, "n3v3mon:");
+    Fl_Output *HKn3v3mon = new Fl_Output(x_packet_offset + 682, y_packet_offset + 265, 60, 20);
+    HKn3v3mon->color(box);
+    snprintf(buffer, sizeof(buffer), "%f", hk_n3v3mon);
+    HKn3v3mon->value(buffer);
+    HKn3v3mon->box(FL_FLAT_BOX);
+    HKn3v3mon->textcolor(output);
+    HK11->box(FL_FLAT_BOX);
+    HK11->color(box);
+    HK11->labelfont();
+    HK11->labelcolor(text);
+    HK11->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+    Fl_Box *HK9 = new Fl_Box(x_packet_offset + 580, y_packet_offset + 285, 50, 20, "n5vmon:");
+    Fl_Output *HKn5vmon = new Fl_Output(x_packet_offset + 682, y_packet_offset + 285, 60, 20);
+    HKn5vmon->color(box);
+    snprintf(buffer, sizeof(buffer), "%f", hk_n5vmon);
+    HKn5vmon->value(buffer);
+    HKn5vmon->box(FL_FLAT_BOX);
+    HKn5vmon->textcolor(output);
+    HK9->box(FL_FLAT_BOX);
+    HK9->color(box);
+    HK9->labelfont();
+    HK9->labelcolor(text);
+    HK9->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+    Fl_Box *HK13 = new Fl_Box(x_packet_offset + 580, y_packet_offset + 305, 50, 20, "15vmon:");
+    Fl_Output *HK15vmon = new Fl_Output(x_packet_offset + 682, y_packet_offset + 305, 60, 20);
+    HK15vmon->color(box);
+    snprintf(buffer, sizeof(buffer), "%f", hk_15vmon);
+    HK15vmon->value(buffer);
+    HK15vmon->box(FL_FLAT_BOX);
+    HK15vmon->textcolor(output);
+    HK13->color(box);
+    HK13->box(FL_FLAT_BOX);
+    HK13->labelfont();
+    HK13->labelcolor(text);
+    HK13->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+    Fl_Box *HK12 = new Fl_Box(x_packet_offset + 580, y_packet_offset + 325, 50, 20, "5vrefmon:");
+    Fl_Output *HK5vrefmon = new Fl_Output(x_packet_offset + 682, y_packet_offset + 325, 60, 20);
+    HK5vrefmon->color(box);
+    snprintf(buffer, sizeof(buffer), "%f", hk_5vrefmon);
+    HK5vrefmon->value(buffer);
+    HK5vrefmon->box(FL_FLAT_BOX);
+    HK5vrefmon->textcolor(output);
+    HK12->box(FL_FLAT_BOX);
+    HK12->color(box);
+    HK12->labelfont();
+    HK12->labelcolor(text);
+    HK12->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+    Fl_Box *HK6 = new Fl_Box(x_packet_offset + 580, y_packet_offset + 345, 50, 20, "n200vmon:");
+    Fl_Output *HKn150vmon = new Fl_Output(x_packet_offset + 682, y_packet_offset + 345, 60, 20);
+    HKn150vmon->color(box);
+    snprintf(buffer, sizeof(buffer), "%f", hk_n150vmon);
+    HKn150vmon->value(buffer);
+    HKn150vmon->box(FL_FLAT_BOX);
+    HKn150vmon->textcolor(output);
+    HK6->box(FL_FLAT_BOX);
+    HK6->color(box);
+    HK6->labelfont();
+    HK6->labelcolor(text);
+    HK6->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+    Fl_Box *HK7 = new Fl_Box(x_packet_offset + 580, y_packet_offset + 365, 50, 20, "n800vmon:");
+    Fl_Output *HKn800vmon = new Fl_Output(x_packet_offset + 682, y_packet_offset + 365, 60, 20);
+    HKn800vmon->color(box);
+    snprintf(buffer, sizeof(buffer), "%f", hk_n800vmon);
+    HKn800vmon->value(buffer);
+    HKn800vmon->box(FL_FLAT_BOX);
+    HKn800vmon->textcolor(output);
+    HK7->box(FL_FLAT_BOX);
+    HK7->color(box);
+    HK7->labelfont();
+    HK7->labelcolor(text);
+    HK7->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
 
-    Fl_Box *dataSent = new Fl_Box(403, 100, 75, 20, "BPS");
-    dataSent->color(box);
-    dataSent->box(FL_NO_BOX);
-    dataSent->labelcolor(text);
-    dataSent->labelfont(FL_BOLD);
-    dataSent->align(FL_ALIGN_TOP);
-    Fl_Value_Slider *BPS = new Fl_Value_Slider(425, 100, 30, 550);
-    BPS->color(box);
-    BPS->box(FL_FLAT_BOX);
-    BPS->textcolor(output);
-    BPS->range(196, 0); // Replace minVoltage and maxVoltage with appropriate values
-    BPS->value(27);
 
+
+    
     writeSerialData(serialPort, "!");
     usleep(10000);
     writeSerialData(serialPort, "@");
@@ -948,7 +940,6 @@ int main(int argc, char **argv)
             newLine();
         }
 
-        BPS->value(totalBPS);
 
         if (PB5->value() != valPB5 &&
             PB5->value() == 1) // Making sure sys_on (PB5) is on before activating other GPIO buttons
@@ -1259,46 +1250,6 @@ int main(int argc, char **argv)
                     {
                         switch (letter)
                         {
-                        case 'B':
-                        {
-                            snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
-                            HKvrefint->value(buffer);
-                            string logMsg(buffer);
-                            hkFrame[14] = logMsg;
-                            break;
-                        }
-                        case 'C':
-                        {
-                            snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
-                            HKtemp1->value(std::stof(buffer));
-                            string logMsg(buffer);
-                            hkFrame[15] = logMsg;
-                            break;
-                        }
-                        case 'D':
-                        {
-                            snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
-                            HKtemp2->value(std::stof(buffer));
-                            string logMsg(buffer);
-                            hkFrame[16] = logMsg;
-                            break;
-                        }
-                        case 'E':
-                        {
-                            snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
-                            HKtemp3->value(std::stof(buffer));
-                            string logMsg(buffer);
-                            hkFrame[17] = logMsg;
-                            break;
-                        }
-                        case 'F':
-                        {
-                            snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
-                            HKtemp4->value(std::stof(buffer));
-                            string logMsg(buffer);
-                            hkFrame[18] = logMsg;
-                            break;
-                        }
                         case 'l':
                         {
                             if (recording)
@@ -1327,12 +1278,60 @@ int main(int argc, char **argv)
                         case 'n':
                         {
                             snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
+                            HKvsense->value(buffer);
+                            string logMsg(buffer);
+                            hkFrame[13] = logMsg;
+                            break;
+                        }
+                        case 'o':
+                        {
+                            snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
+                            HKvrefint->value(buffer);
+                            string logMsg(buffer);
+                            hkFrame[14] = logMsg;
+                            break;
+                        }
+                        case 'p':
+                        {
+                            snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
+                            HKtemp1->value(buffer);
+                            string logMsg(buffer);
+                            hkFrame[15] = logMsg;
+                            break;
+                        }
+                        case 'q':
+                        {
+                            snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
+                            HKtemp2->value(buffer);
+                            string logMsg(buffer);
+                            hkFrame[16] = logMsg;
+                            break;
+                        }
+                        case 'r':
+                        {
+                            snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
+                            HKtemp3->value(buffer);
+                            string logMsg(buffer);
+                            hkFrame[17] = logMsg;
+                            break;
+                        }
+                        case 's':
+                        {
+                            snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
+                            HKtemp4->value(buffer);
+                            string logMsg(buffer);
+                            hkFrame[18] = logMsg;
+                            break;
+                        }
+                        case 't':
+                        {
+                            snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
                             HKbusvmon->value(buffer);
                             string logMsg(buffer);
                             hkFrame[2] = logMsg;
                             break;
                         }
-                        case 'o':
+                        case 'u':
                         {
                             snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
                             HKbusimon->value(buffer);
@@ -1340,31 +1339,7 @@ int main(int argc, char **argv)
                             hkFrame[3] = logMsg;
                             break;
                         }
-                        case 'p':
-                        {
-                            snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
-                            HK3v3mon->value(buffer);
-                            string logMsg(buffer);
-                            hkFrame[4] = logMsg;
-                            break;
-                        }
-                        case 'q':
-                        {
-                            snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
-                            HKn150vmon->value(buffer);
-                            string logMsg(buffer);
-                            hkFrame[5] = logMsg;
-                            break;
-                        }
-                        case 'r':
-                        {
-                            snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
-                            HKn800vmon->value(buffer);
-                            string logMsg(buffer);
-                            hkFrame[6] = logMsg;
-                            break;
-                        }
-                        case 's':
+                        case 'v':
                         {
                             snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
                             HK2v5mon->value(buffer);
@@ -1372,15 +1347,15 @@ int main(int argc, char **argv)
                             hkFrame[7] = logMsg;
                             break;
                         }
-                        case 't':
+                        case 'w':
                         {
                             snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
-                            HKn5vmon->value(buffer);
+                            HK3v3mon->value(buffer);
                             string logMsg(buffer);
-                            hkFrame[8] = logMsg;
+                            hkFrame[4] = logMsg;
                             break;
                         }
-                        case 'u':
+                        case 'x':
                         {
                             snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
                             HK5vmon->value(buffer);
@@ -1388,7 +1363,7 @@ int main(int argc, char **argv)
                             hkFrame[9] = logMsg;
                             break;
                         }
-                        case 'v':
+                        case 'y':
                         {
                             snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
                             HKn3v3mon->value(buffer);
@@ -1396,15 +1371,15 @@ int main(int argc, char **argv)
                             hkFrame[10] = logMsg;
                             break;
                         }
-                        case 'w':
+                        case 'z':
                         {
                             snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
-                            HK5vrefmon->value(buffer);
+                            HKn5vmon->value(buffer);
                             string logMsg(buffer);
-                            hkFrame[11] = logMsg;
+                            hkFrame[8] = logMsg;
                             break;
                         }
-                        case 'x':
+                        case 'A':
                         {
                             snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
                             HK15vmon->value(buffer);
@@ -1412,12 +1387,29 @@ int main(int argc, char **argv)
                             hkFrame[12] = logMsg;
                             break;
                         }
-                        case 'y':
+
+                        case 'B':
                         {
                             snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
-                            HKvsense->value(buffer);
+                            HK5vrefmon->value(buffer);
                             string logMsg(buffer);
-                            hkFrame[13] = logMsg;
+                            hkFrame[11] = logMsg;
+                            break;
+                        }
+                        case 'C':
+                        {
+                            snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
+                            HKn150vmon->value(buffer);
+                            string logMsg(buffer);
+                            hkFrame[5] = logMsg;
+                            break;
+                        }
+                        case 'D':
+                        {
+                            snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
+                            HKn800vmon->value(buffer);
+                            string logMsg(buffer);
+                            hkFrame[6] = logMsg;
                             break;
                         }
                         }
