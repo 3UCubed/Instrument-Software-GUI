@@ -73,7 +73,7 @@ vector <string> interpret(const string &inputStr) {
     char sync[2];
     int packet = 0;
 
-    string erpaLabels[8] = {"a", "b", "c", "d", "e", "f", "g", "h"};
+    string erpaLabels[8] = {"a", "b", "c", "d", "e", "f", "g"};
     int erpaValues[8];
     int erpaIndex = 0;
     int erpaValid = 0;
@@ -119,34 +119,27 @@ vector <string> interpret(const string &inputStr) {
                 erpaValues[erpaIndex] = ((sync[0] & 0xFF) << 8) | (sync[1] & 0xFF);
                 switch (erpaIndex) {
                     case 0:
-                        /* SEQ Bytes; should be 0xAAAA */
+                        /* SYNC Bytes; should be 0xAAAA */
                         sprintf(result, "%s:0x%X", erpaLabels[erpaIndex].c_str(), erpaValues[erpaIndex]);
                         strings.push_back(result);
                         arrCounter++;
                         break;
                     case 1:
-                        /* SYNC Bytes; 0-65535 */
+                        /* SEQ Bytes; 0-65535 */
                         sprintf(result, "%s:%04d", erpaLabels[erpaIndex].c_str(), erpaValues[erpaIndex]);
                         strings.push_back(result);
                         arrCounter++;
                         break;
                     case 2:
-                        /* ERPA eADC Bytes; Interpreted as Volts */
-                        sprintf(result, "%s:%.3f", erpaLabels[erpaIndex].c_str(),
-                                intToVoltage(erpaValues[erpaIndex], 16, 5, 1.0));
+                        /* ENDMon */
+                        sprintf(result, "%s:%06.3f", erpaLabels[erpaIndex].c_str(),
+                                intToVoltage(erpaValues[erpaIndex], 12, 3.3, 1.0));
                         strings.push_back(result);
                         arrCounter++;
                         break;
                     case 3:
-                        // /* SWP Commanded */
-                        // sprintf(result, "%s:%.1f", erpaLabels[erpaIndex].c_str(),
-                        //         intToVoltage(erpaValues[erpaIndex], 12, 3, 1.0));
-                        // strings.push_back(result);
-                        // arrCounter++;
-                        // break;
-                        
-                        /* ENDMon */
-                        sprintf(result, "%s:%06.3f", erpaLabels[erpaIndex].c_str(),
+                        /* SWP Monitored */
+                        sprintf(result, "%s:%.1f", erpaLabels[erpaIndex].c_str(),
                                 intToVoltage(erpaValues[erpaIndex], 12, 3.3, 1.0));
                         strings.push_back(result);
                         arrCounter++;
@@ -166,14 +159,14 @@ vector <string> interpret(const string &inputStr) {
                         arrCounter++;
                         break;
                     case 6:
-                        /* SWP Monitored */
-                        sprintf(result, "%s:%.1f", erpaLabels[erpaIndex].c_str(),
-                                intToVoltage(erpaValues[erpaIndex], 12, 3.3, 1.0));
+                        /* ERPA eADC Bytes; Interpreted as Volts */
+                        sprintf(result, "%s:%.3f", erpaLabels[erpaIndex].c_str(),
+                                intToVoltage(erpaValues[erpaIndex], 16, 5, 1.0));
                         strings.push_back(result);
                         arrCounter++;
                         break;
                 }
-                erpaIndex = (erpaIndex + 1) % 8;
+                erpaIndex = (erpaIndex + 1) % 7;
             }
             erpaValid = !erpaValid;
         } else if (packet == 2) {

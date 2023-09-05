@@ -24,7 +24,7 @@
 #include <mutex>
 #include <sstream>
 #include "interpreter/interpreter.cpp"
-const char *portName = "/dev/cu.usbserial-FT61TEPN"; // CHANGE TO YOUR PORT NAME
+const char *portName = "/dev/cu.usbserial-FT6E0L8J"; // CHANGE TO YOUR PORT NAME
 const float erpaBPS = 140.0;
 const float hkBPS = 5.6;
 const float pmtBPS = 48.0;
@@ -32,8 +32,8 @@ const float tempsBPS = 2.4;
 float totalBPS = 0;
 int serialPort = open(portName, O_RDWR | O_NOCTTY); // Opening serial port
 int step = 0;
-string erpaLabels[7] = {"ERPA sync", "ERPA seq", "ERPA adc", "ERPA swp-mon", "ERPA temp1", "ERPA temp2", "ERPA endmon"};
 string pmtLabels[3] = {"PMT sync", "PMT seq ", "PMT adc "};
+string erpaLabels[7] = {"ERPA sync", "ERPA seq", "ERPA endmon", "ERPA swp-mon", "ERPA temp1", "ERPA temp2", "ERPA adc"};
 string hkLabels[19] = {"HK sync       ", "HK seq        ", "HK busvmon   ", "HK busimon    ", "HK 3v3mon     ", "HK n150vmon   ", "HK n800vmon   ", "HK 2v5mon     ", "HK n5vmon     ", "HK 5vmon      ", "HK n3v3mon    ", "HK 5vrefmon   ", "HK 15vmon     ", "HK vsense     ", "HK vrefint    ", "TMP 1         ", "TMP 2         ", "TMP 3         ", "TMP 4         "};
 string erpaFrame[7];
 string pmtFrame[3];
@@ -263,13 +263,14 @@ int main(int argc, char **argv)
     float hk_temp2 = 0;
     float hk_temp3 = 0;
     float hk_temp4 = 0;
-// 2v5 above 3.3
-// 5vref below 15
 // resolve zero issue
 // averaging on on board MCU
 // timing for different packets
 // RTC
 // separate data into separate CSV's
+//
+// // sync, seq, endmon, swpmon, tmp1, tmp2,adc
+
     // --------- Vars Keeping Track Of Packet States -----------
     unsigned char valPMT;
     unsigned char valERPA;
@@ -289,7 +290,6 @@ int main(int argc, char **argv)
         std::cerr << "Failed to open the serial port." << std::endl;
         ::exit(0);
     }
-
     tcgetattr(serialPort, &options);
     cfsetispeed(&options, B57600);
     cfsetospeed(&options, B57600);
@@ -454,18 +454,18 @@ int main(int argc, char **argv)
     ERPA2->labelfont();
     ERPA2->labelcolor(text);
     ERPA2->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
-    Fl_Box *ERPA3 = new Fl_Box(x_packet_offset + 300, y_packet_offset + 45, 50, 20, "ADC:");
-    Fl_Output *ERPAadc = new Fl_Output(x_packet_offset + 417, y_packet_offset + 45, 60, 20);
-    ERPAadc->color(box);
-    snprintf(buffer, sizeof(buffer), "%f", erpa_adc);
-    ERPAadc->value(buffer);
-    ERPAadc->box(FL_FLAT_BOX);
-    ERPAadc->textcolor(output);
-    ERPA3->box(FL_FLAT_BOX);
-    ERPA3->color(box);
-    ERPA3->labelfont();
-    ERPA3->labelcolor(text);
-    ERPA3->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+    Fl_Box *ERPA7 = new Fl_Box(x_packet_offset + 300, y_packet_offset + 45, 50, 20, "ENDmon:");
+    Fl_Output *ERPAendmon = new Fl_Output(x_packet_offset + 417, y_packet_offset + 45, 60, 20);
+    ERPAendmon->color(box);
+    snprintf(buffer, sizeof(buffer), "%f", erpa_endmon);
+    ERPAendmon->value(buffer);
+    ERPAendmon->box(FL_FLAT_BOX);
+    ERPAendmon->textcolor(output);
+    ERPA7->box(FL_FLAT_BOX);
+    ERPA7->color(box);
+    ERPA7->labelfont();
+    ERPA7->labelcolor(text);
+    ERPA7->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
     Fl_Box *ERPA4 = new Fl_Box(x_packet_offset + 300, y_packet_offset + 65, 50, 20, "SWP MON:");
     Fl_Output *ERPAswp = new Fl_Output(x_packet_offset + 417, y_packet_offset + 65, 60, 20);
     ERPAswp->color(box);
@@ -502,18 +502,18 @@ int main(int argc, char **argv)
     ERPA6->labelfont();
     ERPA6->labelcolor(text);
     ERPA6->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
-    Fl_Box *ERPA7 = new Fl_Box(x_packet_offset + 300, y_packet_offset + 145, 50, 20, "ENDmon:");
-    Fl_Output *ERPAendmon = new Fl_Output(x_packet_offset + 417, y_packet_offset + 145, 60, 20);
-    ERPAendmon->color(box);
-    snprintf(buffer, sizeof(buffer), "%f", erpa_endmon);
-    ERPAendmon->value(buffer);
-    ERPAendmon->box(FL_FLAT_BOX);
-    ERPAendmon->textcolor(output);
-    ERPA7->box(FL_FLAT_BOX);
-    ERPA7->color(box);
-    ERPA7->labelfont();
-    ERPA7->labelcolor(text);
-    ERPA7->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+    Fl_Box *ERPA3 = new Fl_Box(x_packet_offset + 300, y_packet_offset + 145, 50, 20, "ADC:");
+    Fl_Output *ERPAadc = new Fl_Output(x_packet_offset + 417, y_packet_offset + 145, 60, 20);
+    ERPAadc->color(box);
+    snprintf(buffer, sizeof(buffer), "%f", erpa_adc);
+    ERPAadc->value(buffer);
+    ERPAadc->box(FL_FLAT_BOX);
+    ERPAadc->textcolor(output);
+    ERPA3->box(FL_FLAT_BOX);
+    ERPA3->color(box);
+    ERPA3->labelfont();
+    ERPA3->labelcolor(text);
+    ERPA3->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
 
     // ------------------ PMT Packet Group ---------------------
     Fl_Group *group1 = new Fl_Group(x_packet_offset + 15, y_packet_offset, 200, 400,
@@ -1168,17 +1168,17 @@ int main(int argc, char **argv)
                         case 'c':
                         {
                             snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
-                            ERPAadc->value(buffer);
+                            ERPAendmon->value(buffer);
                             string logMsg(buffer);
-                            erpaFrame[2] = logMsg;
+                            erpaFrame[6] = logMsg;
                             break;
                         }
                         case 'd':
                         {
                             snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
-                            ERPAendmon->value(buffer);
+                            ERPAswp->value(buffer);
                             string logMsg(buffer);
-                            erpaFrame[6] = logMsg;
+                            erpaFrame[3] = logMsg;
                             break;
                         }
                         case 'e':
@@ -1200,9 +1200,9 @@ int main(int argc, char **argv)
                         case 'g':
                         {
                             snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
-                            ERPAswp->value(buffer);
+                            ERPAadc->value(buffer);
                             string logMsg(buffer);
-                            erpaFrame[3] = logMsg;
+                            erpaFrame[2] = logMsg;
                             break;
                         }
                         }
