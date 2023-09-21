@@ -24,7 +24,7 @@
 #include <mutex>
 #include <sstream>
 #include "interpreter/interpreter.cpp"
-const char *portName = "/dev/cu.usbserial-FT6E0L8J"; // CHANGE TO YOUR PORT NAME
+const char *portName = "/dev/cu.usbserial-FT61TEPN"; // CHANGE TO YOUR PORT NAME
 const float erpaBPS = 140.0;
 const float hkBPS = 5.6;
 const float pmtBPS = 48.0;
@@ -162,7 +162,7 @@ void readSerialData(const int &serialPort, std::atomic<bool> &stopFlag, std::ofs
 void stepUpCallback(Fl_Widget *)
 {
     writeSerialData(serialPort, "<");
-    if (step < 5)
+    if (step < 7)
     {
         step++;
     }
@@ -231,7 +231,7 @@ bool toleranceCheck(Fl_Value_Slider *widgetToCheck, Fl_Box *widgetToAlarm, float
 // ------------------- Main Program Function -------------------
 int main(int argc, char **argv)
 {
-    float stepVoltages[6] = {0, 0.5, 1, 1.5, 2, 2.5};
+    float stepVoltages[8] = {0, 0.5, 1, 1.5, 2, 2.5, 3, 3.3};
     // ------------------ Output Field Vars --------------------
     char buffer[32];
     float pmt_sync = 0;
