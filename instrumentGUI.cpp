@@ -16,6 +16,7 @@
 #include <termios.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <dirent.h>
 #include <thread>
 #include <atomic>
 #include <functional>
@@ -24,7 +25,7 @@
 #include <mutex>
 #include <sstream>
 #include "interpreter/interpreter.cpp"
-const char *portName = "/dev/cu.usbserial-FT6E0L8J"; // CHANGE TO YOUR PORT NAME
+const char *portName = "";// CHANGE TO YOUR PORT NAME
 const float erpaBPS = 140.0;
 const float hkBPS = 5.6;
 const float pmtBPS = 48.0;
@@ -228,6 +229,33 @@ bool toleranceCheck(Fl_Value_Slider *widgetToCheck, Fl_Box *widgetToAlarm, float
     }
 }
 
+const char* findSerialPort() {
+    const char* devPath = "/dev/";
+    const char* prefix = "cu.usbserial-"; // Your prefix here
+    DIR* dir = opendir(devPath);
+    if (dir == nullptr) {
+        std::cerr << "Error opening directory" << std::endl;
+        return nullptr;
+    }
+
+    dirent* entry;
+    const char* portName = nullptr;
+
+    while ((entry = readdir(dir)) != nullptr) {
+        const char* filename = entry->d_name;
+        if (strstr(filename, prefix) != nullptr) {
+            // Use strncpy to copy the path to a buffer
+            char buffer[1024]; // Adjust the buffer size as needed
+            snprintf(buffer, sizeof(buffer), "%s%s", devPath, filename);
+            portName = buffer;
+            break; // Use the first matching serial port found
+        }
+    }
+
+    closedir(dir);
+    return portName;
+}
+
 // ------------------- Main Program Function -------------------
 int main(int argc, char **argv)
 {
@@ -280,7 +308,9 @@ int main(int argc, char **argv)
     // ------------------------ Thread Vars --------------------
     struct termios options = {};
     std::atomic<bool> stopFlag(false);
+    
     //    const char *portName = "/dev/cu.usbserial-FT6E8SZC"; // CHANGE TO YOUR PORT NAME
+    portName = findSerialPort();
     std::ofstream outputFile("mylog.0", std::ios::out | std::ios::trunc);
 
     // -------------------- Thread/Port Setup ------------------
