@@ -163,7 +163,7 @@ void readSerialData(const int &serialPort, std::atomic<bool> &stopFlag, std::ofs
 void stepUpCallback(Fl_Widget *)
 {
     writeSerialData(serialPort, "<");
-    if (step < 5)
+    if (step < 7)
     {
         step++;
     }
@@ -259,7 +259,7 @@ const char* findSerialPort() {
 // ------------------- Main Program Function -------------------
 int main(int argc, char **argv)
 {
-    float stepVoltages[6] = {0, 0.5, 1, 1.5, 2, 2.5};
+    float stepVoltages[8] = {0, 0.5, 1, 1.5, 2, 2.5, 3, 3.3};
     // ------------------ Output Field Vars --------------------
     char buffer[32];
     float pmt_sync = 0;
