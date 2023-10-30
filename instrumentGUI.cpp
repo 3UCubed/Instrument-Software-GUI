@@ -42,7 +42,12 @@ string hkFrame[19];
 using namespace std;
 const float tolerance = 0.01;
 bool recording = false;
-string LogName = "logs/eventLog.txt";
+string erpaLog = "";
+string pmtLog = "";
+string hkLog = "";
+ofstream erpaStream;
+ofstream pmtStream;
+ofstream hkStream;
 
 // --------------------- Generate New Log Name -----------------
 string newLogName(){
@@ -56,44 +61,63 @@ string newLogName(){
 // ---------------- Start Recording button event ---------------
 void startRecordingCallback(Fl_Widget *widget)
 {
+
     if (!recording)
     {
         recording = true;
         ((Fl_Button*)widget)->label("RECORDING @square");
-        LogName = newLogName();
+        erpaLog = "ERPA" + newLogName();
+        pmtLog = "PMT" + newLogName();
+        hkLog = "HK" + newLogName();
+
+        erpaStream.open(erpaLog, ios::app);
+        pmtStream.open(pmtLog, ios::app);
+        hkStream.open(hkLog, ios::app);   
     }
     else{
         recording = false;
         ((Fl_Button*)widget)->label("RECORD @circle");
+        erpaStream.close();
+        pmtStream.close();
+        hkStream.close();
     }
 }
 
 // --------------------- Write to Event Log --------------------
-void writeToLog(string label, string msg)
+// @param stream: pass either erpaStream, pmtStream, or hkStream
+// @param label: What data value the log entry is for (sync, adc, temp, etc)
+// @param msg: The actual data to be logged to the log
+void writeToLog(ofstream &stream, string label, string msg)
 {
-    ofstream outStream;
     auto t = std::time(nullptr);
     auto tm = *std::localtime(&t);
-
-    outStream.open(LogName, ios::app);
 
     auto now = chrono::system_clock::now();
     time_t now_c = chrono::system_clock::to_time_t(now);
     auto ms = chrono::duration_cast<chrono::milliseconds>(now.time_since_epoch()) % 1000;
-    //outStream << ctime(&now_c) << ms.count();
-    outStream << put_time(&tm, "%m-%d-%Y %H:%M:%S:") << ms.count() << "\t";
-    outStream << label << "\t" << msg << endl;
-    outStream.close();
+    stream << put_time(&tm, ", %m-%d-%Y %H:%M:%S:") << ms.count() << ", " << label << ", " << msg << "\n";
+    // CSV format: date, time, dataLabel, data
 }
-// ------------------ Insert New Line Into Log -----------------
-void newLine()
+
+// --------------------- Write to Event Log OVERLOADED --------------------
+// Writes to all logs instead of one specified log
+// @param label: What data value the log entry is for (sync, adc, temp, etc)
+// @param msg: The actual data to be logged to the log
+void writeToLog(string label, string msg)
 {
-    
-    ofstream outStream;
-    outStream.open(LogName, ios::app);
-    outStream << endl;
-    outStream.close();
+    auto t = std::time(nullptr);
+    auto tm = *std::localtime(&t);
+
+    auto now = chrono::system_clock::now();
+    time_t now_c = chrono::system_clock::to_time_t(now);
+    auto ms = chrono::duration_cast<chrono::milliseconds>(now.time_since_epoch()) % 1000;
+    erpaStream << put_time(&tm, ", %m-%d-%Y %H:%M:%S:") << ms.count() << ", " << label << ", " << msg << "\n";
+    pmtStream << put_time(&tm, ", %m-%d-%Y %H:%M:%S:") << ms.count() << ", " << label << ", " << msg << "\n";
+    hkStream << put_time(&tm, ", %m-%d-%Y %H:%M:%S:") << ms.count() << ", " << label << ", " << msg << "\n";
+
+    // CSV format: date, time, dataLabel, data
 }
+
 
 // --------------------- Quit button event ---------------------
 void quitCallback(Fl_Widget *)
@@ -924,32 +948,32 @@ int main(int argc, char **argv)
             totalBPS += pmtBPS;
             valPMT = PMT_ON->value();
             writeSerialData(serialPort, "1");
-            writeToLog("", "PMT TOGGLED ON");
-            newLine();
+            writeToLog(pmtStream, "PMT Packet", "ON");
+            
         }
         else if (PMT_ON->value() != valPMT && PMT_ON->value() == 0) // Toggling individual packet data
         {
             totalBPS -= pmtBPS;
             valPMT = PMT_ON->value();
             writeSerialData(serialPort, "!");
-            writeToLog("", "PMT TOGGLED OFF");
-            newLine();
+            writeToLog(pmtStream, "PMT Packet", "OFF");
+            
         }
         if (ERPA_ON->value() != valERPA && ERPA_ON->value() == 1)
         {
             totalBPS += erpaBPS;
             valERPA = ERPA_ON->value();
             writeSerialData(serialPort, "2");
-            writeToLog("", "ERPA TOGGLED ON");
-            newLine();
+            writeToLog(erpaStream, "ERPA Packet", "ON");
+            
         }
         else if (ERPA_ON->value() != valERPA && ERPA_ON->value() == 0)
         {
             totalBPS -= erpaBPS;
             valERPA = ERPA_ON->value();
             writeSerialData(serialPort, "@");
-            writeToLog("", "ERPA TOGGLED OFF");
-            newLine();
+            writeToLog(erpaStream, "ERPA Packet", "OFF");
+            
         }
         if (HK_ON->value() != valHK && HK_ON->value() == 1)
         {
@@ -957,8 +981,8 @@ int main(int argc, char **argv)
             totalBPS += tempsBPS;
             valHK = HK_ON->value();
             writeSerialData(serialPort, "3");
-            writeToLog("", "HK TOGGLED ON");
-            newLine();
+            writeToLog(hkStream, "HK Packet", "ON");
+            
         }
         else if (HK_ON->value() != valHK && HK_ON->value() == 0)
         {
@@ -966,16 +990,16 @@ int main(int argc, char **argv)
             totalBPS -= tempsBPS;
             valHK = HK_ON->value();
             writeSerialData(serialPort, "#");
-            writeToLog("", "HK TOGGLED OFF");
-            newLine();
+            writeToLog(hkStream, "HK Packet", "OFF");
+            
         }
 
 
         if (PB5->value() != valPB5 &&
             PB5->value() == 1) // Making sure sys_on (PB5) is on before activating other GPIO buttons
         {
-            writeToLog("", "SYS_ON TOGGLED HIGH");
-            newLine();
+            writeToLog("Control SYS_ON ", "HIGH");
+
             valPB5 = PB5->value();
             writeSerialData(serialPort, "a");
             PB6->activate();
@@ -989,8 +1013,8 @@ int main(int argc, char **argv)
         else if (PB5->value() != valPB5 &&
                  PB5->value() == 0)
         {
-            writeToLog("", "SYS_ON TOGGLED LOW");
-            newLine();
+            writeToLog("Control SYS_ON", "LOW");
+            
             valPB5 = PB5->value();
             writeSerialData(serialPort, "$");
 
@@ -1030,99 +1054,99 @@ int main(int argc, char **argv)
             {
                 valPB6 = PB6->value();
                 writeSerialData(serialPort, "b");
-                writeToLog("", "800v_en TOGGLED HIGH");
-                newLine();
+                writeToLog("Control 800v_en", "HIGH");
+                
             }
             else if (PB6->value() != valPB6 && PB6->value() == 0)
             {
                 valPB6 = PB6->value();
                 writeSerialData(serialPort, "%");
-                writeToLog("", "800v_en TOGGLED LOW");
-                newLine();
+                writeToLog("Control 800v_en", "LOW");
+                
             }
             if (PC10->value() != valPC10 && PC10->value() == 1)
             {
                 valPC10 = PC10->value();
                 writeSerialData(serialPort, "c");
-                writeToLog("", "5v_en TOGGLED HIGH");
-                newLine();
+                writeToLog("Control 5v_en", "HIGH");
+                
             }
             else if (PC10->value() != valPC10 && PC10->value() == 0)
             {
                 valPC10 = PC10->value();
                 writeSerialData(serialPort, "^");
-                writeToLog("", "5v_en TOGGLED LOW");
-                newLine();
+                writeToLog("Control 5v_en", "LOW");
+                
             }
             if (PC13->value() != valPC13 && PC13->value() == 1)
             {
                 valPC13 = PC13->value();
                 writeSerialData(serialPort, "d");
-                writeToLog("", "n150v_en TOGGLED HIGH");
-                newLine();
+                writeToLog("Control n150v_en", "HIGH");
+                
             }
             else if (PC13->value() != valPC13 && PC13->value() == 0)
             {
                 valPC13 = PC13->value();
                 writeSerialData(serialPort, "&");
-                writeToLog("", "n150v_en TOGGLED LOW");
-                newLine();
+                writeToLog("Control n150v_en", "LOW");
+                
             }
             if (PC7->value() != valPC7 && PC7->value() == 1)
             {
                 valPC7 = PC7->value();
                 writeSerialData(serialPort, "e");
-                writeToLog("", "3v3_en TOGGLED HIGH");
-                newLine();
+                writeToLog("Control 3v3_en", "HIGH");
+                
             }
             else if (PC7->value() != valPC7 && PC7->value() == 0)
             {
                 valPC7 = PC7->value();
                 writeSerialData(serialPort, "*");
-                writeToLog("", "3v3_en TOGGLED LOW");
-                newLine();
+                writeToLog("Control 3v3_en", "LOW");
+                
             }
             if (PC8->value() != valPC8 && PC8->value() == 1)
             {
                 valPC8 = PC8->value();
                 writeSerialData(serialPort, "f");
-                writeToLog("", "n5v_en TOGGLED HIGH");
-                newLine();
+                writeToLog("Control n5v_en", "HIGH");
+                
             }
             else if (PC8->value() != valPC8 && PC8->value() == 0)
             {
                 valPC8 = PC8->value();
                 writeSerialData(serialPort, "(");
-                writeToLog("", "n5v_en TOGGLED LOW");
-                newLine();
+                writeToLog("Control n5v_en", "LOW");
+                
             }
             if (PC9->value() != valPC9 && PC9->value() == 1)
             {
                 valPC9 = PC9->value();
                 writeSerialData(serialPort, "g");
-                writeToLog("", "15v_en TOGGLED HIGH");
-                newLine();
+                writeToLog("Control 15v_en", "HIGH");
+                
             }
             else if (PC9->value() != valPC9 && PC9->value() == 0)
             {
                 valPC9 = PC9->value();
                 writeSerialData(serialPort, ")");
-                writeToLog("", "15v_en TOGGLED LOW");
-                newLine();
+                writeToLog("Control 15v_en", "LOW");
+                
             }
             if (PC6->value() != valPC6 && PC6->value() == 1)
             {
                 valPC6 = PC6->value();
                 writeSerialData(serialPort, "h");
-                writeToLog("", "n3v3_en TOGGLED HIGH");
-                newLine();
+                writeToLog("Control n3v3_en", "HIGH");
+                
             }
             if (PC6->value() != valPC6 && PC6->value() == 0)
             {
                 valPC6 = PC6->value();
                 writeSerialData(serialPort, "-");
-                writeToLog("", "n3v3_en TOGGLED LOW");
-                newLine();
+                writeToLog("Control n3v3_en", "LOW");
+                
             }
         }
 
@@ -1130,29 +1154,29 @@ int main(int argc, char **argv)
         {
             valSDN1 = SDN1->value();
             writeSerialData(serialPort, "G");
-            writeToLog("", "SDN1 TOGGLED ON");
-            newLine();
+            writeToLog("Control SDN1", "ON");
+            
         }
         else if (SDN1->value() != valSDN1 && SDN1->value() == 0)
         {
             valSDN1 = SDN1->value();
             writeSerialData(serialPort, "H");
-            writeToLog("", "SDN1 TOGGLED OFF");
-            newLine();
+            writeToLog("Control SDN1", "OFF");
+            
         }
         if (SDN2->value() != valSDN2 && SDN2->value() == 1)
         {
             valSDN2 = SDN2->value();
             writeSerialData(serialPort, "I");
-            writeToLog("", "SDN2 TOGGLED ON");
-            newLine();
+            writeToLog("Control SDN2", "ON");
+            
         }
         else if (SDN2->value() != valSDN2 && SDN2->value() == 0)
         {
             valSDN2 = SDN2->value();
             writeSerialData(serialPort, "J");
-            writeToLog("", "SDN2 TOGGLED OFF");
-            newLine();
+            writeToLog("Control SDN2", "OFF");
+            
         }
 
         if (turnedOff == 0) // Checking if data is being received before going through packet data
@@ -1177,9 +1201,9 @@ int main(int argc, char **argv)
                             {
                                 for (int i = 0; i < 7; i++)
                                 {
-                                    writeToLog(erpaLabels[i], erpaFrame[i]);
+                                    writeToLog(erpaStream, erpaLabels[i], erpaFrame[i]);
                                 }
-                                newLine();
+                                
                             }
                             snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
                             ERPAsync->value(buffer);
@@ -1248,9 +1272,9 @@ int main(int argc, char **argv)
 
                                 for (int i = 0; i < 3; i++)
                                 {
-                                    writeToLog(pmtLabels[i], pmtFrame[i]);
+                                    writeToLog(pmtStream, pmtLabels[i], pmtFrame[i]);
                                 }
-                                newLine();
+                                
                             }
                             snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
                             PMTsync->value(buffer);
@@ -1287,9 +1311,9 @@ int main(int argc, char **argv)
 
                                 for (int i = 0; i < 19; i++)
                                 {
-                                    writeToLog(hkLabels[i], hkFrame[i]);
+                                    writeToLog(hkStream, hkLabels[i], hkFrame[i]);
                                 }
-                                newLine();
+                                
                             }
                             snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
                             HKsync->value(buffer);

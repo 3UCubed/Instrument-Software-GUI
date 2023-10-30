@@ -74,6 +74,15 @@
     "__functional_base": "cpp",
     "algorithm": "cpp",
     "iterator": "cpp",
-    "utility": "cpp"
+    "utility": "cpp",
+    "charconv": "cpp",
+    "codecvt": "cpp",
+    "format": "cpp",
+    "numeric": "cpp",
+    "queue": "cpp",
+    "random": "cpp",
+    "span": "cpp",
+    "memory_resource": "cpp",
+    "cinttypes": "cpp"
   }
 }
