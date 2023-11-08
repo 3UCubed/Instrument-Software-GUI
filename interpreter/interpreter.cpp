@@ -146,15 +146,15 @@ vector <string> interpret(const string &inputStr) {
                         break;
                     case 4:
                         /* TEMP Op-Amp1 */
-                        sprintf(result, "%s:%07.3f", erpaLabels[erpaIndex].c_str(),
-                                intToCelsius(erpaValues[erpaIndex], 12, 3.3));
+                        sprintf(result, "%s:%06.3f", erpaLabels[erpaIndex].c_str(),
+                                intToVoltage(erpaValues[erpaIndex], 12, 3.3, 1.0));
                         strings.push_back(result);
                         arrCounter++;
                         break;
                     case 5:
                         /* TEMP Op-Amp2 */
-                        sprintf(result, "%s:%07.3f", erpaLabels[erpaIndex].c_str(),
-                                intToCelsius(erpaValues[erpaIndex], 12, 3.3));
+                        sprintf(result, "%s:%06.3f", erpaLabels[erpaIndex].c_str(),
+                                intToVoltage(erpaValues[erpaIndex], 12, 3.3, 1.0));
                         strings.push_back(result);
                         arrCounter++;
                         break;
