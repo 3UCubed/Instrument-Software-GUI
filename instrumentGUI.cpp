@@ -25,7 +25,7 @@
 #include <mutex>
 #include <sstream>
 #include "interpreter/interpreter.cpp"
-const char *portName = "";// CHANGE TO YOUR PORT NAME
+const char *portName = "/dev/cu.usbserial-FT6DXNPY"; // CHANGE TO YOUR PORT NAME
 const float erpaBPS = 140.0;
 const float hkBPS = 5.6;
 const float pmtBPS = 48.0;
@@ -253,6 +253,7 @@ bool toleranceCheck(Fl_Value_Slider *widgetToCheck, Fl_Box *widgetToAlarm, float
     }
 }
 
+/*
 const char* findSerialPort() {
     const char* devPath = "/dev/";
     const char* prefix = "cu.usbserial-"; // Your prefix here
@@ -279,6 +280,7 @@ const char* findSerialPort() {
     closedir(dir);
     return portName;
 }
+*/
 
 // ------------------- Main Program Function -------------------
 int main(int argc, char **argv)
@@ -333,8 +335,7 @@ int main(int argc, char **argv)
     struct termios options = {};
     std::atomic<bool> stopFlag(false);
     
-    //    const char *portName = "/dev/cu.usbserial-FT6E8SZC"; // CHANGE TO YOUR PORT NAME
-    portName = findSerialPort();
+    // portName = findSerialPort();
     std::ofstream outputFile("mylog.0", std::ios::out | std::ios::trunc);
 
     // -------------------- Thread/Port Setup ------------------
