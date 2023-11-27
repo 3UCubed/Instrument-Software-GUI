@@ -24,7 +24,7 @@
 #include <mutex>
 #include <sstream>
 #include "interpreter/interpreter.cpp"
-const char *portName = "/dev/cu.usbserial-FT61TEPN"; // CHANGE TO YOUR PORT NAME
+const char *portName = "/dev/cu.usbserial-FT6DXNPY"; // CHANGE TO YOUR PORT NAME
 const float erpaBPS = 140.0;
 const float hkBPS = 5.6;
 const float pmtBPS = 48.0;
