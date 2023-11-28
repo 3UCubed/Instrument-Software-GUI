@@ -84,5 +84,6 @@
     "span": "cpp",
     "memory_resource": "cpp",
     "cinttypes": "cpp"
-  }
+  },
+  "cmake.sourceDirectory": "/Users/jaredmorrison/Desktop/Instrument-Software-GUI"
 }
