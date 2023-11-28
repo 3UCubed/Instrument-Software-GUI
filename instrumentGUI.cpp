@@ -45,17 +45,65 @@ bool recording = false;
 string erpaLog = "";
 string pmtLog = "";
 string hkLog = "";
+string controlsLog = "";
 ofstream erpaStream;
 ofstream pmtStream;
 ofstream hkStream;
-
+ofstream controlsStream;
 // --------------------- Generate New Log Name -----------------
-string newLogName(){
+string newLogName()
+{
     auto t = std::time(nullptr);
     auto tm = *std::localtime(&t);
     ostringstream oss;
-    oss << put_time(&tm, "logs/%m-%d-%Y %H-%M-%S");
-    return(oss.str());
+    oss << put_time(&tm, "%m-%d-%Y %H-%M-%S");
+    return (oss.str());
+}
+
+
+// --------------------- Write to Event Log --------------------
+void writeToErpaLog(string sync, string seq, string endMon, string SWPMON, string temp1, string temp2, string adc)
+{
+    auto t = std::time(nullptr);
+    auto tm = *std::localtime(&t);
+
+    auto now = chrono::system_clock::now();
+    time_t now_c = chrono::system_clock::to_time_t(now);
+    auto ms = chrono::duration_cast<chrono::milliseconds>(now.time_since_epoch()) % 1000;
+    erpaStream << put_time(&tm, "%m-%d-%Y, %H:%M:%S:") << ms.count() << ", " << sync << ", " << seq << ", " << endMon << ", " << SWPMON << ", " << temp1 << ", " << temp2 << ", " << adc << "\n";
+}
+
+void writeToPMTLog(string sync, string seq, string adc)
+{
+    auto t = std::time(nullptr);
+    auto tm = *std::localtime(&t);
+
+    auto now = chrono::system_clock::now();
+    time_t now_c = chrono::system_clock::to_time_t(now);
+    auto ms = chrono::duration_cast<chrono::milliseconds>(now.time_since_epoch()) % 1000;
+    pmtStream << put_time(&tm, "%m-%d-%Y, %H:%M:%S:") << ms.count() << ", " << sync << ", " << seq << ", " << adc << "\n";
+}
+
+void writeToHKLog(string sync, string seq, string vsense, string vrefint, string temp1, string temp2, string temp3, string temp4, string busvmon, string busimon, string mon2v5, string mon3v3, string vmon5, string n3v3mon, string n5vmon, string vmon15, string vrefmon5, string n200vmon, string n800vmon)
+{
+    auto t = std::time(nullptr);
+    auto tm = *std::localtime(&t);
+
+    auto now = chrono::system_clock::now();
+    time_t now_c = chrono::system_clock::to_time_t(now);
+    auto ms = chrono::duration_cast<chrono::milliseconds>(now.time_since_epoch()) % 1000;
+    hkStream << put_time(&tm, "%m-%d-%Y, %H:%M:%S:") << ms.count() << ", " << sync << ", " << seq << ", " << vsense << ", " << vrefint << ", " << temp1 << ", " << temp2 << ", " << temp3 << ", " << temp4 << ", " << busvmon << ", " << busimon << ", " << mon2v5 << ", " << mon3v3 << ", " << vmon5 << ", " << n3v3mon << ", " << n5vmon << ", " << vmon15 << ", " << vrefmon5 << ", " << n200vmon << ", " << n800vmon << "\n";
+}
+
+void writeToControlsLog(string pmt_on, string erpa_on, string hk_on, string c_sys_on, string c_800v_en, string c_5v_en, string c_n150v_en, string c_3v3_en, string c_n5v_en, string c_15v_en, string c_n3v3_en, string c_sdn1, string c_sdn2)
+{
+    auto t = std::time(nullptr);
+    auto tm = *std::localtime(&t);
+
+    auto now = chrono::system_clock::now();
+    time_t now_c = chrono::system_clock::to_time_t(now);
+    auto ms = chrono::duration_cast<chrono::milliseconds>(now.time_since_epoch()) % 1000;
+    controlsStream << put_time(&tm, "%m-%d-%Y, %H:%M:%S:") << ms.count() << ", " << pmt_on << ", " << erpa_on << ", " << hk_on << ", " << c_sys_on << ", " << c_800v_en << ", " << c_5v_en << ", " << c_n150v_en << ", " << c_3v3_en << ", " << c_n5v_en << ", " << c_15v_en << ", " << c_n3v3_en << ", " << c_sdn1 << ", " << c_sdn2 << "\n";
 }
 
 // ---------------- Start Recording button event ---------------
@@ -65,63 +113,31 @@ void startRecordingCallback(Fl_Widget *widget)
     if (!recording)
     {
         recording = true;
-        ((Fl_Button*)widget)->label("RECORDING @square");
-        erpaLog = "ERPA" + newLogName();
-        pmtLog = "PMT" + newLogName();
-        hkLog = "HK" + newLogName();
+        ((Fl_Button *)widget)->label("RECORDING @square");
+        erpaLog = "logs/ERPA" + newLogName();
+        pmtLog = "logs/PMT" + newLogName();
+        hkLog = "logs/HK" + newLogName();
 
         erpaStream.open(erpaLog, ios::app);
         pmtStream.open(pmtLog, ios::app);
-        hkStream.open(hkLog, ios::app);   
+        hkStream.open(hkLog, ios::app);
+        writeToErpaLog("sync", "seq", "endMon", "SWPMON", "temp1", "temp2", "adc");
+        writeToPMTLog("sync", "seq", "adc");
+        writeToHKLog("sync", "seq", "vsense", "vrefint", "temp1", "temp2", "temp3", "temp4", "busvmon", "busimon", "2v5mov", "3v3mon", "5vmon", "n3v3mon", "n5vmon", "15vmon", "5vrefmon", "n200vmon", "n800vmon");
     }
-    else{
+    else
+    {
         recording = false;
-        ((Fl_Button*)widget)->label("RECORD @circle");
+        ((Fl_Button *)widget)->label("RECORD @circle");
         erpaStream.close();
         pmtStream.close();
         hkStream.close();
     }
 }
-
-// --------------------- Write to Event Log --------------------
-// @param stream: pass either erpaStream, pmtStream, or hkStream
-// @param label: What data value the log entry is for (sync, adc, temp, etc)
-// @param msg: The actual data to be logged to the log
-void writeToLog(ofstream &stream, string label, string msg)
-{
-    auto t = std::time(nullptr);
-    auto tm = *std::localtime(&t);
-
-    auto now = chrono::system_clock::now();
-    time_t now_c = chrono::system_clock::to_time_t(now);
-    auto ms = chrono::duration_cast<chrono::milliseconds>(now.time_since_epoch()) % 1000;
-    stream << put_time(&tm, ", %m-%d-%Y %H:%M:%S:") << ms.count() << ", " << label << ", " << msg << "\n";
-    // CSV format: date, time, dataLabel, data
-}
-
-// --------------------- Write to Event Log OVERLOADED --------------------
-// Writes to all logs instead of one specified log
-// @param label: What data value the log entry is for (sync, adc, temp, etc)
-// @param msg: The actual data to be logged to the log
-void writeToLog(string label, string msg)
-{
-    auto t = std::time(nullptr);
-    auto tm = *std::localtime(&t);
-
-    auto now = chrono::system_clock::now();
-    time_t now_c = chrono::system_clock::to_time_t(now);
-    auto ms = chrono::duration_cast<chrono::milliseconds>(now.time_since_epoch()) % 1000;
-    erpaStream << put_time(&tm, ", %m-%d-%Y %H:%M:%S:") << ms.count() << ", " << label << ", " << msg << "\n";
-    pmtStream << put_time(&tm, ", %m-%d-%Y %H:%M:%S:") << ms.count() << ", " << label << ", " << msg << "\n";
-    hkStream << put_time(&tm, ", %m-%d-%Y %H:%M:%S:") << ms.count() << ", " << label << ", " << msg << "\n";
-
-    // CSV format: date, time, dataLabel, data
-}
-
-
 // --------------------- Quit button event ---------------------
 void quitCallback(Fl_Widget *)
 {
+    controlsStream.close();
     exit(0);
 }
 
@@ -317,13 +333,16 @@ int main(int argc, char **argv)
     float hk_temp2 = 0;
     float hk_temp3 = 0;
     float hk_temp4 = 0;
-// resolve zero issue
-// averaging on on board MCU
-// timing for different packets
-// RTC
-// separate data into separate CSV's
-//
-// // sync, seq, endmon, swpmon, tmp1, tmp2,adc
+    // resolve zero issue
+    // averaging on on board MCU
+    // timing for different packets
+    // RTC
+    // separate data into separate CSV's
+    //
+    // // sync, seq, endmon, swpmon, tmp1, tmp2,adc
+    controlsLog = "logs/Controls" + newLogName();
+    controlsStream.open(controlsLog, ios::app);
+    writeToControlsLog("pmt_on", "erpa_on", "hk_on", "c_sys_on", "c_800v_en", "c_5v_en", "c_n150v_en", "c_3v3_en", "c_n5v_en", "c_15v_en", "c_n3v3_en", "c_sdn1", "c_sdn2");
 
     // --------- Vars Keeping Track Of Packet States -----------
     unsigned char valPMT;
@@ -334,7 +353,7 @@ int main(int argc, char **argv)
     // ------------------------ Thread Vars --------------------
     struct termios options = {};
     std::atomic<bool> stopFlag(false);
-    
+
     // portName = findSerialPort();
     std::ofstream outputFile("mylog.0", std::ios::out | std::ios::trunc);
 
@@ -854,9 +873,6 @@ int main(int argc, char **argv)
     HK7->labelcolor(text);
     HK7->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
 
-
-
-    
     writeSerialData(serialPort, "!");
     usleep(10000);
     writeSerialData(serialPort, "@");
@@ -949,32 +965,28 @@ int main(int argc, char **argv)
             totalBPS += pmtBPS;
             valPMT = PMT_ON->value();
             writeSerialData(serialPort, "1");
-            writeToLog(pmtStream, "PMT Packet", "ON");
-            
+            writeToControlsLog("1", "", "", "", "", "", "", "", "", "", "", "", "");
         }
         else if (PMT_ON->value() != valPMT && PMT_ON->value() == 0) // Toggling individual packet data
         {
             totalBPS -= pmtBPS;
             valPMT = PMT_ON->value();
             writeSerialData(serialPort, "!");
-            writeToLog(pmtStream, "PMT Packet", "OFF");
-            
+            writeToControlsLog("0", "", "", "", "", "", "", "", "", "", "", "", "");
         }
         if (ERPA_ON->value() != valERPA && ERPA_ON->value() == 1)
         {
             totalBPS += erpaBPS;
             valERPA = ERPA_ON->value();
             writeSerialData(serialPort, "2");
-            writeToLog(erpaStream, "ERPA Packet", "ON");
-            
+            writeToControlsLog("", "1", "", "", "", "", "", "", "", "", "", "", "");
         }
         else if (ERPA_ON->value() != valERPA && ERPA_ON->value() == 0)
         {
             totalBPS -= erpaBPS;
             valERPA = ERPA_ON->value();
             writeSerialData(serialPort, "@");
-            writeToLog(erpaStream, "ERPA Packet", "OFF");
-            
+            writeToControlsLog("", "0", "", "", "", "", "", "", "", "", "", "", "");
         }
         if (HK_ON->value() != valHK && HK_ON->value() == 1)
         {
@@ -982,8 +994,7 @@ int main(int argc, char **argv)
             totalBPS += tempsBPS;
             valHK = HK_ON->value();
             writeSerialData(serialPort, "3");
-            writeToLog(hkStream, "HK Packet", "ON");
-            
+            writeToControlsLog("", "", "1", "", "", "", "", "", "", "", "", "", "");
         }
         else if (HK_ON->value() != valHK && HK_ON->value() == 0)
         {
@@ -991,15 +1002,13 @@ int main(int argc, char **argv)
             totalBPS -= tempsBPS;
             valHK = HK_ON->value();
             writeSerialData(serialPort, "#");
-            writeToLog(hkStream, "HK Packet", "OFF");
-            
+            writeToControlsLog("", "", "0", "", "", "", "", "", "", "", "", "", "");
         }
-
 
         if (PB5->value() != valPB5 &&
             PB5->value() == 1) // Making sure sys_on (PB5) is on before activating other GPIO buttons
         {
-            writeToLog("Control SYS_ON ", "HIGH");
+            writeToControlsLog("", "", "", "1", "", "", "", "", "", "", "", "", "");
 
             valPB5 = PB5->value();
             writeSerialData(serialPort, "a");
@@ -1014,8 +1023,8 @@ int main(int argc, char **argv)
         else if (PB5->value() != valPB5 &&
                  PB5->value() == 0)
         {
-            writeToLog("Control SYS_ON", "LOW");
-            
+            writeToControlsLog("", "", "", "0", "", "", "", "", "", "", "", "", "");
+
             valPB5 = PB5->value();
             writeSerialData(serialPort, "$");
 
@@ -1055,99 +1064,85 @@ int main(int argc, char **argv)
             {
                 valPB6 = PB6->value();
                 writeSerialData(serialPort, "b");
-                writeToLog("Control 800v_en", "HIGH");
-                
+                writeToControlsLog("", "", "", "", "1", "", "", "", "", "", "", "", "");
             }
             else if (PB6->value() != valPB6 && PB6->value() == 0)
             {
                 valPB6 = PB6->value();
                 writeSerialData(serialPort, "%");
-                writeToLog("Control 800v_en", "LOW");
-                
+                writeToControlsLog("", "", "", "", "0", "", "", "", "", "", "", "", "");
             }
             if (PC10->value() != valPC10 && PC10->value() == 1)
             {
                 valPC10 = PC10->value();
                 writeSerialData(serialPort, "c");
-                writeToLog("Control 5v_en", "HIGH");
-                
+                writeToControlsLog("", "", "", "", "", "1", "", "", "", "", "", "", "");
             }
             else if (PC10->value() != valPC10 && PC10->value() == 0)
             {
                 valPC10 = PC10->value();
                 writeSerialData(serialPort, "^");
-                writeToLog("Control 5v_en", "LOW");
-                
+                writeToControlsLog("", "", "", "", "", "0", "", "", "", "", "", "", "");
             }
             if (PC13->value() != valPC13 && PC13->value() == 1)
             {
                 valPC13 = PC13->value();
                 writeSerialData(serialPort, "d");
-                writeToLog("Control n150v_en", "HIGH");
-                
+                writeToControlsLog("", "", "", "", "", "", "1", "", "", "", "", "", "");
             }
             else if (PC13->value() != valPC13 && PC13->value() == 0)
             {
                 valPC13 = PC13->value();
                 writeSerialData(serialPort, "&");
-                writeToLog("Control n150v_en", "LOW");
-                
+                writeToControlsLog("", "", "", "", "", "", "0", "", "", "", "", "", "");
             }
             if (PC7->value() != valPC7 && PC7->value() == 1)
             {
                 valPC7 = PC7->value();
                 writeSerialData(serialPort, "e");
-                writeToLog("Control 3v3_en", "HIGH");
-                
+                writeToControlsLog("", "", "", "", "", "", "", "1", "", "", "", "", "");
             }
             else if (PC7->value() != valPC7 && PC7->value() == 0)
             {
                 valPC7 = PC7->value();
                 writeSerialData(serialPort, "*");
-                writeToLog("Control 3v3_en", "LOW");
-                
+                writeToControlsLog("", "", "", "", "", "", "", "0", "", "", "", "", "");
             }
             if (PC8->value() != valPC8 && PC8->value() == 1)
             {
                 valPC8 = PC8->value();
                 writeSerialData(serialPort, "f");
-                writeToLog("Control n5v_en", "HIGH");
-                
+                writeToControlsLog("", "", "", "", "", "", "", "", "1", "", "", "", "");
             }
             else if (PC8->value() != valPC8 && PC8->value() == 0)
             {
                 valPC8 = PC8->value();
                 writeSerialData(serialPort, "(");
-                writeToLog("Control n5v_en", "LOW");
-                
+                writeToControlsLog("", "", "", "", "", "", "", "", "0", "", "", "", "");
             }
             if (PC9->value() != valPC9 && PC9->value() == 1)
             {
                 valPC9 = PC9->value();
                 writeSerialData(serialPort, "g");
-                writeToLog("Control 15v_en", "HIGH");
-                
+                writeToControlsLog("", "", "", "", "", "", "", "", "", "1", "", "", "");
             }
             else if (PC9->value() != valPC9 && PC9->value() == 0)
             {
                 valPC9 = PC9->value();
                 writeSerialData(serialPort, ")");
-                writeToLog("Control 15v_en", "LOW");
-                
+                writeToControlsLog("", "", "", "", "", "", "", "", "", "0", "", "", "");
             }
             if (PC6->value() != valPC6 && PC6->value() == 1)
             {
                 valPC6 = PC6->value();
                 writeSerialData(serialPort, "h");
-                writeToLog("Control n3v3_en", "HIGH");
-                
+                writeToControlsLog("", "", "", "", "", "", "", "", "", "", "1", "", "");
             }
             if (PC6->value() != valPC6 && PC6->value() == 0)
             {
                 valPC6 = PC6->value();
                 writeSerialData(serialPort, "-");
-                writeToLog("Control n3v3_en", "LOW");
-                
+                writeToControlsLog("", "", "", "", "", "", "", "", "", "", "0", "", "");
             }
         }
 
@@ -1155,29 +1150,25 @@ int main(int argc, char **argv)
         {
             valSDN1 = SDN1->value();
             writeSerialData(serialPort, "G");
-            writeToLog("Control SDN1", "ON");
-            
+            writeToControlsLog("", "", "", "", "", "", "", "", "", "", "", "1", "");
         }
         else if (SDN1->value() != valSDN1 && SDN1->value() == 0)
         {
             valSDN1 = SDN1->value();
             writeSerialData(serialPort, "H");
-            writeToLog("Control SDN1", "OFF");
-            
+            writeToControlsLog("", "", "", "", "", "", "", "", "", "", "", "0", "");
         }
         if (SDN2->value() != valSDN2 && SDN2->value() == 1)
         {
             valSDN2 = SDN2->value();
             writeSerialData(serialPort, "I");
-            writeToLog("Control SDN2", "ON");
-            
+            writeToControlsLog("", "", "", "", "", "", "", "", "", "", "", "", "1");
         }
         else if (SDN2->value() != valSDN2 && SDN2->value() == 0)
         {
             valSDN2 = SDN2->value();
             writeSerialData(serialPort, "J");
-            writeToLog("Control SDN2", "OFF");
-            
+            writeToControlsLog("", "", "", "", "", "", "", "", "", "", "", "", "0");
         }
 
         if (turnedOff == 0) // Checking if data is being received before going through packet data
@@ -1200,11 +1191,7 @@ int main(int argc, char **argv)
                         {
                             if (recording)
                             {
-                                for (int i = 0; i < 7; i++)
-                                {
-                                    writeToLog(erpaStream, erpaLabels[i], erpaFrame[i]);
-                                }
-                                
+                                writeToErpaLog(erpaFrame[0], erpaFrame[1], erpaFrame[6], erpaFrame[3], erpaFrame[4], erpaFrame[5], erpaFrame[2]);
                             }
                             snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
                             ERPAsync->value(buffer);
@@ -1270,12 +1257,7 @@ int main(int argc, char **argv)
                         {
                             if (recording)
                             {
-
-                                for (int i = 0; i < 3; i++)
-                                {
-                                    writeToLog(pmtStream, pmtLabels[i], pmtFrame[i]);
-                                }
-                                
+                                writeToPMTLog(pmtFrame[0], pmtFrame[1], pmtFrame[2]);
                             }
                             snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
                             PMTsync->value(buffer);
@@ -1309,12 +1291,7 @@ int main(int argc, char **argv)
                         {
                             if (recording)
                             {
-
-                                for (int i = 0; i < 19; i++)
-                                {
-                                    writeToLog(hkStream, hkLabels[i], hkFrame[i]);
-                                }
-                                
+                                writeToHKLog(hkFrame[0], hkFrame[1], hkFrame[13], hkFrame[14], hkFrame[15], hkFrame[16], hkFrame[17], hkFrame[18], hkFrame[2], hkFrame[3], hkFrame[7], hkFrame[4], hkFrame[9], hkFrame[10], hkFrame[8], hkFrame[12], hkFrame[11], hkFrame[5], hkFrame[6]);
                             }
                             snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
                             HKsync->value(buffer);
