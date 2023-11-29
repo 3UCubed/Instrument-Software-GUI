@@ -114,9 +114,9 @@ void startRecordingCallback(Fl_Widget *widget)
     {
         recording = true;
         ((Fl_Button *)widget)->label("RECORDING @square");
-        erpaLog = "logs/ERPA" + newLogName();
-        pmtLog = "logs/PMT" + newLogName();
-        hkLog = "logs/HK" + newLogName();
+        erpaLog = "logs/ERPA/ERPA" + newLogName() + ".csv";
+        pmtLog = "logs/PMT/PMT" + newLogName() + ".csv";
+        hkLog = "logs/HK/HK" + newLogName() + ".csv";
 
         erpaStream.open(erpaLog, ios::app);
         pmtStream.open(pmtLog, ios::app);
@@ -340,7 +340,7 @@ int main(int argc, char **argv)
     // separate data into separate CSV's
     //
     // // sync, seq, endmon, swpmon, tmp1, tmp2,adc
-    controlsLog = "logs/Controls" + newLogName();
+    controlsLog = "logs/Controls/Controls" + newLogName() + ".csv";
     controlsStream.open(controlsLog, ios::app);
     writeToControlsLog("pmt_on", "erpa_on", "hk_on", "c_sys_on", "c_800v_en", "c_5v_en", "c_n150v_en", "c_3v3_en", "c_n5v_en", "c_15v_en", "c_n3v3_en", "c_sdn1", "c_sdn2");
 
