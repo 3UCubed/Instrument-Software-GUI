@@ -25,6 +25,11 @@
 #include <mutex>
 #include <sstream>
 #include "interpreter/interpreter.cpp"
+
+#define ERPA_HEADER "date, time, sync, seq, endMon, SWPMON, temp1, temp2, adc"
+#define PMT_HEADER "date, time, sync, seq, adc"
+#define HK_HEADER "date, time, sync, seq, vsense, vrefint, temp1, temp2, temp3, temp4, busvmon, busimon, 2v5mov, 3v3mon, 5vmon, n3v3mon, n5vmon, 15vmon, 5refmon, n200vmon, n800vmon"
+
 const char *portName = "/dev/cu.usbserial-FT6DXNPY"; // CHANGE TO YOUR PORT NAME
 const float erpaBPS = 140.0;
 const float hkBPS = 5.6;
@@ -121,10 +126,12 @@ void startRecordingCallback(Fl_Widget *widget)
         erpaStream.open(erpaLog, ios::app);
         pmtStream.open(pmtLog, ios::app);
         hkStream.open(hkLog, ios::app);
-        writeToErpaLog("sync", "seq", "endMon", "SWPMON", "temp1", "temp2", "adc");
-        writeToPMTLog("sync", "seq", "adc");
-        writeToHKLog("sync", "seq", "vsense", "vrefint", "temp1", "temp2", "temp3", "temp4", "busvmon", "busimon", "2v5mov", "3v3mon", "5vmon", "n3v3mon", "n5vmon", "15vmon", "5vrefmon", "n200vmon", "n800vmon");
-    }
+
+        //Write the headers
+        erpaStream << ERPA_HEADER << "\n";
+        pmtStream << PMT_HEADER << "\n";
+        hkStream << HK_HEADER << "\n";
+      }
     else
     {
         recording = false;
