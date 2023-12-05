@@ -186,8 +186,8 @@ void readSerialData(const int &serialPort, std::atomic<bool> &stopFlag, std::ofs
         ssize_t bytesRead = read(serialPort, buffer, bufferSize - 1);
         if (bytesRead > 0)
         {
-            buffer[bytesRead] = '\0';
-            outputFile << buffer;
+            //buffer[bytesRead] = '\0';
+            outputFile.write(buffer, bytesRead);
             bytesReadTotal += bytesRead;
             if (bytesReadTotal >=
                 flushInterval) // Flush and truncate the file if the byte count exceeds the flush interval
