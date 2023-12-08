@@ -170,7 +170,7 @@ void exitStopModeCallback(Fl_Widget *)
 {
     for (int i = 0; i < 12; i++)
     {
-        writeSerialData(serialPort, '[');
+        writeSerialData(serialPort, 0x5B);
     }
 }
 
