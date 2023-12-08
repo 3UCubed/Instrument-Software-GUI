@@ -149,9 +149,10 @@ void quitCallback(Fl_Widget *)
 }
 
 // ----------------- Write data to serial port -----------------
-void writeSerialData(const int &serialPort, const std::string &data)
+void writeSerialData(const int &serialPort, const unsigned char data)
 {
-    ssize_t bytesWritten = write(serialPort, data.c_str(), data.length());
+    const unsigned char * ptr = &data;
+    ssize_t bytesWritten = write(serialPort, ptr, sizeof(unsigned char));
     if (bytesWritten == -1)
     {
         std::cerr << "Error writing to the serial port." << std::endl;
@@ -161,7 +162,7 @@ void writeSerialData(const int &serialPort, const std::string &data)
 // --------------------- Stop Callback -------------------------
 void stopModeCallback(Fl_Widget *)
 {
-    writeSerialData(serialPort, "s");
+    writeSerialData(serialPort, 0x0C);
 }
 
 // ---------------------- Wake-Up Callback ---------------------
@@ -169,7 +170,7 @@ void exitStopModeCallback(Fl_Widget *)
 {
     for (int i = 0; i < 12; i++)
     {
-        writeSerialData(serialPort, "£");
+        writeSerialData(serialPort, '[');
     }
 }
 
@@ -209,7 +210,7 @@ void readSerialData(const int &serialPort, std::atomic<bool> &stopFlag, std::ofs
 // ------------------- Step Up button event --------------------
 void stepUpCallback(Fl_Widget *)
 {
-    writeSerialData(serialPort, "<");
+    writeSerialData(serialPort, 0x1B);
     if (step < 7)
     {
         step++;
@@ -219,7 +220,7 @@ void stepUpCallback(Fl_Widget *)
 // ------------------- Step Down button event ------------------
 void stepDownCallback(Fl_Widget *)
 {
-    writeSerialData(serialPort, ">");
+    writeSerialData(serialPort, 0x1C);
     if (step > 0)
     {
         step--;
@@ -880,31 +881,31 @@ int main(int argc, char **argv)
     HK7->labelcolor(text);
     HK7->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
 
-    writeSerialData(serialPort, "!");
+    writeSerialData(serialPort, 0x10);
     usleep(10000);
-    writeSerialData(serialPort, "@");
+    writeSerialData(serialPort, 0x11);
     usleep(10000);
-    writeSerialData(serialPort, "#");
+    writeSerialData(serialPort, 0x12);
     usleep(10000);
-    writeSerialData(serialPort, "$");
+    writeSerialData(serialPort, 0x13);
     usleep(10000);
-    writeSerialData(serialPort, "%");
+    writeSerialData(serialPort, 0x14);
     usleep(10000);
-    writeSerialData(serialPort, "^");
+    writeSerialData(serialPort, 0x15);
     usleep(10000);
-    writeSerialData(serialPort, "&");
+    writeSerialData(serialPort, 0x16);
     usleep(10000);
-    writeSerialData(serialPort, "*");
+    writeSerialData(serialPort, 0x17);
     usleep(10000);
-    writeSerialData(serialPort, "(");
+    writeSerialData(serialPort, 0x18);
     usleep(10000);
-    writeSerialData(serialPort, ")");
+    writeSerialData(serialPort, 0x19);
     usleep(10000);
-    writeSerialData(serialPort, "-");
+    writeSerialData(serialPort, 0x1A);
     usleep(10000);
-    writeSerialData(serialPort, "H");
+    writeSerialData(serialPort, 0x0A);
     usleep(10000);
-    writeSerialData(serialPort, "J");
+    writeSerialData(serialPort, 0x09);
 
     window->show(); // Opening main window before entering main loop
     Fl::check();
@@ -971,28 +972,28 @@ int main(int argc, char **argv)
         {
             totalBPS += pmtBPS;
             valPMT = PMT_ON->value();
-            writeSerialData(serialPort, "1");
+            writeSerialData(serialPort, 0x0D);
             writeToControlsLog("1", "", "", "", "", "", "", "", "", "", "", "", "");
         }
         else if (PMT_ON->value() != valPMT && PMT_ON->value() == 0) // Toggling individual packet data
         {
             totalBPS -= pmtBPS;
             valPMT = PMT_ON->value();
-            writeSerialData(serialPort, "!");
+            writeSerialData(serialPort, 0x10);
             writeToControlsLog("0", "", "", "", "", "", "", "", "", "", "", "", "");
         }
         if (ERPA_ON->value() != valERPA && ERPA_ON->value() == 1)
         {
             totalBPS += erpaBPS;
             valERPA = ERPA_ON->value();
-            writeSerialData(serialPort, "2");
+            writeSerialData(serialPort, 0x0E);
             writeToControlsLog("", "1", "", "", "", "", "", "", "", "", "", "", "");
         }
         else if (ERPA_ON->value() != valERPA && ERPA_ON->value() == 0)
         {
             totalBPS -= erpaBPS;
             valERPA = ERPA_ON->value();
-            writeSerialData(serialPort, "@");
+            writeSerialData(serialPort, 0x11);
             writeToControlsLog("", "0", "", "", "", "", "", "", "", "", "", "", "");
         }
         if (HK_ON->value() != valHK && HK_ON->value() == 1)
@@ -1000,7 +1001,7 @@ int main(int argc, char **argv)
             totalBPS += hkBPS;
             totalBPS += tempsBPS;
             valHK = HK_ON->value();
-            writeSerialData(serialPort, "3");
+            writeSerialData(serialPort, 0x0F);
             writeToControlsLog("", "", "1", "", "", "", "", "", "", "", "", "", "");
         }
         else if (HK_ON->value() != valHK && HK_ON->value() == 0)
@@ -1008,7 +1009,7 @@ int main(int argc, char **argv)
             totalBPS -= hkBPS;
             totalBPS -= tempsBPS;
             valHK = HK_ON->value();
-            writeSerialData(serialPort, "#");
+            writeSerialData(serialPort, 0x12);
             writeToControlsLog("", "", "0", "", "", "", "", "", "", "", "", "", "");
         }
 
@@ -1018,7 +1019,7 @@ int main(int argc, char **argv)
             writeToControlsLog("", "", "", "1", "", "", "", "", "", "", "", "", "");
 
             valPB5 = PB5->value();
-            writeSerialData(serialPort, "a");
+            writeSerialData(serialPort, 0x00);
             PB6->activate();
             PC10->activate();
             PC13->activate();
@@ -1033,7 +1034,7 @@ int main(int argc, char **argv)
             writeToControlsLog("", "", "", "0", "", "", "", "", "", "", "", "", "");
 
             valPB5 = PB5->value();
-            writeSerialData(serialPort, "$");
+            writeSerialData(serialPort, 0x13);
 
             PB6->deactivate();
             PC10->deactivate();
@@ -1045,110 +1046,110 @@ int main(int argc, char **argv)
 
             PB6->value(0);
             valPB6 = PB6->value();
-            writeSerialData(serialPort, "%");
+            writeSerialData(serialPort, 0x14);
             PC10->value(0);
             valPC10 = PC10->value();
-            writeSerialData(serialPort, "^");
+            writeSerialData(serialPort, 0x15);
             PC13->value(0);
             valPC13 = PC13->value();
-            writeSerialData(serialPort, "&");
+            writeSerialData(serialPort, 0x16);
             PC7->value(0);
             valPC7 = PC7->value();
-            writeSerialData(serialPort, "*");
+            writeSerialData(serialPort, 0x17);
             PC8->value(0);
             valPC8 = PC8->value();
-            writeSerialData(serialPort, "(");
+            writeSerialData(serialPort, 0x18);
             PC9->value(0);
             valPC9 = PC9->value();
-            writeSerialData(serialPort, ")");
+            writeSerialData(serialPort, 0x19);
             PC6->value(0);
             valPC6 = PC6->value();
-            writeSerialData(serialPort, "-");
+            writeSerialData(serialPort, 0x1A);
         }
         if (PB5->value())
         {
             if (PB6->value() != valPB6 && PB6->value() == 1)
             {
                 valPB6 = PB6->value();
-                writeSerialData(serialPort, "b");
+                writeSerialData(serialPort, 0x01);
                 writeToControlsLog("", "", "", "", "1", "", "", "", "", "", "", "", "");
             }
             else if (PB6->value() != valPB6 && PB6->value() == 0)
             {
                 valPB6 = PB6->value();
-                writeSerialData(serialPort, "%");
+                writeSerialData(serialPort, 0x14);
                 writeToControlsLog("", "", "", "", "0", "", "", "", "", "", "", "", "");
             }
             if (PC10->value() != valPC10 && PC10->value() == 1)
             {
                 valPC10 = PC10->value();
-                writeSerialData(serialPort, "c");
+                writeSerialData(serialPort, 0x02);
                 writeToControlsLog("", "", "", "", "", "1", "", "", "", "", "", "", "");
             }
             else if (PC10->value() != valPC10 && PC10->value() == 0)
             {
                 valPC10 = PC10->value();
-                writeSerialData(serialPort, "^");
+                writeSerialData(serialPort, 0x15);
                 writeToControlsLog("", "", "", "", "", "0", "", "", "", "", "", "", "");
             }
             if (PC13->value() != valPC13 && PC13->value() == 1)
             {
                 valPC13 = PC13->value();
-                writeSerialData(serialPort, "d");
+                writeSerialData(serialPort, 0x03);
                 writeToControlsLog("", "", "", "", "", "", "1", "", "", "", "", "", "");
             }
             else if (PC13->value() != valPC13 && PC13->value() == 0)
             {
                 valPC13 = PC13->value();
-                writeSerialData(serialPort, "&");
+                writeSerialData(serialPort, 0x16);
                 writeToControlsLog("", "", "", "", "", "", "0", "", "", "", "", "", "");
             }
             if (PC7->value() != valPC7 && PC7->value() == 1)
             {
                 valPC7 = PC7->value();
-                writeSerialData(serialPort, "e");
+                writeSerialData(serialPort, 0x04);
                 writeToControlsLog("", "", "", "", "", "", "", "1", "", "", "", "", "");
             }
             else if (PC7->value() != valPC7 && PC7->value() == 0)
             {
                 valPC7 = PC7->value();
-                writeSerialData(serialPort, "*");
+                writeSerialData(serialPort, 0x17);
                 writeToControlsLog("", "", "", "", "", "", "", "0", "", "", "", "", "");
             }
             if (PC8->value() != valPC8 && PC8->value() == 1)
             {
                 valPC8 = PC8->value();
-                writeSerialData(serialPort, "f");
+                writeSerialData(serialPort, 0x05);
                 writeToControlsLog("", "", "", "", "", "", "", "", "1", "", "", "", "");
             }
             else if (PC8->value() != valPC8 && PC8->value() == 0)
             {
                 valPC8 = PC8->value();
-                writeSerialData(serialPort, "(");
+                writeSerialData(serialPort, 0x18);
                 writeToControlsLog("", "", "", "", "", "", "", "", "0", "", "", "", "");
             }
             if (PC9->value() != valPC9 && PC9->value() == 1)
             {
                 valPC9 = PC9->value();
-                writeSerialData(serialPort, "g");
+                writeSerialData(serialPort, 0x06);
                 writeToControlsLog("", "", "", "", "", "", "", "", "", "1", "", "", "");
             }
             else if (PC9->value() != valPC9 && PC9->value() == 0)
             {
                 valPC9 = PC9->value();
-                writeSerialData(serialPort, ")");
+                writeSerialData(serialPort, 0x19);
                 writeToControlsLog("", "", "", "", "", "", "", "", "", "0", "", "", "");
             }
             if (PC6->value() != valPC6 && PC6->value() == 1)
             {
                 valPC6 = PC6->value();
-                writeSerialData(serialPort, "h");
+                writeSerialData(serialPort, 0x07);
                 writeToControlsLog("", "", "", "", "", "", "", "", "", "", "1", "", "");
             }
             if (PC6->value() != valPC6 && PC6->value() == 0)
             {
                 valPC6 = PC6->value();
-                writeSerialData(serialPort, "-");
+                writeSerialData(serialPort, 0x1A);
                 writeToControlsLog("", "", "", "", "", "", "", "", "", "", "0", "", "");
             }
         }
@@ -1156,25 +1157,25 @@ int main(int argc, char **argv)
         if (SDN1->value() != valSDN1 && SDN1->value() == 1)
         {
             valSDN1 = SDN1->value();
-            writeSerialData(serialPort, "G");
+            writeSerialData(serialPort, 0x0B);
             writeToControlsLog("", "", "", "", "", "", "", "", "", "", "", "1", "");
         }
         else if (SDN1->value() != valSDN1 && SDN1->value() == 0)
         {
             valSDN1 = SDN1->value();
-            writeSerialData(serialPort, "H");
+            writeSerialData(serialPort, 0x0A);
             writeToControlsLog("", "", "", "", "", "", "", "", "", "", "", "0", "");
         }
         if (SDN2->value() != valSDN2 && SDN2->value() == 1)
         {
             valSDN2 = SDN2->value();
-            writeSerialData(serialPort, "I");
+            writeSerialData(serialPort, 0x08);
             writeToControlsLog("", "", "", "", "", "", "", "", "", "", "", "", "1");
         }
         else if (SDN2->value() != valSDN2 && SDN2->value() == 0)
         {
             valSDN2 = SDN2->value();
-            writeSerialData(serialPort, "J");
+            writeSerialData(serialPort, 0x09);
             writeToControlsLog("", "", "", "", "", "", "", "", "", "", "", "", "0");
         }
 
