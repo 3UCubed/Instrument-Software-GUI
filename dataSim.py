@@ -1,3 +1,4 @@
+import sys
 import serial
 import random
 import time
@@ -8,7 +9,8 @@ mu=threading.Lock()
 #fake data packets (ERPA, PMT, HK)
 #NOTE please pip install serial
 def simPacket(header, length, interval, comPort):
-    while True:
+    while exit_flag:
+        print("thread is running")
         #build a randomized packet data set to attach to header
         packet = [random.randint(0,255) for _ in range(length-2)]
         #preempt data with appropriate header
@@ -36,9 +38,14 @@ comPort = input("Enter COM Port in use (ex. COMx): ")
 ERPA_thread = threading.Thread(target=simPacket, args=(0xAAAA, 14, 100, comPort))
 PMT_thread = threading.Thread(target=simPacket, args=(0xBBBB, 6, 125, comPort))
 HK_thread = threading.Thread(target=simPacket, args=(0xCCCC, 22, 100, comPort))
+exit_flag = True
 #start all of the threads
 ERPA_thread.start()
 PMT_thread.start()
 HK_thread.start()
+#for now we will manually have to end the process
+comPort = input("Type something and press enter to end the process: ") 
+exit_flag = False
+sys.exit()
 
 
