@@ -26,6 +26,7 @@
 #include <sstream>
 #include "interpreter/interpreter.cpp"
 
+#define SWEEP_SPEED 0.5
 #define ERPA_HEADER "date, time, sync, seq, endMon, SWPMON, temp1, temp2, adc"
 #define PMT_HEADER "date, time, sync, seq, adc"
 #define HK_HEADER "date, time, sync, seq, vsense, vrefint, temp1, temp2, temp3, temp4, busvmon, busimon, 2v5mov, 3v3mon, 5vmon, n3v3mon, n5vmon, 15vmon, 5refmon, n200vmon, n800vmon"
@@ -47,6 +48,8 @@ string hkFrame[19];
 using namespace std;
 const float tolerance = 0.01;
 bool recording = false;
+bool autoSweepStarted = false;
+bool steppingUp = true;
 string erpaLog = "";
 string pmtLog = "";
 string hkLog = "";
@@ -207,6 +210,7 @@ void readSerialData(const int &serialPort, std::atomic<bool> &stopFlag, std::ofs
     }
 }
 
+
 // ------------------- Step Up button event --------------------
 void stepUpCallback(Fl_Widget *)
 {
@@ -226,6 +230,41 @@ void stepDownCallback(Fl_Widget *)
         step--;
     }
 }
+
+// ------------------- 100ms Timer Callback --------------------
+void timeoutCallback(void*){
+    if (step == 7){
+        steppingUp = false;
+    }
+    else if (step == 0){
+        steppingUp = true;
+    }
+
+    if (steppingUp){
+        stepUpCallback(nullptr);
+    }
+    else{
+        stepDownCallback(nullptr);
+    }
+
+
+    Fl::repeat_timeout(SWEEP_SPEED, timeoutCallback);    // retrigger timeout
+
+}
+
+// ------------------- Auto Sweep Callback --------------------
+void autoSweepCallback(Fl_Widget *){
+    if (autoSweepStarted){
+        Fl::remove_timeout(timeoutCallback);
+        autoSweepStarted = false;
+    }
+    else{
+        autoSweepStarted = true;
+        Fl::add_timeout(SWEEP_SPEED, timeoutCallback);
+    }
+}
+
+
 
 // ----------- Check If Value Is In Tolerance Range ------------
 bool toleranceCheck(Fl_Output *widgetToCheck, Fl_Box *widgetToAlarm, float initialValue)
@@ -395,6 +434,7 @@ int main(int argc, char **argv)
 
     window->color(darkBackground);
 
+
     Fl_Button *quit = new Fl_Button(15, 10, 40, 40, "ⓧ");
     quit->box(FL_FLAT_BOX);
     quit->color(darkBackground);
@@ -423,8 +463,9 @@ int main(int argc, char **argv)
     Fl_Round_Button *PC13 = new Fl_Round_Button(20, 380, 100, 50, "n200v_en PC13");
     Fl_Round_Button *PB6 = new Fl_Round_Button(20, 430, 100, 50, "800v_en PB6");
 
-    Fl_Button *stepUp = new Fl_Button(25, 490, 110, 35, "Step Up");
-    Fl_Button *stepDown = new Fl_Button(25, 555, 110, 35, "Step Down");
+    Fl_Button *autoSweep = new Fl_Button(25, 475, 110, 25, "Auto Sweep");
+    Fl_Button *stepUp = new Fl_Button(25, 510, 110, 25, "Step Up");
+    Fl_Button *stepDown = new Fl_Button(25, 565, 110, 25, "Step Down");
 
     Fl_Button *enterStopMode = new Fl_Button(25, 610, 110, 35, "Sleep");
     Fl_Button *exitStopMode = new Fl_Button(25, 660, 110, 35, "Wake Up");
@@ -433,15 +474,16 @@ int main(int argc, char **argv)
     startRecording->labelcolor(FL_RED);
     startRecording->callback(startRecordingCallback);
 
+    autoSweep->callback(autoSweepCallback);
     stepDown->callback(stepDownCallback);
+    stepUp->callback(stepUpCallback);
     stepUp->label("Step Up      @8->");
     stepUp->align(FL_ALIGN_CENTER);
     stepDown->label("Step Down  @2->");
     stepDown->align(FL_ALIGN_CENTER);
-    Fl_Output *currStep = new Fl_Output(112, 530, 20, 20);
-    Fl_Output *stepVoltage = new Fl_Output(40, 530, 20, 20);
+    Fl_Output *currStep = new Fl_Output(112, 540, 20, 20);
+    Fl_Output *stepVoltage = new Fl_Output(40, 540, 20, 20);
 
-    stepUp->callback(stepUpCallback);
     enterStopMode->callback(stopModeCallback);
     exitStopMode->callback(exitStopModeCallback);
 
@@ -1188,7 +1230,7 @@ int main(int argc, char **argv)
                 truncate("mylog.0", 0);
                 for (int i = 0; i < strings.size(); i++)
                 {
-                    cout << strings[i] << endl;
+                    //cout << strings[i] << endl;
                     char letter = strings[i][0];
                     strings[i] = strings[i].substr(2);
                     if (ERPA_ON->value())
