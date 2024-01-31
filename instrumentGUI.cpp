@@ -232,36 +232,11 @@ void stepDownCallback(Fl_Widget *)
 }
 
 // ------------------- 100ms Timer Callback --------------------
-void timeoutCallback(void*){
-    if (step == 7){
-        steppingUp = false;
-    }
-    else if (step == 0){
-        steppingUp = true;
-    }
 
-    if (steppingUp){
-        stepUpCallback(nullptr);
-    }
-    else{
-        stepDownCallback(nullptr);
-    }
-
-
-    Fl::repeat_timeout(SWEEP_SPEED, timeoutCallback);    // retrigger timeout
-
-}
 
 // ------------------- Auto Sweep Callback --------------------
 void autoSweepCallback(Fl_Widget *){
-    if (autoSweepStarted){
-        Fl::remove_timeout(timeoutCallback);
-        autoSweepStarted = false;
-    }
-    else{
-        autoSweepStarted = true;
-        Fl::add_timeout(SWEEP_SPEED, timeoutCallback);
-    }
+    writeSerialData(serialPort, 0x1D);
 }
 
 
