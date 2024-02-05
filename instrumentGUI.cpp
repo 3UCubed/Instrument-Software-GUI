@@ -65,7 +65,7 @@ string newLogName()
     auto t = std::time(nullptr);
     auto tm = *std::localtime(&t);
     ostringstream oss;
-    oss << put_time(&tm, "%m-%d-%Y %H-%M-%S");
+    oss << put_time(&tm, "%Y-%m-%d %H-%M-%S");
     return (oss.str());
 }
 
@@ -123,9 +123,9 @@ void startRecordingCallback(Fl_Widget *widget)
     {
         recording = true;
         ((Fl_Button *)widget)->label("RECORDING @square");
-        erpaLog = "logs/ERPA/ERPA" + newLogName() + ".csv";
-        pmtLog = "logs/PMT/PMT" + newLogName() + ".csv";
-        hkLog = "logs/HK/HK" + newLogName() + ".csv";
+        erpaLog = "logs/ERPA/ERPA " + newLogName() + ".csv";
+        pmtLog = "logs/PMT/PMT " + newLogName() + ".csv";
+        hkLog = "logs/HK/HK " + newLogName() + ".csv";
 
         erpaStream.open(erpaLog, ios::app);
         pmtStream.open(pmtLog, ios::app);
