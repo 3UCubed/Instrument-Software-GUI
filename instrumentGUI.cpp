@@ -3,6 +3,7 @@
 
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
+#include <FL/Fl_Value_Input.H>
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Output.H>
 #include <FL/Fl_PNG_Image.H>
@@ -64,7 +65,7 @@ string newLogName()
     auto t = std::time(nullptr);
     auto tm = *std::localtime(&t);
     ostringstream oss;
-    oss << put_time(&tm, "%m-%d-%Y %H-%M-%S");
+    oss << put_time(&tm, "%Y-%m-%d %H-%M-%S");
     return (oss.str());
 }
 
@@ -122,9 +123,9 @@ void startRecordingCallback(Fl_Widget *widget)
     {
         recording = true;
         ((Fl_Button *)widget)->label("RECORDING @square");
-        erpaLog = "logs/ERPA/ERPA" + newLogName() + ".csv";
-        pmtLog = "logs/PMT/PMT" + newLogName() + ".csv";
-        hkLog = "logs/HK/HK" + newLogName() + ".csv";
+        erpaLog = "logs/ERPA/ERPA " + newLogName() + ".csv";
+        pmtLog = "logs/PMT/PMT " + newLogName() + ".csv";
+        hkLog = "logs/HK/HK " + newLogName() + ".csv";
 
         erpaStream.open(erpaLog, ios::app);
         pmtStream.open(pmtLog, ios::app);
@@ -437,8 +438,8 @@ int main(int argc, char **argv)
     Fl_Round_Button *PC9 = new Fl_Round_Button(20, 330, 100, 50, "15v_en PC9");
     Fl_Round_Button *PC13 = new Fl_Round_Button(20, 380, 100, 50, "n200v_en PC13");
     Fl_Round_Button *PB6 = new Fl_Round_Button(20, 430, 100, 50, "800v_en PB6");
-
-    Fl_Value_Slider *vSlide = new Fl_Value_Slider(175, 75, 35, 700, "SWP SPD");
+    
+    Fl_Value_Input *vSlide = new Fl_Value_Input(175, 75, 75, 35, "SWP SPD");
     vSlide->labelcolor(text);
     vSlide->labelfont(FL_BOLD);
     vSlide->align(FL_ALIGN_TOP);
@@ -933,6 +934,7 @@ int main(int argc, char **argv)
     // ---------------- MAIN PROGRAM EVENT LOOP ----------------
     while (1)
     {
+        
         SWEEP_SPEED = vSlide->value();
         // if (toleranceCheck(HKn800vmon, HK7, 800))
         // {
