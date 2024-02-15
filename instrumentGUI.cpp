@@ -33,6 +33,9 @@
 
 const char *portName = "/dev/cu.usbserial-FT6DXNPY"; // CHANGE TO YOUR PORT NAME
 float SWEEP_SPEED = 1.0;
+unsigned char ERPA_SPD = 0;
+unsigned char PMT_SPD = 0;
+unsigned char HK_SPD = 0;
 const float erpaBPS = 140.0;
 const float hkBPS = 5.6;
 const float pmtBPS = 48.0;
@@ -163,6 +166,16 @@ void writeSerialData(const int &serialPort, const unsigned char data)
     }
 }
 
+// ------------ Special Function for writing cadence --------------
+void writeCadenceData(const int &serialPort, const unsigned char* data)
+{
+    ssize_t bytesWritten = write(serialPort, &data, sizeof(unsigned char) * 2);
+    if (bytesWritten == -1)
+    {
+        std::cerr << "Error writing to the serial port." << std::endl;
+    }
+}
+
 // --------------------- Stop Callback -------------------------
 void stopModeCallback(Fl_Widget *)
 {
@@ -232,8 +245,23 @@ void stepDownCallback(Fl_Widget *)
     }
 }
 
-// ------------------- 100ms Timer Callback --------------------
+// ------------------ ERPA Timer Callback ------------------
+void erpaCadenceCallback(Fl_Widget *) {
+    unsigned char data[2] = {0x1E, ERPA_SPD};
+    writeCadenceData(serialPort, data);
+}
 
+// ------------------ PMT Timer Callback ------------------
+void pmtCadenceCallback(Fl_Widget *) {
+    unsigned char data[2] = {0x1F, PMT_SPD};
+    writeCadenceData(serialPort, data);
+}
+
+// ------------------ HK Timer Callback ------------------
+void hkCadenceCallback(Fl_Widget *) {
+    unsigned char data[2] = {0x20, HK_SPD};
+    writeCadenceData(serialPort, data);
+}
 
 // ------------------- Auto Sweep Callback --------------------
 void autoSweepCallback(Fl_Widget *){
@@ -439,6 +467,23 @@ int main(int argc, char **argv)
     Fl_Round_Button *PC13 = new Fl_Round_Button(20, 380, 100, 50, "n200v_en PC13");
     Fl_Round_Button *PB6 = new Fl_Round_Button(20, 430, 100, 50, "800v_en PB6");
     
+    Fl_Value_Input *erpaCadence = new Fl_Value_Input(175, 150, 75, 35, "ERPA SPD");
+    erpaCadence->labelcolor(text);
+    erpaCadence->labelfont(FL_BOLD);
+    erpaCadence->align(FL_ALIGN_TOP);
+    Fl_Button *erpaSendCadence = new Fl_Button(225, 150, 75, 35, "SEND");
+    erpaSendCadence->callback(erpaCadenceCallback);
+    erpaSendCadence->align(FL_ALIGN_CENTER);
+    erpaSendCadence->label("SEND");
+    Fl_Value_Input *pmtCadence = new Fl_Value_Input(175, 225, 75, 35, "PMT SPD");
+    pmtCadence->labelcolor(text);
+    pmtCadence->labelfont(FL_BOLD);
+    pmtCadence->align(FL_ALIGN_TOP);
+    Fl_Value_Input *hkCadence = new Fl_Value_Input(175, 300, 75, 35, "HK SPD");
+    hkCadence->labelcolor(text);
+    hkCadence->labelfont(FL_BOLD);
+    hkCadence->align(FL_ALIGN_TOP);
+
     Fl_Value_Input *vSlide = new Fl_Value_Input(175, 75, 75, 35, "SWP SPD");
     vSlide->labelcolor(text);
     vSlide->labelfont(FL_BOLD);
@@ -936,6 +981,9 @@ int main(int argc, char **argv)
     {
         
         SWEEP_SPEED = vSlide->value();
+        ERPA_SPD = erpaCadence->value();
+        PMT_SPD = pmtCadence->value();
+        HK_SPD = hkCadence->value();
         // if (toleranceCheck(HKn800vmon, HK7, 800))
         // {
         //     PB6->value(0);
