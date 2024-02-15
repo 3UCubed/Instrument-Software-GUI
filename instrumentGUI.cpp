@@ -33,9 +33,9 @@
 
 const char *portName = "/dev/cu.usbserial-FT6DXNPY"; // CHANGE TO YOUR PORT NAME
 float SWEEP_SPEED = 1.0;
-unsigned char ERPA_SPD = 0;
-unsigned char PMT_SPD = 0;
-unsigned char HK_SPD = 0;
+unsigned char ERPA_SPD = 100;
+unsigned char PMT_SPD = 125;
+unsigned char HK_SPD = 100;
 const float erpaBPS = 140.0;
 const float hkBPS = 5.6;
 const float pmtBPS = 48.0;
@@ -169,7 +169,7 @@ void writeSerialData(const int &serialPort, const unsigned char data)
 // ------------ Special Function for writing cadence --------------
 void writeCadenceData(const int &serialPort, const unsigned char* data)
 {
-    ssize_t bytesWritten = write(serialPort, &data, sizeof(unsigned char) * 2);
+    ssize_t bytesWritten = write(serialPort, data, sizeof(data));
     if (bytesWritten == -1)
     {
         std::cerr << "Error writing to the serial port." << std::endl;
@@ -248,18 +248,21 @@ void stepDownCallback(Fl_Widget *)
 // ------------------ ERPA Timer Callback ------------------
 void erpaCadenceCallback(Fl_Widget *) {
     unsigned char data[2] = {0x1E, ERPA_SPD};
+    // printf("%02X %d", data[0], data[1]);
     writeCadenceData(serialPort, data);
 }
 
 // ------------------ PMT Timer Callback ------------------
 void pmtCadenceCallback(Fl_Widget *) {
     unsigned char data[2] = {0x1F, PMT_SPD};
+    // printf("%02X %d", data[0], data[1]);
     writeCadenceData(serialPort, data);
 }
 
 // ------------------ HK Timer Callback ------------------
 void hkCadenceCallback(Fl_Widget *) {
     unsigned char data[2] = {0x20, HK_SPD};
+    // printf("%02X %d", data[0], data[1]);
     writeCadenceData(serialPort, data);
 }
 
@@ -471,7 +474,7 @@ int main(int argc, char **argv)
     erpaCadence->labelcolor(text);
     erpaCadence->labelfont(FL_BOLD);
     erpaCadence->align(FL_ALIGN_TOP);
-    Fl_Button *erpaSendCadence = new Fl_Button(225, 150, 75, 35, "SEND");
+    Fl_Button *erpaSendCadence = new Fl_Button(260, 160, 50, 20, "SEND");
     erpaSendCadence->callback(erpaCadenceCallback);
     erpaSendCadence->align(FL_ALIGN_CENTER);
     erpaSendCadence->label("SEND");
@@ -479,10 +482,18 @@ int main(int argc, char **argv)
     pmtCadence->labelcolor(text);
     pmtCadence->labelfont(FL_BOLD);
     pmtCadence->align(FL_ALIGN_TOP);
+    Fl_Button *pmtSendCadence = new Fl_Button(260, 235, 50, 20, "SEND");
+    pmtSendCadence->callback(pmtCadenceCallback);
+    pmtSendCadence->align(FL_ALIGN_CENTER);
+    pmtSendCadence->label("SEND");
     Fl_Value_Input *hkCadence = new Fl_Value_Input(175, 300, 75, 35, "HK SPD");
     hkCadence->labelcolor(text);
     hkCadence->labelfont(FL_BOLD);
     hkCadence->align(FL_ALIGN_TOP);
+    Fl_Button *hkSendCadence = new Fl_Button(260, 310, 50, 20, "SEND");
+    hkSendCadence->callback(hkCadenceCallback);
+    hkSendCadence->align(FL_ALIGN_CENTER);
+    hkSendCadence->label("SEND");
 
     Fl_Value_Input *vSlide = new Fl_Value_Input(175, 75, 75, 35, "SWP SPD");
     vSlide->labelcolor(text);
