@@ -31,7 +31,7 @@
 #define PMT_HEADER "date, time, sync, seq, adc"
 #define HK_HEADER "date, time, sync, seq, vsense, vrefint, temp1, temp2, temp3, temp4, busvmon, busimon, 2v5mov, 3v3mon, 5vmon, n3v3mon, n5vmon, 15vmon, 5refmon, n200vmon, n800vmon"
 
-const char *portName = "/dev/cu.usbserial-FT6DXNPY"; // CHANGE TO YOUR PORT NAME
+const char *portName = "/dev/cu.usbserial-FT61TEPN"; // CHANGE TO YOUR PORT NAME
 float SWEEP_SPEED = 1.0;
 unsigned char ERPA_SPD = 100;
 unsigned char PMT_SPD = 125;
@@ -159,7 +159,7 @@ void quitCallback(Fl_Widget *)
 void writeSerialData(const int &serialPort, const unsigned char data)
 {
     const unsigned char * ptr = &data;
-    ssize_t bytesWritten = write(serialPort, ptr, sizeof(ptr));
+    ssize_t bytesWritten = write(serialPort, ptr, sizeof(2));
     if (bytesWritten == -1)
     {
         std::cerr << "Error writing to the serial port." << std::endl;
@@ -169,7 +169,7 @@ void writeSerialData(const int &serialPort, const unsigned char data)
 // ------------ Special Function for writing cadence --------------
 void writeCadenceData(const int &serialPort, const unsigned char* data)
 {
-    ssize_t bytesWritten = write(serialPort, data, sizeof(data));
+    ssize_t bytesWritten = write(serialPort, data, sizeof(2));
     if (bytesWritten == -1)
     {
         std::cerr << "Error writing to the serial port." << std::endl;
@@ -1101,7 +1101,7 @@ int main(int argc, char **argv)
             writeToControlsLog("", "", "", "1", "", "", "", "", "", "", "", "", "");
 
             valPB5 = PB5->value();
-            writeSerialData(serialPort, 0x00);
+            writeSerialData(serialPort, 0x21);
             PB6->activate();
             PC10->activate();
             PC13->activate();
