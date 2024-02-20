@@ -159,7 +159,7 @@ void quitCallback(Fl_Widget *)
 void writeSerialData(const int &serialPort, const unsigned char data)
 {
     const unsigned char * ptr = &data;
-    ssize_t bytesWritten = write(serialPort, ptr, sizeof(unsigned char));
+    ssize_t bytesWritten = write(serialPort, ptr, sizeof(ptr));
     if (bytesWritten == -1)
     {
         std::cerr << "Error writing to the serial port." << std::endl;
