@@ -38,6 +38,8 @@ const float hkBPS = 5.6;
 const float pmtBPS = 48.0;
 const float tempsBPS = 2.4;
 float totalBPS = 0;
+int currentFactor = 1;
+char currentFactorBuf[8];
 int serialPort = open(portName, O_RDWR | O_NOCTTY); // Opening serial port
 int step = 0;
 string pmtLabels[3] = {"PMT sync", "PMT seq ", "PMT adc "};
@@ -232,6 +234,20 @@ void stepDownCallback(Fl_Widget *)
     }
 }
 
+void factorUpCallback(Fl_Widget *) {
+    writeSerialData(serialPort, 0x24);
+    if (currentFactor < 16) {
+        currentFactor *= 2;
+    }
+}
+
+void factorDownCallback(Fl_Widget*) {
+    writeSerialData(serialPort, 0x25);
+    if (currentFactor > 1) {
+        currentFactor /= 2;
+    }
+}
+
 // ------------------- 100ms Timer Callback --------------------
 
 
@@ -407,6 +423,7 @@ int main(int argc, char **argv)
     Fl_Color text = fl_rgb_color(203, 207, 213);
     Fl_Color box = fl_rgb_color(46, 47, 56);
     Fl_Color output = fl_rgb_color(60, 116, 239);
+    Fl_Color white = fl_rgb_color(255, 255, 255);
 
     window->color(darkBackground);
 
@@ -448,6 +465,17 @@ int main(int argc, char **argv)
     Fl_Button *stepDown = new Fl_Button(25, 565, 110, 25, "Step Down");
     Fl_Button *enterStopMode = new Fl_Button(25, 610, 110, 35, "Sleep");
     Fl_Button *exitStopMode = new Fl_Button(25, 660, 110, 35, "Wake Up");
+
+    Fl_Button *increaseFactor = new Fl_Button(300, 75, 110, 25, "Factor Up");
+    increaseFactor->callback(factorUpCallback);
+    Fl_Button *decreaseFactor = new Fl_Button(300, 115, 110, 25, "Factor Down");
+    decreaseFactor->callback(factorDownCallback);
+    Fl_Output *curFactor = new Fl_Output(300, 155, 110, 25);
+    curFactor->color(box);
+    curFactor->value(buffer);
+    curFactor->box(FL_FLAT_BOX);
+    curFactor->textcolor(output);
+
 
     Fl_Button *startRecording = new Fl_Button(25, 720, 110, 35, "RECORD @circle");
     startRecording->labelcolor(FL_RED);
@@ -974,7 +1002,8 @@ int main(int argc, char **argv)
         // - 5vref mon
         // - vsense
         // - vrefint
-
+        snprintf(currentFactorBuf, sizeof(currentFactorBuf), "%d", currentFactor);
+        curFactor->value(currentFactorBuf);
         char tempBuf[8];
         snprintf(tempBuf, sizeof(tempBuf), "%d", step);
         currStep->value(tempBuf);
