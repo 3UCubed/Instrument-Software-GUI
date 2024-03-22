@@ -15,6 +15,7 @@
 #include <iostream>
 #include <fstream>
 #include <termios.h>
+#include <stdint.h>
 #include <fcntl.h>
 #include <unistd.h>
 #include <dirent.h>
@@ -39,6 +40,7 @@ const float pmtBPS = 48.0;
 const float tempsBPS = 2.4;
 float totalBPS = 0;
 int currentFactor = 1;
+uint16_t currentHKSpeed = 1;
 char currentFactorBuf[8];
 int serialPort = open(portName, O_RDWR | O_NOCTTY); // Opening serial port
 int step = 0;
@@ -157,8 +159,16 @@ void quitCallback(Fl_Widget *)
 // ----------------- Write data to serial port -----------------
 void writeSerialData(const int &serialPort, const unsigned char data)
 {
-    const unsigned char * ptr = &data;
-    ssize_t bytesWritten = write(serialPort, ptr, sizeof(unsigned char));
+    const unsigned char ptr[3] = {data, 0x00, 0x00};
+    ssize_t bytesWritten = write(serialPort, ptr, 3 * sizeof(unsigned char));
+    if (bytesWritten == -1)
+    {
+        std::cerr << "Error writing to the serial port." << std::endl;
+    }
+}
+
+void writeHkSpeed(const int &serialPort, const unsigned char* data) {
+    ssize_t bytesWritten = write(serialPort, data, 3 * sizeof(unsigned char));
     if (bytesWritten == -1)
     {
         std::cerr << "Error writing to the serial port." << std::endl;
@@ -218,10 +228,6 @@ void readSerialData(const int &serialPort, std::atomic<bool> &stopFlag, std::ofs
 void stepUpCallback(Fl_Widget *)
 {
     writeSerialData(serialPort, 0x1B);
-    if (step < 7)
-    {
-        step++;
-    }
 }
 
 // ------------------- Step Down button event ------------------
@@ -247,6 +253,15 @@ void factorDownCallback(Fl_Widget*) {
         currentFactor /= 2;
     }
 }
+
+void hkSpeedCallback(Fl_Widget *) {
+    unsigned char b1 = (unsigned char) ((currentHKSpeed  & 0xFF00) >> 8);
+    unsigned char b2 = (unsigned char) (currentHKSpeed & 0x00FF);
+    // fprintf(stdout, "%d %d\n", b1, b2);
+    unsigned char data[3] = {0x26, b1, b2};
+    writeHkSpeed(serialPort, data);
+}
+
 
 // ------------------- 100ms Timer Callback --------------------
 
@@ -460,6 +475,15 @@ int main(int argc, char **argv)
     vSlide->labelcolor(text);
     vSlide->labelfont(FL_BOLD);
     vSlide->align(FL_ALIGN_TOP);
+
+    Fl_Value_Input *hkSpeed = new Fl_Value_Input(175, 150, 75, 35, "HK SPD");
+    hkSpeed->labelcolor(text);
+    hkSpeed->labelfont(FL_BOLD);
+    hkSpeed->align(FL_ALIGN_TOP);
+
+    Fl_Button *sendHkSpeed = new Fl_Button(187.5, 200, 50, 25, "Send");
+    sendHkSpeed->callback(hkSpeedCallback);
+
     Fl_Button *autoSweep = new Fl_Button(25, 475, 110, 25, "Auto Sweep");
     Fl_Button *stepUp = new Fl_Button(25, 510, 110, 25, "Step Up");
     Fl_Button *stepDown = new Fl_Button(25, 565, 110, 25, "Step Down");
@@ -964,6 +988,8 @@ int main(int argc, char **argv)
     {
         
         SWEEP_SPEED = vSlide->value();
+        currentHKSpeed = hkSpeed->value();
+
         // if (toleranceCheck(HKn800vmon, HK7, 800))
         // {
         //     PB6->value(0);
