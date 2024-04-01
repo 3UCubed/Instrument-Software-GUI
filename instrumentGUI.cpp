@@ -32,7 +32,6 @@
 #define HK_HEADER "date, time, sync, seq, vsense, vrefint, temp1, temp2, temp3, temp4, busvmon, busimon, 2v5mov, 3v3mon, 5vmon, n3v3mon, n5vmon, 15vmon, 5refmon, n200vmon, n800vmon"
 
 const char *portName = "/dev/cu.usbserial-FT6DXNPY"; // CHANGE TO YOUR PORT NAME
-float SWEEP_SPEED = 1.0;
 const float erpaBPS = 140.0;
 const float hkBPS = 5.6;
 const float pmtBPS = 48.0;
@@ -456,10 +455,6 @@ int main(int argc, char **argv)
     Fl_Round_Button *PC13 = new Fl_Round_Button(20, 380, 100, 50, "n200v_en PC13");
     Fl_Round_Button *PB6 = new Fl_Round_Button(20, 430, 100, 50, "800v_en PB6");
     
-    Fl_Value_Input *vSlide = new Fl_Value_Input(175, 75, 75, 35, "SWP SPD");
-    vSlide->labelcolor(text);
-    vSlide->labelfont(FL_BOLD);
-    vSlide->align(FL_ALIGN_TOP);
     Fl_Button *autoSweep = new Fl_Button(25, 475, 110, 25, "Auto Sweep");
     Fl_Button *stepUp = new Fl_Button(25, 510, 110, 25, "Step Up");
     Fl_Button *stepDown = new Fl_Button(25, 565, 110, 25, "Step Down");
@@ -963,7 +958,6 @@ int main(int argc, char **argv)
     while (1)
     {
         
-        SWEEP_SPEED = vSlide->value();
         // if (toleranceCheck(HKn800vmon, HK7, 800))
         // {
         //     PB6->value(0);
