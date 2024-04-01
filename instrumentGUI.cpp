@@ -235,7 +235,7 @@ void stepDownCallback(Fl_Widget *)
 
 void factorUpCallback(Fl_Widget *) {
     writeSerialData(serialPort, 0x24);
-    if (currentFactor < 16) {
+    if (currentFactor < 32) {
         currentFactor *= 2;
     }
 }
