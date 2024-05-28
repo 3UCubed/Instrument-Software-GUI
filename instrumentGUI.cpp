@@ -1,6 +1,13 @@
-// ------------------------- README -----------------------
-// If you get error "Failed to open serial port" go to line 120
+/**
+* @file
+* @author Jared Morrison, Jared King, Shane Woods
+* @version 1.0
+* @section DESCRIPTION
+*
+* GUI that connects to H7-Instrument-Software and shows packet data in real time
+*/
 
+// ******************************************************************************************************************* INCLUDES
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Value_Input.H>
@@ -27,10 +34,12 @@
 #include <sstream>
 #include "interpreter/interpreter.cpp"
 
+// ******************************************************************************************************************* DEFINES
 #define ERPA_HEADER "date, time, sync, seq, endMon, SWPMON, temp1, temp2, adc"
 #define PMT_HEADER "date, time, sync, seq, adc"
 #define HK_HEADER "date, time, sync, seq, vsense, vrefint, temp1, temp2, temp3, temp4, busvmon, busimon, 2v5mov, 3v3mon, 5vmon, n3v3mon, n5vmon, 15vmon, 5refmon, n200vmon, n800vmon"
 
+// ******************************************************************************************************************* GLOBALS
 const char *portName = "/dev/cu.usbserial-FT6DXNPY"; // CHANGE TO YOUR PORT NAME
 const float erpaBPS = 140.0;
 const float hkBPS = 5.6;
@@ -60,7 +69,18 @@ ofstream erpaStream;
 ofstream pmtStream;
 ofstream hkStream;
 ofstream controlsStream;
-// --------------------- Generate New Log Name -----------------
+
+// ******************************************************************************************************************* HELPER FUNCTIONS
+/**
+ * @brief Generates a new log file name based on the current date and time.
+ *
+ * This function retrieves the current system time, formats it into a string
+ * using the format "YYYY-MM-DD HH-MM-SS", and returns the formatted string.
+ *
+ * @return A string representing the current date and time, formatted as
+ *         "YYYY-MM-DD HH-MM-SS".
+ */
+
 string newLogName()
 {
     auto t = std::time(nullptr);
@@ -70,8 +90,21 @@ string newLogName()
     return (oss.str());
 }
 
-
-// --------------------- Write to Event Log --------------------
+/**
+ * @brief Writes a log entry to the ERPA log stream.
+ *
+ * This function logs various parameters along with the current date and time,
+ * including milliseconds, to the ERPA log stream. The log entry includes the
+ * following parameters: sync, seq, endMon, SWPMON, temp1, temp2, and adc.
+ *
+ * @param sync   A string representing the synchronization state.
+ * @param seq    A string representing the sequence number.
+ * @param endMon A string representing the end monitor status.
+ * @param SWPMON A string representing the SWPMON status.
+ * @param temp1  A string representing the first temperature reading.
+ * @param temp2  A string representing the second temperature reading.
+ * @param adc    A string representing the ADC value.
+ */
 void writeToErpaLog(string sync, string seq, string endMon, string SWPMON, string temp1, string temp2, string adc)
 {
     auto t = std::time(nullptr);
@@ -83,6 +116,17 @@ void writeToErpaLog(string sync, string seq, string endMon, string SWPMON, strin
     erpaStream << put_time(&tm, "%m-%d-%Y, %H:%M:%S:") << ms.count() << ", " << sync << ", " << seq << ", " << endMon << ", " << SWPMON << ", " << temp1 << ", " << temp2 << ", " << adc << "\n";
 }
 
+/**
+ * @brief Writes a log entry to the PMT log stream.
+ *
+ * This function logs various parameters along with the current date and time,
+ * including milliseconds, to the PMT log stream. The log entry includes the
+ * following parameters: sync, seq, and adc.
+ *
+ * @param sync A string representing the synchronization state.
+ * @param seq  A string representing the sequence number.
+ * @param adc  A string representing the ADC value.
+ */
 void writeToPMTLog(string sync, string seq, string adc)
 {
     auto t = std::time(nullptr);
@@ -94,6 +138,35 @@ void writeToPMTLog(string sync, string seq, string adc)
     pmtStream << put_time(&tm, "%m-%d-%Y, %H:%M:%S:") << ms.count() << ", " << sync << ", " << seq << ", " << adc << "\n";
 }
 
+/**
+ * @brief Writes a log entry to the HK log stream.
+ *
+ * This function logs various parameters along with the current date and time,
+ * including milliseconds, to the HK log stream. The log entry includes the
+ * following parameters: sync, seq, vsense, vrefint, temp1, temp2, temp3, temp4,
+ * busvmon, busimon, mon2v5, mon3v3, vmon5, n3v3mon, n5vmon, vmon15, vrefmon5,
+ * n200vmon, and n800vmon.
+ *
+ * @param sync     A string representing the synchronization state.
+ * @param seq      A string representing the sequence number.
+ * @param vsense   A string representing the VSENSE value.
+ * @param vrefint  A string representing the VREFINT value.
+ * @param temp1    A string representing the first temperature sensor value.
+ * @param temp2    A string representing the second temperature sensor value.
+ * @param temp3    A string representing the third temperature sensor value.
+ * @param temp4    A string representing the fourth temperature sensor value.
+ * @param busvmon  A string representing the bus voltage monitor value.
+ * @param busimon  A string representing the bus current monitor value.
+ * @param mon2v5   A string representing the 2.5V monitor value.
+ * @param mon3v3   A string representing the 3.3V monitor value.
+ * @param vmon5    A string representing the 5V monitor value.
+ * @param n3v3mon  A string representing the -3.3V monitor value.
+ * @param n5vmon   A string representing the -5V monitor value.
+ * @param vmon15   A string representing the 15V monitor value.
+ * @param vrefmon5 A string representing the VREF 5V monitor value.
+ * @param n200vmon A string representing the -200V monitor value.
+ * @param n800vmon A string representing the -800V monitor value.
+ */
 void writeToHKLog(string sync, string seq, string vsense, string vrefint, string temp1, string temp2, string temp3, string temp4, string busvmon, string busimon, string mon2v5, string mon3v3, string vmon5, string n3v3mon, string n5vmon, string vmon15, string vrefmon5, string n200vmon, string n800vmon)
 {
     auto t = std::time(nullptr);
@@ -105,6 +178,25 @@ void writeToHKLog(string sync, string seq, string vsense, string vrefint, string
     hkStream << put_time(&tm, "%m-%d-%Y, %H:%M:%S:") << ms.count() << ", " << sync << ", " << seq << ", " << vsense << ", " << vrefint << ", " << temp1 << ", " << temp2 << ", " << temp3 << ", " << temp4 << ", " << busvmon << ", " << busimon << ", " << mon2v5 << ", " << mon3v3 << ", " << vmon5 << ", " << n3v3mon << ", " << n5vmon << ", " << vmon15 << ", " << vrefmon5 << ", " << n200vmon << ", " << n800vmon << "\n";
 }
 
+/**
+ * @brief Writes a log entry to the Controls log stream.
+ *
+ * Logs the current date, time (including milliseconds), and various control states to the Controls log stream.
+ *
+ * @param pmt_on     PMT on state.
+ * @param erpa_on    ERPA on state.
+ * @param hk_on      HK on state.
+ * @param c_sys_on   Control system on state.
+ * @param c_800v_en  800V enable state.
+ * @param c_5v_en    5V enable state.
+ * @param c_n150v_en -150V enable state.
+ * @param c_3v3_en   3.3V enable state.
+ * @param c_n5v_en   -5V enable state.
+ * @param c_15v_en   15V enable state.
+ * @param c_n3v3_en  -3.3V enable state.
+ * @param c_sdn1     Shutdown 1 state.
+ * @param c_sdn2     Shutdown 2 state.
+ */
 void writeToControlsLog(string pmt_on, string erpa_on, string hk_on, string c_sys_on, string c_800v_en, string c_5v_en, string c_n150v_en, string c_3v3_en, string c_n5v_en, string c_15v_en, string c_n3v3_en, string c_sdn1, string c_sdn2)
 {
     auto t = std::time(nullptr);
@@ -116,7 +208,14 @@ void writeToControlsLog(string pmt_on, string erpa_on, string hk_on, string c_sy
     controlsStream << put_time(&tm, "%m-%d-%Y, %H:%M:%S:") << ms.count() << ", " << pmt_on << ", " << erpa_on << ", " << hk_on << ", " << c_sys_on << ", " << c_800v_en << ", " << c_5v_en << ", " << c_n150v_en << ", " << c_3v3_en << ", " << c_n5v_en << ", " << c_15v_en << ", " << c_n3v3_en << ", " << c_sdn1 << ", " << c_sdn2 << "\n";
 }
 
-// ---------------- Start Recording button event ---------------
+/**
+ * @brief Callback function to start or stop recording logs.
+ *
+ * This function toggles the recording state. When recording starts, it creates new log files for ERPA, PMT, and HK,
+ * opens the file streams, and writes headers to the log files. When recording stops, it closes the log file streams.
+ *
+ * @param widget Pointer to the FLTK widget triggering this callback.
+ */
 void startRecordingCallback(Fl_Widget *widget)
 {
 
@@ -132,11 +231,11 @@ void startRecordingCallback(Fl_Widget *widget)
         pmtStream.open(pmtLog, ios::app);
         hkStream.open(hkLog, ios::app);
 
-        //Write the headers
+        // Write the headers
         erpaStream << ERPA_HEADER << "\n";
         pmtStream << PMT_HEADER << "\n";
         hkStream << HK_HEADER << "\n";
-      }
+    }
     else
     {
         recording = false;
@@ -146,17 +245,31 @@ void startRecordingCallback(Fl_Widget *widget)
         hkStream.close();
     }
 }
-// --------------------- Quit button event ---------------------
+
+/**
+ * @brief Callback function to quit the application.
+ *
+ * This function closes the controls log stream and terminates the application.
+ *
+ * @param widget Unused parameter for the FLTK widget triggering this callback.
+ */
 void quitCallback(Fl_Widget *)
 {
     controlsStream.close();
     exit(0);
 }
 
-// ----------------- Write data to serial port -----------------
+/**
+ * @brief Writes a single byte of data to the specified serial port.
+ *
+ * This function sends the provided data byte to the given serial port and logs an error if the write operation fails.
+ *
+ * @param serialPort The file descriptor for the open serial port.
+ * @param data The byte of data to write to the serial port.
+ */
 void writeSerialData(const int &serialPort, const unsigned char data)
 {
-    const unsigned char * ptr = &data;
+    const unsigned char *ptr = &data;
     ssize_t bytesWritten = write(serialPort, ptr, sizeof(unsigned char));
     if (bytesWritten == -1)
     {
@@ -164,13 +277,25 @@ void writeSerialData(const int &serialPort, const unsigned char data)
     }
 }
 
-// --------------------- Stop Callback -------------------------
+/**
+ * @brief Sends a stop mode command over the serial port.
+ *
+ * This function sends a stop mode command (0x0C) over the specified serial port.
+ *
+ * @param serialPort The file descriptor for the open serial port.
+ */
 void stopModeCallback(Fl_Widget *)
 {
     writeSerialData(serialPort, 0x0C);
 }
 
-// ---------------------- Wake-Up Callback ---------------------
+/**
+ * @brief Sends exit stop mode commands over the serial port.
+ *
+ * This function sends exit stop mode commands (0x5B) over the specified serial port.
+ *
+ * @param serialPort The file descriptor for the open serial port.
+ */
 void exitStopModeCallback(Fl_Widget *)
 {
     for (int i = 0; i < 12; i++)
@@ -179,7 +304,16 @@ void exitStopModeCallback(Fl_Widget *)
     }
 }
 
-// ------- Continuously reads data from the serial port --------
+/**
+ * @brief Reads data from the serial port and writes it to an output file.
+ *
+ * This function continuously reads data from the specified serial port and writes it to the specified output file.
+ * It stops when the stopFlag is set to true.
+ *
+ * @param serialPort The file descriptor for the open serial port.
+ * @param stopFlag Atomic boolean flag indicating whether to stop reading.
+ * @param outputFile The output file stream where the data will be written.
+ */
 void readSerialData(const int &serialPort, std::atomic<bool> &stopFlag, std::ofstream &outputFile)
 {
     const int bufferSize = 64;
@@ -192,7 +326,7 @@ void readSerialData(const int &serialPort, std::atomic<bool> &stopFlag, std::ofs
         ssize_t bytesRead = read(serialPort, buffer, bufferSize - 1);
         if (bytesRead > 0)
         {
-            //buffer[bytesRead] = '\0';
+            // buffer[bytesRead] = '\0';
             outputFile.write(buffer, bytesRead);
             bytesReadTotal += bytesRead;
             if (bytesReadTotal >=
@@ -212,8 +346,14 @@ void readSerialData(const int &serialPort, std::atomic<bool> &stopFlag, std::ofs
     }
 }
 
-
-// ------------------- Step Up button event --------------------
+/**
+ * @brief Callback function to step up a process.
+ *
+ * This function sends a command to step up a process via the serial port.
+ * If the current step is less than 7, it increments the step counter.
+ *
+ * @param widget The Fl_Widget triggering the callback.
+ */
 void stepUpCallback(Fl_Widget *)
 {
     writeSerialData(serialPort, 0x1B);
@@ -223,7 +363,14 @@ void stepUpCallback(Fl_Widget *)
     }
 }
 
-// ------------------- Step Down button event ------------------
+/**
+ * @brief Callback function to step down a process.
+ *
+ * This function sends a command to step down a process via the serial port.
+ * If the current step is greater than 0, it decrements the step counter.
+ *
+ * @param widget The Fl_Widget triggering the callback.
+ */
 void stepDownCallback(Fl_Widget *)
 {
     writeSerialData(serialPort, 0x1C);
@@ -233,96 +380,78 @@ void stepDownCallback(Fl_Widget *)
     }
 }
 
-void factorUpCallback(Fl_Widget *) {
+/**
+ * @brief Callback function to increase a factor.
+ *
+ * This function sends a command to increase a factor via the serial port.
+ * If the current factor is less than 32, it doubles the current factor.
+ *
+ * @param widget The Fl_Widget triggering the callback.
+ */
+void factorUpCallback(Fl_Widget *)
+{
     writeSerialData(serialPort, 0x24);
-    if (currentFactor < 32) {
+    if (currentFactor < 32)
+    {
         currentFactor *= 2;
     }
 }
 
-void factorDownCallback(Fl_Widget*) {
+/**
+ * @brief Callback function to decrease a factor.
+ *
+ * This function sends a command to decrease a factor via the serial port.
+ * If the current factor is greater than 1, it divides the current factor by 2.
+ *
+ * @param widget The Fl_Widget triggering the callback.
+ */
+void factorDownCallback(Fl_Widget *)
+{
     writeSerialData(serialPort, 0x25);
-    if (currentFactor > 1) {
+    if (currentFactor > 1)
+    {
         currentFactor /= 2;
     }
 }
 
-// ------------------- 100ms Timer Callback --------------------
-
-
-// ------------------- Auto Sweep Callback --------------------
-void autoSweepCallback(Fl_Widget *){
+/**
+ * @brief Callback function to initiate auto sweep.
+ *
+ * This function sends a command to initiate auto sweep via the serial port.
+ *
+ * @param widget The Fl_Widget triggering the callback.
+ */
+void autoSweepCallback(Fl_Widget *)
+{
     writeSerialData(serialPort, 0x1D);
 }
 
-
-
-// ----------- Check If Value Is In Tolerance Range ------------
-bool toleranceCheck(Fl_Output *widgetToCheck, Fl_Box *widgetToAlarm, float initialValue)
-{ // Returns true if current value is outside of tolerance range, false otherwise
-    float currVal = stof(widgetToCheck->value());
-    float allowedTolerance = initialValue * tolerance;
-    float min = initialValue - allowedTolerance;
-    float max = initialValue + allowedTolerance;
-    if (currVal > max)
+/**
+ * @brief Finds the serial port with a specified prefix.
+ *
+ * This function searches for a serial port in the "/dev/" directory with a given prefix.
+ *
+ * @return A pointer to the serial port name if found, otherwise nullptr.
+ */
+const char *findSerialPort()
+{
+    const char *devPath = "/dev/";
+    const char *prefix = "cu.usbserial-"; // Your prefix here
+    DIR *dir = opendir(devPath);
+    if (dir == nullptr)
     {
-        widgetToAlarm->color(FL_RED);
-        return true;
-    }
-    else if (currVal < min)
-    {
-        widgetToAlarm->color(FL_BLUE);
-        return true;
-    }
-    else
-    {
-        Fl_Color box = fl_rgb_color(46, 47, 56);
-        widgetToAlarm->color(box);
-        return false;
-    }
-}
-
-// ------ Check If Value Is In Tolerance Range Overloaded ------
-bool toleranceCheck(Fl_Value_Slider *widgetToCheck, Fl_Box *widgetToAlarm, float initialValue)
-{ // Function overloaded for temperature sliders
-    float currVal = (float)widgetToCheck->value();
-    float allowedTolerance = initialValue * tolerance;
-    float min = initialValue - allowedTolerance;
-    float max = initialValue + allowedTolerance;
-    if (currVal > max)
-    {
-        widgetToCheck->color(FL_RED);
-        return true;
-    }
-    else if (currVal < min)
-    {
-        widgetToCheck->color(FL_BLUE);
-        return true;
-    }
-    else
-    {
-        Fl_Color box = fl_rgb_color(46, 47, 56);
-        widgetToCheck->color(box);
-        return false;
-    }
-}
-
-/*
-const char* findSerialPort() {
-    const char* devPath = "/dev/";
-    const char* prefix = "cu.usbserial-"; // Your prefix here
-    DIR* dir = opendir(devPath);
-    if (dir == nullptr) {
         std::cerr << "Error opening directory" << std::endl;
         return nullptr;
     }
 
-    dirent* entry;
-    const char* portName = nullptr;
+    dirent *entry;
+    const char *portName = nullptr;
 
-    while ((entry = readdir(dir)) != nullptr) {
-        const char* filename = entry->d_name;
-        if (strstr(filename, prefix) != nullptr) {
+    while ((entry = readdir(dir)) != nullptr)
+    {
+        const char *filename = entry->d_name;
+        if (strstr(filename, prefix) != nullptr)
+        {
             // Use strncpy to copy the path to a buffer
             char buffer[1024]; // Adjust the buffer size as needed
             snprintf(buffer, sizeof(buffer), "%s%s", devPath, filename);
@@ -334,9 +463,14 @@ const char* findSerialPort() {
     closedir(dir);
     return portName;
 }
-*/
 
-// ------------------- Main Program Function -------------------
+/**
+ * @brief The main entry point of the program.
+ *
+ * @param argc The number of command-line arguments.
+ * @param argv An array of command-line arguments.
+ * @return An integer representing the exit status of the program.
+ */
 int main(int argc, char **argv)
 {
     float stepVoltages[8] = {0, 0.5, 1, 1.5, 2, 2.5, 3, 3.3};
@@ -392,7 +526,7 @@ int main(int argc, char **argv)
     struct termios options = {};
     std::atomic<bool> stopFlag(false);
 
-    // portName = findSerialPort();
+    portName = findSerialPort();
     std::ofstream outputFile("mylog.0", std::ios::out | std::ios::trunc);
 
     // -------------------- Thread/Port Setup ------------------
@@ -426,7 +560,6 @@ int main(int argc, char **argv)
 
     window->color(darkBackground);
 
-
     Fl_Button *quit = new Fl_Button(15, 10, 40, 40, "ⓧ");
     quit->box(FL_FLAT_BOX);
     quit->color(darkBackground);
@@ -454,7 +587,7 @@ int main(int argc, char **argv)
     Fl_Round_Button *PC9 = new Fl_Round_Button(20, 330, 100, 50, "15v_en PC9");
     Fl_Round_Button *PC13 = new Fl_Round_Button(20, 380, 100, 50, "n200v_en PC13");
     Fl_Round_Button *PB6 = new Fl_Round_Button(20, 430, 100, 50, "800v_en PB6");
-    
+
     Fl_Button *autoSweep = new Fl_Button(25, 475, 110, 25, "Auto Sweep");
     Fl_Button *stepUp = new Fl_Button(25, 510, 110, 25, "Step Up");
     Fl_Button *stepDown = new Fl_Button(25, 565, 110, 25, "Step Down");
@@ -470,7 +603,6 @@ int main(int argc, char **argv)
     curFactor->value(buffer);
     curFactor->box(FL_FLAT_BOX);
     curFactor->textcolor(output);
-
 
     Fl_Button *startRecording = new Fl_Button(25, 720, 110, 35, "RECORD @circle");
     startRecording->labelcolor(FL_RED);
@@ -957,7 +1089,7 @@ int main(int argc, char **argv)
     // ---------------- MAIN PROGRAM EVENT LOOP ----------------
     while (1)
     {
-        
+
         // if (toleranceCheck(HKn800vmon, HK7, 800))
         // {
         //     PB6->value(0);
@@ -1234,7 +1366,7 @@ int main(int argc, char **argv)
                 truncate("mylog.0", 0);
                 for (int i = 0; i < strings.size(); i++)
                 {
-                    //cout << strings[i] << endl;
+                    // cout << strings[i] << endl;
                     char letter = strings[i][0];
                     strings[i] = strings[i].substr(2);
                     if (ERPA_ON->value())

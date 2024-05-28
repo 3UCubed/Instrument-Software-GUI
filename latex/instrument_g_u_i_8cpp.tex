@@ -1,0 +1,564 @@
+\doxysection{instrument\+GUI.\+cpp File Reference}
+\hypertarget{instrument_g_u_i_8cpp}{}\label{instrument_g_u_i_8cpp}\index{instrumentGUI.cpp@{instrumentGUI.cpp}}
+{\ttfamily \#include $<$FL/\+Fl.\+H$>$}\newline
+{\ttfamily \#include $<$FL/\+Fl\+\_\+\+Window.\+H$>$}\newline
+{\ttfamily \#include $<$FL/\+Fl\+\_\+\+Value\+\_\+\+Input.\+H$>$}\newline
+{\ttfamily \#include $<$FL/\+Fl\+\_\+\+Box.\+H$>$}\newline
+{\ttfamily \#include $<$FL/\+Fl\+\_\+\+Output.\+H$>$}\newline
+{\ttfamily \#include $<$FL/\+Fl\+\_\+\+PNG\+\_\+\+Image.\+H$>$}\newline
+{\ttfamily \#include $<$FL/\+Fl\+\_\+\+Button.\+H$>$}\newline
+{\ttfamily \#include $<$FL/\+Fl\+\_\+\+Round\+\_\+\+Button.\+H$>$}\newline
+{\ttfamily \#include $<$FL/\+Fl\+\_\+\+Value\+\_\+\+Slider.\+H$>$}\newline
+{\ttfamily \#include $<$iomanip$>$}\newline
+{\ttfamily \#include $<$string$>$}\newline
+{\ttfamily \#include $<$iostream$>$}\newline
+{\ttfamily \#include $<$fstream$>$}\newline
+{\ttfamily \#include $<$termios.\+h$>$}\newline
+{\ttfamily \#include $<$fcntl.\+h$>$}\newline
+{\ttfamily \#include $<$unistd.\+h$>$}\newline
+{\ttfamily \#include $<$dirent.\+h$>$}\newline
+{\ttfamily \#include $<$thread$>$}\newline
+{\ttfamily \#include $<$atomic$>$}\newline
+{\ttfamily \#include $<$functional$>$}\newline
+{\ttfamily \#include $<$chrono$>$}\newline
+{\ttfamily \#include $<$mutex$>$}\newline
+{\ttfamily \#include $<$sstream$>$}\newline
+{\ttfamily \#include "{}interpreter/interpreter.\+cpp"{}}\newline
+\doxysubsubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{instrument_g_u_i_8cpp_ac1c9ba1bd20887a1ad03243b0b7ee994}\label{instrument_g_u_i_8cpp_ac1c9ba1bd20887a1ad03243b0b7ee994} 
+\#define {\bfseries ERPA\+\_\+\+HEADER}~"{}date, time, sync, seq, end\+Mon, SWPMON, temp1, temp2, adc"{}
+\item 
+\Hypertarget{instrument_g_u_i_8cpp_abce5b052fa0fdd4912558079e552aac7}\label{instrument_g_u_i_8cpp_abce5b052fa0fdd4912558079e552aac7} 
+\#define {\bfseries PMT\+\_\+\+HEADER}~"{}date, time, sync, seq, adc"{}
+\item 
+\Hypertarget{instrument_g_u_i_8cpp_a6dd5d23f417ef18cc13c4273b62121b1}\label{instrument_g_u_i_8cpp_a6dd5d23f417ef18cc13c4273b62121b1} 
+\#define {\bfseries HK\+\_\+\+HEADER}~"{}date, time, sync, seq, vsense, vrefint, temp1, temp2, temp3, temp4, busvmon, busimon, 2v5mov, 3v3mon, 5vmon, n3v3mon, n5vmon, 15vmon, 5refmon, n200vmon, n800vmon"{}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+string \mbox{\hyperlink{instrument_g_u_i_8cpp_a88ed7b306a57d27acbe48c702f502717}{new\+Log\+Name}} ()
+\begin{DoxyCompactList}\small\item\em Generates a new log file name based on the current date and time. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{instrument_g_u_i_8cpp_a70dded61e8ea59045c52b8017346c306}{write\+To\+Erpa\+Log}} (string sync, string seq, string end\+Mon, string SWPMON, string temp1, string temp2, string adc)
+\begin{DoxyCompactList}\small\item\em Writes a log entry to the ERPA log stream. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{instrument_g_u_i_8cpp_ace1545d23a4b53586d59f971dc4a7b6b}{write\+To\+PMTLog}} (string sync, string seq, string adc)
+\begin{DoxyCompactList}\small\item\em Writes a log entry to the PMT log stream. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{instrument_g_u_i_8cpp_a9e736766b175775727bbac3f8bc25dcb}{write\+To\+HKLog}} (string sync, string seq, string vsense, string vrefint, string temp1, string temp2, string temp3, string temp4, string busvmon, string busimon, string mon2v5, string mon3v3, string vmon5, string n3v3mon, string n5vmon, string vmon15, string vrefmon5, string n200vmon, string n800vmon)
+\begin{DoxyCompactList}\small\item\em Writes a log entry to the HK log stream. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{instrument_g_u_i_8cpp_a3ee559829b6eaa6ebc39b725bc705680}{write\+To\+Controls\+Log}} (string pmt\+\_\+on, string erpa\+\_\+on, string hk\+\_\+on, string c\+\_\+sys\+\_\+on, string c\+\_\+800v\+\_\+en, string c\+\_\+5v\+\_\+en, string c\+\_\+n150v\+\_\+en, string c\+\_\+3v3\+\_\+en, string c\+\_\+n5v\+\_\+en, string c\+\_\+15v\+\_\+en, string c\+\_\+n3v3\+\_\+en, string c\+\_\+sdn1, string c\+\_\+sdn2)
+\begin{DoxyCompactList}\small\item\em Writes a log entry to the Controls log stream. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{instrument_g_u_i_8cpp_a2ce61d68a4032d586f6394d0abd91e63}{start\+Recording\+Callback}} (Fl\+\_\+\+Widget \texorpdfstring{$\ast$}{*}widget)
+\begin{DoxyCompactList}\small\item\em Callback function to start or stop recording logs. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{instrument_g_u_i_8cpp_a2012fc9578686e55fc30c024a3ccecde}{quit\+Callback}} (Fl\+\_\+\+Widget \texorpdfstring{$\ast$}{*})
+\begin{DoxyCompactList}\small\item\em Callback function to quit the application. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{instrument_g_u_i_8cpp_a0635f2e51c6a9fcedcd5da08987919f1}{write\+Serial\+Data}} (const int \&serial\+Port, const unsigned char data)
+\begin{DoxyCompactList}\small\item\em Writes a single byte of data to the specified serial port. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{instrument_g_u_i_8cpp_a78f31a6e86614b3545660e9e56afd9ed}{stop\+Mode\+Callback}} (Fl\+\_\+\+Widget \texorpdfstring{$\ast$}{*})
+\begin{DoxyCompactList}\small\item\em Sends a stop mode command over the serial port. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{instrument_g_u_i_8cpp_ae55419737075b0e7ffc3aca07943cf40}{exit\+Stop\+Mode\+Callback}} (Fl\+\_\+\+Widget \texorpdfstring{$\ast$}{*})
+\begin{DoxyCompactList}\small\item\em Sends exit stop mode commands over the serial port. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{instrument_g_u_i_8cpp_adef2b8937bb096f498c3762409be6a09}{read\+Serial\+Data}} (const int \&serial\+Port, std\+::atomic$<$ bool $>$ \&stop\+Flag, std\+::ofstream \&output\+File)
+\begin{DoxyCompactList}\small\item\em Reads data from the serial port and writes it to an output file. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{instrument_g_u_i_8cpp_a0c118a58cc7d085cf79a4481cf744bdb}{step\+Up\+Callback}} (Fl\+\_\+\+Widget \texorpdfstring{$\ast$}{*})
+\begin{DoxyCompactList}\small\item\em Callback function to step up a process. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{instrument_g_u_i_8cpp_a139d80a4c8bc67191d39c65ac29ea46b}{step\+Down\+Callback}} (Fl\+\_\+\+Widget \texorpdfstring{$\ast$}{*})
+\begin{DoxyCompactList}\small\item\em Callback function to step down a process. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{instrument_g_u_i_8cpp_a69e4144a316e7cdb5a3f332237621e54}{factor\+Up\+Callback}} (Fl\+\_\+\+Widget \texorpdfstring{$\ast$}{*})
+\begin{DoxyCompactList}\small\item\em Callback function to increase a factor. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{instrument_g_u_i_8cpp_ab2a4b4e0d3a81c806ca9a87e9fc8c4a5}{factor\+Down\+Callback}} (Fl\+\_\+\+Widget \texorpdfstring{$\ast$}{*})
+\begin{DoxyCompactList}\small\item\em Callback function to decrease a factor. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{instrument_g_u_i_8cpp_a7435fae06d024bbe3e0ab003a1f0af6a}{auto\+Sweep\+Callback}} (Fl\+\_\+\+Widget \texorpdfstring{$\ast$}{*})
+\begin{DoxyCompactList}\small\item\em Callback function to initiate auto sweep. \end{DoxyCompactList}\item 
+const char \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{instrument_g_u_i_8cpp_a08b1134536af43152874fd57934012c5}{find\+Serial\+Port}} ()
+\begin{DoxyCompactList}\small\item\em Finds the serial port with a specified prefix. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{instrument_g_u_i_8cpp_a3c04138a5bfe5d72780bb7e82a18e627}{main}} (int argc, char \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}argv)
+\begin{DoxyCompactList}\small\item\em The main entry point of the program. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{instrument_g_u_i_8cpp_a071e1cb0252c4e58d948e4ccc7a427b7}\label{instrument_g_u_i_8cpp_a071e1cb0252c4e58d948e4ccc7a427b7} 
+const char \texorpdfstring{$\ast$}{*} {\bfseries port\+Name} = "{}/dev/cu.\+usbserial-\/FT6\+DXNPY"{}
+\item 
+\Hypertarget{instrument_g_u_i_8cpp_ab9ceedb201bf151898b47772fbfe92a8}\label{instrument_g_u_i_8cpp_ab9ceedb201bf151898b47772fbfe92a8} 
+const float {\bfseries erpa\+BPS} = 140.\+0
+\item 
+\Hypertarget{instrument_g_u_i_8cpp_a75240da74b0b8c4f1ab6dc5d088378c3}\label{instrument_g_u_i_8cpp_a75240da74b0b8c4f1ab6dc5d088378c3} 
+const float {\bfseries hk\+BPS} = 5.\+6
+\item 
+\Hypertarget{instrument_g_u_i_8cpp_a86e8b2b7f14e347bab61d9e4a8548495}\label{instrument_g_u_i_8cpp_a86e8b2b7f14e347bab61d9e4a8548495} 
+const float {\bfseries pmt\+BPS} = 48.\+0
+\item 
+\Hypertarget{instrument_g_u_i_8cpp_a9a6730ad7d741872e00f82e40835b274}\label{instrument_g_u_i_8cpp_a9a6730ad7d741872e00f82e40835b274} 
+const float {\bfseries temps\+BPS} = 2.\+4
+\item 
+\Hypertarget{instrument_g_u_i_8cpp_ad594c61f175e5480278c08a9f8623100}\label{instrument_g_u_i_8cpp_ad594c61f175e5480278c08a9f8623100} 
+float {\bfseries total\+BPS} = 0
+\item 
+\Hypertarget{instrument_g_u_i_8cpp_a4d628471e971d2d5f623c9c1162276cf}\label{instrument_g_u_i_8cpp_a4d628471e971d2d5f623c9c1162276cf} 
+int {\bfseries current\+Factor} = 1
+\item 
+\Hypertarget{instrument_g_u_i_8cpp_a5a36f0bb503f386d4b82378c67d911ce}\label{instrument_g_u_i_8cpp_a5a36f0bb503f386d4b82378c67d911ce} 
+char {\bfseries current\+Factor\+Buf} \mbox{[}8\mbox{]}
+\item 
+\Hypertarget{instrument_g_u_i_8cpp_aa20749990357c57fbb6cc1e5b2c8a23c}\label{instrument_g_u_i_8cpp_aa20749990357c57fbb6cc1e5b2c8a23c} 
+int {\bfseries serial\+Port} = open(port\+Name, O\+\_\+\+RDWR \texorpdfstring{$\vert$}{|} O\+\_\+\+NOCTTY)
+\item 
+\Hypertarget{instrument_g_u_i_8cpp_abc16e65f240ed0c8f3e876e8732c0a33}\label{instrument_g_u_i_8cpp_abc16e65f240ed0c8f3e876e8732c0a33} 
+int {\bfseries step} = 0
+\item 
+\Hypertarget{instrument_g_u_i_8cpp_a989beff18106201b6bc90f52d78f0a63}\label{instrument_g_u_i_8cpp_a989beff18106201b6bc90f52d78f0a63} 
+string {\bfseries pmt\+Labels} \mbox{[}3\mbox{]} = \{"{}PMT sync"{}, "{}PMT seq "{}, "{}PMT adc "{}\}
+\item 
+\Hypertarget{instrument_g_u_i_8cpp_a1416ae9e643aba2fcbd416bc0819d7bb}\label{instrument_g_u_i_8cpp_a1416ae9e643aba2fcbd416bc0819d7bb} 
+string {\bfseries erpa\+Labels} \mbox{[}7\mbox{]} = \{"{}ERPA sync"{}, "{}ERPA seq"{}, "{}ERPA endmon"{}, "{}ERPA swp-\/mon"{}, "{}ERPA temp1"{}, "{}ERPA temp2"{}, "{}ERPA adc"{}\}
+\item 
+\Hypertarget{instrument_g_u_i_8cpp_aef7753cce726ee52345bead83e35e7ed}\label{instrument_g_u_i_8cpp_aef7753cce726ee52345bead83e35e7ed} 
+string {\bfseries hk\+Labels} \mbox{[}19\mbox{]} = \{"{}HK sync "{}, "{}HK seq "{}, "{}HK busvmon "{}, "{}HK busimon "{}, "{}HK 3v3mon "{}, "{}HK n150vmon "{}, "{}HK n800vmon "{}, "{}HK 2v5mon "{}, "{}HK n5vmon "{}, "{}HK 5vmon "{}, "{}HK n3v3mon "{}, "{}HK 5vrefmon "{}, "{}HK 15vmon "{}, "{}HK vsense "{}, "{}HK vrefint "{}, "{}TMP 1 "{}, "{}TMP 2 "{}, "{}TMP 3 "{}, "{}TMP 4 "{}\}
+\item 
+\Hypertarget{instrument_g_u_i_8cpp_a90c49a5f1e64c0dbe065ed70beedf473}\label{instrument_g_u_i_8cpp_a90c49a5f1e64c0dbe065ed70beedf473} 
+string {\bfseries erpa\+Frame} \mbox{[}7\mbox{]}
+\item 
+\Hypertarget{instrument_g_u_i_8cpp_a0846ee7b88df0efbf3af05f39f440672}\label{instrument_g_u_i_8cpp_a0846ee7b88df0efbf3af05f39f440672} 
+string {\bfseries pmt\+Frame} \mbox{[}3\mbox{]}
+\item 
+\Hypertarget{instrument_g_u_i_8cpp_a37fb6c70863c8e3adf61fb543e58232e}\label{instrument_g_u_i_8cpp_a37fb6c70863c8e3adf61fb543e58232e} 
+string {\bfseries hk\+Frame} \mbox{[}19\mbox{]}
+\item 
+\Hypertarget{instrument_g_u_i_8cpp_a2e1b356fca82a70b46300d60bf0068ca}\label{instrument_g_u_i_8cpp_a2e1b356fca82a70b46300d60bf0068ca} 
+const float {\bfseries tolerance} = 0.\+01
+\item 
+\Hypertarget{instrument_g_u_i_8cpp_aaaa86cbd88875817d7896b26080d35d4}\label{instrument_g_u_i_8cpp_aaaa86cbd88875817d7896b26080d35d4} 
+bool {\bfseries recording} = false
+\item 
+\Hypertarget{instrument_g_u_i_8cpp_a825f0f653142e7dbe33eb47eba17978a}\label{instrument_g_u_i_8cpp_a825f0f653142e7dbe33eb47eba17978a} 
+bool {\bfseries auto\+Sweep\+Started} = false
+\item 
+\Hypertarget{instrument_g_u_i_8cpp_af8e781bbfd870b100d1f57877446bef4}\label{instrument_g_u_i_8cpp_af8e781bbfd870b100d1f57877446bef4} 
+bool {\bfseries stepping\+Up} = true
+\item 
+\Hypertarget{instrument_g_u_i_8cpp_a0ed20d0f09f7409b695dda9b30fe4329}\label{instrument_g_u_i_8cpp_a0ed20d0f09f7409b695dda9b30fe4329} 
+string {\bfseries erpa\+Log} = "{}"{}
+\item 
+\Hypertarget{instrument_g_u_i_8cpp_a308cd1e73f54cccef8fa685e417fe705}\label{instrument_g_u_i_8cpp_a308cd1e73f54cccef8fa685e417fe705} 
+string {\bfseries pmt\+Log} = "{}"{}
+\item 
+\Hypertarget{instrument_g_u_i_8cpp_aa95f48c45c5744e9d1bbcd698a0129ab}\label{instrument_g_u_i_8cpp_aa95f48c45c5744e9d1bbcd698a0129ab} 
+string {\bfseries hk\+Log} = "{}"{}
+\item 
+\Hypertarget{instrument_g_u_i_8cpp_afe7125866727e58cea26b675a86cd781}\label{instrument_g_u_i_8cpp_afe7125866727e58cea26b675a86cd781} 
+string {\bfseries controls\+Log} = "{}"{}
+\item 
+\Hypertarget{instrument_g_u_i_8cpp_a95e65857921e8f6e368276110b071184}\label{instrument_g_u_i_8cpp_a95e65857921e8f6e368276110b071184} 
+ofstream {\bfseries erpa\+Stream}
+\item 
+\Hypertarget{instrument_g_u_i_8cpp_a4a3abcf313b549e304eb3647f32ad18e}\label{instrument_g_u_i_8cpp_a4a3abcf313b549e304eb3647f32ad18e} 
+ofstream {\bfseries pmt\+Stream}
+\item 
+\Hypertarget{instrument_g_u_i_8cpp_a2481a0e892cdfd5fe5d27291b400190d}\label{instrument_g_u_i_8cpp_a2481a0e892cdfd5fe5d27291b400190d} 
+ofstream {\bfseries hk\+Stream}
+\item 
+\Hypertarget{instrument_g_u_i_8cpp_aba04de89808cc619740ecd0e82df36b9}\label{instrument_g_u_i_8cpp_aba04de89808cc619740ecd0e82df36b9} 
+ofstream {\bfseries controls\+Stream}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\begin{DoxyAuthor}{Author}
+Jared Morrison, Jared King, Shane Woods 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+1.\+0 
+\end{DoxyVersion}
+\hypertarget{instrument_g_u_i_8cpp_DESCRIPTION}{}\doxysubsection{\texorpdfstring{DESCRIPTION}{DESCRIPTION}}\label{instrument_g_u_i_8cpp_DESCRIPTION}
+GUI that connects to H7-\/\+Instrument-\/\+Software and shows packet data in real time 
+
+\doxysubsection{Function Documentation}
+\Hypertarget{instrument_g_u_i_8cpp_a7435fae06d024bbe3e0ab003a1f0af6a}\index{instrumentGUI.cpp@{instrumentGUI.cpp}!autoSweepCallback@{autoSweepCallback}}
+\index{autoSweepCallback@{autoSweepCallback}!instrumentGUI.cpp@{instrumentGUI.cpp}}
+\doxysubsubsection{\texorpdfstring{autoSweepCallback()}{autoSweepCallback()}}
+{\footnotesize\ttfamily \label{instrument_g_u_i_8cpp_a7435fae06d024bbe3e0ab003a1f0af6a} 
+void auto\+Sweep\+Callback (\begin{DoxyParamCaption}\item[{Fl\+\_\+\+Widget \texorpdfstring{$\ast$}{*}}]{}{}\end{DoxyParamCaption})}
+
+
+
+Callback function to initiate auto sweep. 
+
+This function sends a command to initiate auto sweep via the serial port.
+
+
+\begin{DoxyParams}{Parameters}
+{\em widget} & The Fl\+\_\+\+Widget triggering the callback. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{instrument_g_u_i_8cpp_ae55419737075b0e7ffc3aca07943cf40}\index{instrumentGUI.cpp@{instrumentGUI.cpp}!exitStopModeCallback@{exitStopModeCallback}}
+\index{exitStopModeCallback@{exitStopModeCallback}!instrumentGUI.cpp@{instrumentGUI.cpp}}
+\doxysubsubsection{\texorpdfstring{exitStopModeCallback()}{exitStopModeCallback()}}
+{\footnotesize\ttfamily \label{instrument_g_u_i_8cpp_ae55419737075b0e7ffc3aca07943cf40} 
+void exit\+Stop\+Mode\+Callback (\begin{DoxyParamCaption}\item[{Fl\+\_\+\+Widget \texorpdfstring{$\ast$}{*}}]{}{}\end{DoxyParamCaption})}
+
+
+
+Sends exit stop mode commands over the serial port. 
+
+This function sends exit stop mode commands (0x5B) over the specified serial port.
+
+
+\begin{DoxyParams}{Parameters}
+{\em serial\+Port} & The file descriptor for the open serial port. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{instrument_g_u_i_8cpp_ab2a4b4e0d3a81c806ca9a87e9fc8c4a5}\index{instrumentGUI.cpp@{instrumentGUI.cpp}!factorDownCallback@{factorDownCallback}}
+\index{factorDownCallback@{factorDownCallback}!instrumentGUI.cpp@{instrumentGUI.cpp}}
+\doxysubsubsection{\texorpdfstring{factorDownCallback()}{factorDownCallback()}}
+{\footnotesize\ttfamily \label{instrument_g_u_i_8cpp_ab2a4b4e0d3a81c806ca9a87e9fc8c4a5} 
+void factor\+Down\+Callback (\begin{DoxyParamCaption}\item[{Fl\+\_\+\+Widget \texorpdfstring{$\ast$}{*}}]{}{}\end{DoxyParamCaption})}
+
+
+
+Callback function to decrease a factor. 
+
+This function sends a command to decrease a factor via the serial port. If the current factor is greater than 1, it divides the current factor by 2.
+
+
+\begin{DoxyParams}{Parameters}
+{\em widget} & The Fl\+\_\+\+Widget triggering the callback. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{instrument_g_u_i_8cpp_a69e4144a316e7cdb5a3f332237621e54}\index{instrumentGUI.cpp@{instrumentGUI.cpp}!factorUpCallback@{factorUpCallback}}
+\index{factorUpCallback@{factorUpCallback}!instrumentGUI.cpp@{instrumentGUI.cpp}}
+\doxysubsubsection{\texorpdfstring{factorUpCallback()}{factorUpCallback()}}
+{\footnotesize\ttfamily \label{instrument_g_u_i_8cpp_a69e4144a316e7cdb5a3f332237621e54} 
+void factor\+Up\+Callback (\begin{DoxyParamCaption}\item[{Fl\+\_\+\+Widget \texorpdfstring{$\ast$}{*}}]{}{}\end{DoxyParamCaption})}
+
+
+
+Callback function to increase a factor. 
+
+This function sends a command to increase a factor via the serial port. If the current factor is less than 32, it doubles the current factor.
+
+
+\begin{DoxyParams}{Parameters}
+{\em widget} & The Fl\+\_\+\+Widget triggering the callback. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{instrument_g_u_i_8cpp_a08b1134536af43152874fd57934012c5}\index{instrumentGUI.cpp@{instrumentGUI.cpp}!findSerialPort@{findSerialPort}}
+\index{findSerialPort@{findSerialPort}!instrumentGUI.cpp@{instrumentGUI.cpp}}
+\doxysubsubsection{\texorpdfstring{findSerialPort()}{findSerialPort()}}
+{\footnotesize\ttfamily \label{instrument_g_u_i_8cpp_a08b1134536af43152874fd57934012c5} 
+const char \texorpdfstring{$\ast$}{*} find\+Serial\+Port (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Finds the serial port with a specified prefix. 
+
+This function searches for a serial port in the "{}/dev/"{} directory with a given prefix.
+
+\begin{DoxyReturn}{Returns}
+A pointer to the serial port name if found, otherwise nullptr. 
+\end{DoxyReturn}
+\Hypertarget{instrument_g_u_i_8cpp_a3c04138a5bfe5d72780bb7e82a18e627}\index{instrumentGUI.cpp@{instrumentGUI.cpp}!main@{main}}
+\index{main@{main}!instrumentGUI.cpp@{instrumentGUI.cpp}}
+\doxysubsubsection{\texorpdfstring{main()}{main()}}
+{\footnotesize\ttfamily \label{instrument_g_u_i_8cpp_a3c04138a5bfe5d72780bb7e82a18e627} 
+int main (\begin{DoxyParamCaption}\item[{int}]{argc}{, }\item[{char \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}}]{argv}{}\end{DoxyParamCaption})}
+
+
+
+The main entry point of the program. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em argc} & The number of command-\/line arguments. \\
+\hline
+{\em argv} & An array of command-\/line arguments. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+An integer representing the exit status of the program. 
+\end{DoxyReturn}
+\Hypertarget{instrument_g_u_i_8cpp_a88ed7b306a57d27acbe48c702f502717}\index{instrumentGUI.cpp@{instrumentGUI.cpp}!newLogName@{newLogName}}
+\index{newLogName@{newLogName}!instrumentGUI.cpp@{instrumentGUI.cpp}}
+\doxysubsubsection{\texorpdfstring{newLogName()}{newLogName()}}
+{\footnotesize\ttfamily \label{instrument_g_u_i_8cpp_a88ed7b306a57d27acbe48c702f502717} 
+string new\+Log\+Name (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Generates a new log file name based on the current date and time. 
+
+This function retrieves the current system time, formats it into a string using the format "{}\+YYYY-\/\+MM-\/\+DD HH-\/\+MM-\/\+SS"{}, and returns the formatted string.
+
+\begin{DoxyReturn}{Returns}
+A string representing the current date and time, formatted as "{}\+YYYY-\/\+MM-\/\+DD HH-\/\+MM-\/\+SS"{}. 
+\end{DoxyReturn}
+\Hypertarget{instrument_g_u_i_8cpp_a2012fc9578686e55fc30c024a3ccecde}\index{instrumentGUI.cpp@{instrumentGUI.cpp}!quitCallback@{quitCallback}}
+\index{quitCallback@{quitCallback}!instrumentGUI.cpp@{instrumentGUI.cpp}}
+\doxysubsubsection{\texorpdfstring{quitCallback()}{quitCallback()}}
+{\footnotesize\ttfamily \label{instrument_g_u_i_8cpp_a2012fc9578686e55fc30c024a3ccecde} 
+void quit\+Callback (\begin{DoxyParamCaption}\item[{Fl\+\_\+\+Widget \texorpdfstring{$\ast$}{*}}]{}{}\end{DoxyParamCaption})}
+
+
+
+Callback function to quit the application. 
+
+This function closes the controls log stream and terminates the application.
+
+
+\begin{DoxyParams}{Parameters}
+{\em widget} & Unused parameter for the FLTK widget triggering this callback. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{instrument_g_u_i_8cpp_adef2b8937bb096f498c3762409be6a09}\index{instrumentGUI.cpp@{instrumentGUI.cpp}!readSerialData@{readSerialData}}
+\index{readSerialData@{readSerialData}!instrumentGUI.cpp@{instrumentGUI.cpp}}
+\doxysubsubsection{\texorpdfstring{readSerialData()}{readSerialData()}}
+{\footnotesize\ttfamily \label{instrument_g_u_i_8cpp_adef2b8937bb096f498c3762409be6a09} 
+void read\+Serial\+Data (\begin{DoxyParamCaption}\item[{const int \&}]{serial\+Port}{, }\item[{std\+::atomic$<$ bool $>$ \&}]{stop\+Flag}{, }\item[{std\+::ofstream \&}]{output\+File}{}\end{DoxyParamCaption})}
+
+
+
+Reads data from the serial port and writes it to an output file. 
+
+This function continuously reads data from the specified serial port and writes it to the specified output file. It stops when the stop\+Flag is set to true.
+
+
+\begin{DoxyParams}{Parameters}
+{\em serial\+Port} & The file descriptor for the open serial port. \\
+\hline
+{\em stop\+Flag} & Atomic boolean flag indicating whether to stop reading. \\
+\hline
+{\em output\+File} & The output file stream where the data will be written. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{instrument_g_u_i_8cpp_a2ce61d68a4032d586f6394d0abd91e63}\index{instrumentGUI.cpp@{instrumentGUI.cpp}!startRecordingCallback@{startRecordingCallback}}
+\index{startRecordingCallback@{startRecordingCallback}!instrumentGUI.cpp@{instrumentGUI.cpp}}
+\doxysubsubsection{\texorpdfstring{startRecordingCallback()}{startRecordingCallback()}}
+{\footnotesize\ttfamily \label{instrument_g_u_i_8cpp_a2ce61d68a4032d586f6394d0abd91e63} 
+void start\+Recording\+Callback (\begin{DoxyParamCaption}\item[{Fl\+\_\+\+Widget \texorpdfstring{$\ast$}{*}}]{widget}{}\end{DoxyParamCaption})}
+
+
+
+Callback function to start or stop recording logs. 
+
+This function toggles the recording state. When recording starts, it creates new log files for ERPA, PMT, and HK, opens the file streams, and writes headers to the log files. When recording stops, it closes the log file streams.
+
+
+\begin{DoxyParams}{Parameters}
+{\em widget} & Pointer to the FLTK widget triggering this callback. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{instrument_g_u_i_8cpp_a139d80a4c8bc67191d39c65ac29ea46b}\index{instrumentGUI.cpp@{instrumentGUI.cpp}!stepDownCallback@{stepDownCallback}}
+\index{stepDownCallback@{stepDownCallback}!instrumentGUI.cpp@{instrumentGUI.cpp}}
+\doxysubsubsection{\texorpdfstring{stepDownCallback()}{stepDownCallback()}}
+{\footnotesize\ttfamily \label{instrument_g_u_i_8cpp_a139d80a4c8bc67191d39c65ac29ea46b} 
+void step\+Down\+Callback (\begin{DoxyParamCaption}\item[{Fl\+\_\+\+Widget \texorpdfstring{$\ast$}{*}}]{}{}\end{DoxyParamCaption})}
+
+
+
+Callback function to step down a process. 
+
+This function sends a command to step down a process via the serial port. If the current step is greater than 0, it decrements the step counter.
+
+
+\begin{DoxyParams}{Parameters}
+{\em widget} & The Fl\+\_\+\+Widget triggering the callback. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{instrument_g_u_i_8cpp_a0c118a58cc7d085cf79a4481cf744bdb}\index{instrumentGUI.cpp@{instrumentGUI.cpp}!stepUpCallback@{stepUpCallback}}
+\index{stepUpCallback@{stepUpCallback}!instrumentGUI.cpp@{instrumentGUI.cpp}}
+\doxysubsubsection{\texorpdfstring{stepUpCallback()}{stepUpCallback()}}
+{\footnotesize\ttfamily \label{instrument_g_u_i_8cpp_a0c118a58cc7d085cf79a4481cf744bdb} 
+void step\+Up\+Callback (\begin{DoxyParamCaption}\item[{Fl\+\_\+\+Widget \texorpdfstring{$\ast$}{*}}]{}{}\end{DoxyParamCaption})}
+
+
+
+Callback function to step up a process. 
+
+This function sends a command to step up a process via the serial port. If the current step is less than 7, it increments the step counter.
+
+
+\begin{DoxyParams}{Parameters}
+{\em widget} & The Fl\+\_\+\+Widget triggering the callback. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{instrument_g_u_i_8cpp_a78f31a6e86614b3545660e9e56afd9ed}\index{instrumentGUI.cpp@{instrumentGUI.cpp}!stopModeCallback@{stopModeCallback}}
+\index{stopModeCallback@{stopModeCallback}!instrumentGUI.cpp@{instrumentGUI.cpp}}
+\doxysubsubsection{\texorpdfstring{stopModeCallback()}{stopModeCallback()}}
+{\footnotesize\ttfamily \label{instrument_g_u_i_8cpp_a78f31a6e86614b3545660e9e56afd9ed} 
+void stop\+Mode\+Callback (\begin{DoxyParamCaption}\item[{Fl\+\_\+\+Widget \texorpdfstring{$\ast$}{*}}]{}{}\end{DoxyParamCaption})}
+
+
+
+Sends a stop mode command over the serial port. 
+
+This function sends a stop mode command (0x0C) over the specified serial port.
+
+
+\begin{DoxyParams}{Parameters}
+{\em serial\+Port} & The file descriptor for the open serial port. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{instrument_g_u_i_8cpp_a0635f2e51c6a9fcedcd5da08987919f1}\index{instrumentGUI.cpp@{instrumentGUI.cpp}!writeSerialData@{writeSerialData}}
+\index{writeSerialData@{writeSerialData}!instrumentGUI.cpp@{instrumentGUI.cpp}}
+\doxysubsubsection{\texorpdfstring{writeSerialData()}{writeSerialData()}}
+{\footnotesize\ttfamily \label{instrument_g_u_i_8cpp_a0635f2e51c6a9fcedcd5da08987919f1} 
+void write\+Serial\+Data (\begin{DoxyParamCaption}\item[{const int \&}]{serial\+Port}{, }\item[{const unsigned char}]{data}{}\end{DoxyParamCaption})}
+
+
+
+Writes a single byte of data to the specified serial port. 
+
+This function sends the provided data byte to the given serial port and logs an error if the write operation fails.
+
+
+\begin{DoxyParams}{Parameters}
+{\em serial\+Port} & The file descriptor for the open serial port. \\
+\hline
+{\em data} & The byte of data to write to the serial port. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{instrument_g_u_i_8cpp_a3ee559829b6eaa6ebc39b725bc705680}\index{instrumentGUI.cpp@{instrumentGUI.cpp}!writeToControlsLog@{writeToControlsLog}}
+\index{writeToControlsLog@{writeToControlsLog}!instrumentGUI.cpp@{instrumentGUI.cpp}}
+\doxysubsubsection{\texorpdfstring{writeToControlsLog()}{writeToControlsLog()}}
+{\footnotesize\ttfamily \label{instrument_g_u_i_8cpp_a3ee559829b6eaa6ebc39b725bc705680} 
+void write\+To\+Controls\+Log (\begin{DoxyParamCaption}\item[{string}]{pmt\+\_\+on}{, }\item[{string}]{erpa\+\_\+on}{, }\item[{string}]{hk\+\_\+on}{, }\item[{string}]{c\+\_\+sys\+\_\+on}{, }\item[{string}]{c\+\_\+800v\+\_\+en}{, }\item[{string}]{c\+\_\+5v\+\_\+en}{, }\item[{string}]{c\+\_\+n150v\+\_\+en}{, }\item[{string}]{c\+\_\+3v3\+\_\+en}{, }\item[{string}]{c\+\_\+n5v\+\_\+en}{, }\item[{string}]{c\+\_\+15v\+\_\+en}{, }\item[{string}]{c\+\_\+n3v3\+\_\+en}{, }\item[{string}]{c\+\_\+sdn1}{, }\item[{string}]{c\+\_\+sdn2}{}\end{DoxyParamCaption})}
+
+
+
+Writes a log entry to the Controls log stream. 
+
+Logs the current date, time (including milliseconds), and various control states to the Controls log stream.
+
+
+\begin{DoxyParams}{Parameters}
+{\em pmt\+\_\+on} & PMT on state. \\
+\hline
+{\em erpa\+\_\+on} & ERPA on state. \\
+\hline
+{\em hk\+\_\+on} & HK on state. \\
+\hline
+{\em c\+\_\+sys\+\_\+on} & Control system on state. \\
+\hline
+{\em c\+\_\+800v\+\_\+en} & 800V enable state. \\
+\hline
+{\em c\+\_\+5v\+\_\+en} & 5V enable state. \\
+\hline
+{\em c\+\_\+n150v\+\_\+en} & -\/150V enable state. \\
+\hline
+{\em c\+\_\+3v3\+\_\+en} & 3.\+3V enable state. \\
+\hline
+{\em c\+\_\+n5v\+\_\+en} & -\/5V enable state. \\
+\hline
+{\em c\+\_\+15v\+\_\+en} & 15V enable state. \\
+\hline
+{\em c\+\_\+n3v3\+\_\+en} & -\/3.\+3V enable state. \\
+\hline
+{\em c\+\_\+sdn1} & Shutdown 1 state. \\
+\hline
+{\em c\+\_\+sdn2} & Shutdown 2 state. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{instrument_g_u_i_8cpp_a70dded61e8ea59045c52b8017346c306}\index{instrumentGUI.cpp@{instrumentGUI.cpp}!writeToErpaLog@{writeToErpaLog}}
+\index{writeToErpaLog@{writeToErpaLog}!instrumentGUI.cpp@{instrumentGUI.cpp}}
+\doxysubsubsection{\texorpdfstring{writeToErpaLog()}{writeToErpaLog()}}
+{\footnotesize\ttfamily \label{instrument_g_u_i_8cpp_a70dded61e8ea59045c52b8017346c306} 
+void write\+To\+Erpa\+Log (\begin{DoxyParamCaption}\item[{string}]{sync}{, }\item[{string}]{seq}{, }\item[{string}]{end\+Mon}{, }\item[{string}]{SWPMON}{, }\item[{string}]{temp1}{, }\item[{string}]{temp2}{, }\item[{string}]{adc}{}\end{DoxyParamCaption})}
+
+
+
+Writes a log entry to the ERPA log stream. 
+
+This function logs various parameters along with the current date and time, including milliseconds, to the ERPA log stream. The log entry includes the following parameters\+: sync, seq, end\+Mon, SWPMON, temp1, temp2, and adc.
+
+
+\begin{DoxyParams}{Parameters}
+{\em sync} & A string representing the synchronization state. \\
+\hline
+{\em seq} & A string representing the sequence number. \\
+\hline
+{\em end\+Mon} & A string representing the end monitor status. \\
+\hline
+{\em SWPMON} & A string representing the SWPMON status. \\
+\hline
+{\em temp1} & A string representing the first temperature reading. \\
+\hline
+{\em temp2} & A string representing the second temperature reading. \\
+\hline
+{\em adc} & A string representing the ADC value. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{instrument_g_u_i_8cpp_a9e736766b175775727bbac3f8bc25dcb}\index{instrumentGUI.cpp@{instrumentGUI.cpp}!writeToHKLog@{writeToHKLog}}
+\index{writeToHKLog@{writeToHKLog}!instrumentGUI.cpp@{instrumentGUI.cpp}}
+\doxysubsubsection{\texorpdfstring{writeToHKLog()}{writeToHKLog()}}
+{\footnotesize\ttfamily \label{instrument_g_u_i_8cpp_a9e736766b175775727bbac3f8bc25dcb} 
+void write\+To\+HKLog (\begin{DoxyParamCaption}\item[{string}]{sync}{, }\item[{string}]{seq}{, }\item[{string}]{vsense}{, }\item[{string}]{vrefint}{, }\item[{string}]{temp1}{, }\item[{string}]{temp2}{, }\item[{string}]{temp3}{, }\item[{string}]{temp4}{, }\item[{string}]{busvmon}{, }\item[{string}]{busimon}{, }\item[{string}]{mon2v5}{, }\item[{string}]{mon3v3}{, }\item[{string}]{vmon5}{, }\item[{string}]{n3v3mon}{, }\item[{string}]{n5vmon}{, }\item[{string}]{vmon15}{, }\item[{string}]{vrefmon5}{, }\item[{string}]{n200vmon}{, }\item[{string}]{n800vmon}{}\end{DoxyParamCaption})}
+
+
+
+Writes a log entry to the HK log stream. 
+
+This function logs various parameters along with the current date and time, including milliseconds, to the HK log stream. The log entry includes the following parameters\+: sync, seq, vsense, vrefint, temp1, temp2, temp3, temp4, busvmon, busimon, mon2v5, mon3v3, vmon5, n3v3mon, n5vmon, vmon15, vrefmon5, n200vmon, and n800vmon.
+
+
+\begin{DoxyParams}{Parameters}
+{\em sync} & A string representing the synchronization state. \\
+\hline
+{\em seq} & A string representing the sequence number. \\
+\hline
+{\em vsense} & A string representing the VSENSE value. \\
+\hline
+{\em vrefint} & A string representing the VREFINT value. \\
+\hline
+{\em temp1} & A string representing the first temperature sensor value. \\
+\hline
+{\em temp2} & A string representing the second temperature sensor value. \\
+\hline
+{\em temp3} & A string representing the third temperature sensor value. \\
+\hline
+{\em temp4} & A string representing the fourth temperature sensor value. \\
+\hline
+{\em busvmon} & A string representing the bus voltage monitor value. \\
+\hline
+{\em busimon} & A string representing the bus current monitor value. \\
+\hline
+{\em mon2v5} & A string representing the 2.\+5V monitor value. \\
+\hline
+{\em mon3v3} & A string representing the 3.\+3V monitor value. \\
+\hline
+{\em vmon5} & A string representing the 5V monitor value. \\
+\hline
+{\em n3v3mon} & A string representing the -\/3.\+3V monitor value. \\
+\hline
+{\em n5vmon} & A string representing the -\/5V monitor value. \\
+\hline
+{\em vmon15} & A string representing the 15V monitor value. \\
+\hline
+{\em vrefmon5} & A string representing the VREF 5V monitor value. \\
+\hline
+{\em n200vmon} & A string representing the -\/200V monitor value. \\
+\hline
+{\em n800vmon} & A string representing the -\/800V monitor value. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{instrument_g_u_i_8cpp_ace1545d23a4b53586d59f971dc4a7b6b}\index{instrumentGUI.cpp@{instrumentGUI.cpp}!writeToPMTLog@{writeToPMTLog}}
+\index{writeToPMTLog@{writeToPMTLog}!instrumentGUI.cpp@{instrumentGUI.cpp}}
+\doxysubsubsection{\texorpdfstring{writeToPMTLog()}{writeToPMTLog()}}
+{\footnotesize\ttfamily \label{instrument_g_u_i_8cpp_ace1545d23a4b53586d59f971dc4a7b6b} 
+void write\+To\+PMTLog (\begin{DoxyParamCaption}\item[{string}]{sync}{, }\item[{string}]{seq}{, }\item[{string}]{adc}{}\end{DoxyParamCaption})}
+
+
+
+Writes a log entry to the PMT log stream. 
+
+This function logs various parameters along with the current date and time, including milliseconds, to the PMT log stream. The log entry includes the following parameters\+: sync, seq, and adc.
+
+
+\begin{DoxyParams}{Parameters}
+{\em sync} & A string representing the synchronization state. \\
+\hline
+{\em seq} & A string representing the sequence number. \\
+\hline
+{\em adc} & A string representing the ADC value. \\
+\hline
+\end{DoxyParams}
