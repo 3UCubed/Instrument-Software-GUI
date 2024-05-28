@@ -40,7 +40,7 @@
 #define HK_HEADER "date, time, sync, seq, vsense, vrefint, temp1, temp2, temp3, temp4, busvmon, busimon, 2v5mov, 3v3mon, 5vmon, n3v3mon, n5vmon, 15vmon, 5refmon, n200vmon, n800vmon"
 
 // ******************************************************************************************************************* GLOBALS
-const char *portName = "/dev/cu.usbserial-FT6DXNPY"; // CHANGE TO YOUR PORT NAME
+const char *portName = "/dev/cu.usbserial-FT6DXVWX"; // CHANGE TO YOUR PORT NAME
 const float erpaBPS = 140.0;
 const float hkBPS = 5.6;
 const float pmtBPS = 48.0;
@@ -433,36 +433,36 @@ void autoSweepCallback(Fl_Widget *)
  *
  * @return A pointer to the serial port name if found, otherwise nullptr.
  */
-const char *findSerialPort()
-{
-    const char *devPath = "/dev/";
-    const char *prefix = "cu.usbserial-"; // Your prefix here
-    DIR *dir = opendir(devPath);
-    if (dir == nullptr)
-    {
-        std::cerr << "Error opening directory" << std::endl;
-        return nullptr;
-    }
+// const char *findSerialPort()
+// {
+//     const char *devPath = "/dev/";
+//     const char *prefix = "cu.usbserial-"; // Your prefix here
+//     DIR *dir = opendir(devPath);
+//     if (dir == nullptr)
+//     {
+//         std::cerr << "Error opening directory" << std::endl;
+//         return nullptr;
+//     }
 
-    dirent *entry;
-    const char *portName = nullptr;
+//     dirent *entry;
+//     const char *portName = nullptr;
 
-    while ((entry = readdir(dir)) != nullptr)
-    {
-        const char *filename = entry->d_name;
-        if (strstr(filename, prefix) != nullptr)
-        {
-            // Use strncpy to copy the path to a buffer
-            char buffer[1024]; // Adjust the buffer size as needed
-            snprintf(buffer, sizeof(buffer), "%s%s", devPath, filename);
-            portName = buffer;
-            break; // Use the first matching serial port found
-        }
-    }
+//     while ((entry = readdir(dir)) != nullptr)
+//     {
+//         const char *filename = entry->d_name;
+//         if (strstr(filename, prefix) != nullptr)
+//         {
+//             // Use strncpy to copy the path to a buffer
+//             char buffer[1024]; // Adjust the buffer size as needed
+//             snprintf(buffer, sizeof(buffer), "%s%s", devPath, filename);
+//             portName = buffer;
+//             break; // Use the first matching serial port found
+//         }
+//     }
 
-    closedir(dir);
-    return portName;
-}
+//     closedir(dir);
+//     return portName;
+// }
 
 /**
  * @brief The main entry point of the program.
@@ -526,7 +526,7 @@ int main(int argc, char **argv)
     struct termios options = {};
     std::atomic<bool> stopFlag(false);
 
-    portName = findSerialPort();
+    //portName = findSerialPort();
     std::ofstream outputFile("mylog.0", std::ios::out | std::ios::trunc);
 
     // -------------------- Thread/Port Setup ------------------
@@ -537,8 +537,8 @@ int main(int argc, char **argv)
         ::exit(0);
     }
     tcgetattr(serialPort, &options);
-    cfsetispeed(&options, B57600);
-    cfsetospeed(&options, B57600);
+    cfsetispeed(&options, 460800);
+    cfsetospeed(&options, 460800);
     options.c_cflag |= O_NONBLOCK;
     tcsetattr(serialPort, TCSANOW, &options);
 
