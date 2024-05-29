@@ -54,40 +54,6 @@ bool steppingUp = true;
 
 // ******************************************************************************************************************* HELPER FUNCTIONS
 /**
- * @brief Callback function to start or stop recording logs.
- *
- * This function toggles the recording state. When recording starts, it creates new log files for ERPA, PMT, and HK,
- * opens the file streams, and writes headers to the log files. When recording stops, it closes the log file streams.
- *
- * @param widget Pointer to the FLTK widget triggering this callback.
- */
-void startRecordingCallback(Fl_Widget *widget)
-{
-    if (!recording)
-    {
-        recording = true;
-        ((Fl_Button *)widget)->label("RECORDING @square");
-    }
-    else
-    {
-        recording = false;
-        ((Fl_Button *)widget)->label("RECORD @circle");
-    }
-}
-
-/**
- * @brief Callback function to quit the application.
- *
- * This function closes the controls log stream and terminates the application.
- *
- * @param widget Unused parameter for the FLTK widget triggering this callback.
- */
-void quitCallback(Fl_Widget *)
-{
-    exit(0);
-}
-
-/**
  * @brief Writes a single byte of data to the specified serial port.
  *
  * This function sends the provided data byte to the given serial port and logs an error if the write operation fails.
@@ -102,33 +68,6 @@ void writeSerialData(const int &serialPort, const unsigned char data)
     if (bytesWritten == -1)
     {
         std::cerr << "Error writing to the serial port." << std::endl;
-    }
-}
-
-/**
- * @brief Sends a stop mode command over the serial port.
- *
- * This function sends a stop mode command (0x0C) over the specified serial port.
- *
- * @param serialPort The file descriptor for the open serial port.
- */
-void stopModeCallback(Fl_Widget *)
-{
-    writeSerialData(serialPort, 0x0C);
-}
-
-/**
- * @brief Sends exit stop mode commands over the serial port.
- *
- * This function sends exit stop mode commands (0x5B) over the specified serial port.
- *
- * @param serialPort The file descriptor for the open serial port.
- */
-void exitStopModeCallback(Fl_Widget *)
-{
-    for (int i = 0; i < 12; i++)
-    {
-        writeSerialData(serialPort, 0x5B);
     }
 }
 
@@ -171,6 +110,68 @@ void readSerialData(const int &serialPort, std::atomic<bool> &stopFlag, std::ofs
         {
             std::cerr << "Error reading from the serial port." << std::endl;
         }
+    }
+}
+
+// ******************************************************************************************************************* CALLBACKS
+/**
+ * @brief Callback function to start or stop recording logs.
+ *
+ * This function toggles the recording state. When recording starts, it creates new log files for ERPA, PMT, and HK,
+ * opens the file streams, and writes headers to the log files. When recording stops, it closes the log file streams.
+ *
+ * @param widget Pointer to the FLTK widget triggering this callback.
+ */
+void startRecordingCallback(Fl_Widget *widget)
+{
+    if (!recording)
+    {
+        recording = true;
+        ((Fl_Button *)widget)->label("RECORDING @square");
+    }
+    else
+    {
+        recording = false;
+        ((Fl_Button *)widget)->label("RECORD @circle");
+    }
+}
+
+/**
+ * @brief Callback function to quit the application.
+ *
+ * This function closes the controls log stream and terminates the application.
+ *
+ * @param widget Unused parameter for the FLTK widget triggering this callback.
+ */
+void quitCallback(Fl_Widget *)
+{
+    exit(0);
+}
+
+/**
+ * @brief Sends a stop mode command over the serial port.
+ *
+ * This function sends a stop mode command (0x0C) over the specified serial port.
+ *
+ * @param serialPort The file descriptor for the open serial port.
+ */
+void stopModeCallback(Fl_Widget *)
+{
+    writeSerialData(serialPort, 0x0C);
+}
+
+/**
+ * @brief Sends exit stop mode commands over the serial port.
+ *
+ * This function sends exit stop mode commands (0x5B) over the specified serial port.
+ *
+ * @param serialPort The file descriptor for the open serial port.
+ */
+void exitStopModeCallback(Fl_Widget *)
+{
+    for (int i = 0; i < 12; i++)
+    {
+        writeSerialData(serialPort, 0x5B);
     }
 }
 
@@ -254,6 +255,11 @@ void autoSweepCallback(Fl_Widget *)
     writeSerialData(serialPort, 0x1D);
 }
 
+/**
+ * @brief Callback function for SDN1.
+ *
+ * @param widget Pointer to the Fl_Widget triggering the callback.
+ */
 void SDN1Callback(Fl_Widget *widget)
 {
     int currValue = ((Fl_Light_Button *)widget)->value();
@@ -267,6 +273,11 @@ void SDN1Callback(Fl_Widget *widget)
     }
 }
 
+/**
+ * @brief Callback function for PMT ON.
+ *
+ * @param widget Pointer to the Fl_Widget triggering the callback.
+ */
 void PMTOnCallback(Fl_Widget *widget)
 {
     int currValue = ((Fl_Round_Button *)widget)->value();
@@ -280,6 +291,11 @@ void PMTOnCallback(Fl_Widget *widget)
     }
 }
 
+/**
+ * @brief Callback function for ERPA ON.
+ *
+ * @param widget Pointer to the Fl_Widget triggering the callback.
+ */
 void ERPAOnCallback(Fl_Widget *widget)
 {
     int currValue = ((Fl_Round_Button *)widget)->value();
@@ -293,6 +309,11 @@ void ERPAOnCallback(Fl_Widget *widget)
     }
 }
 
+/**
+ * @brief Callback function for HK ON.
+ *
+ * @param widget Pointer to the Fl_Widget triggering the callback.
+ */
 void HKOnCallback(Fl_Widget *widget)
 {
     int currValue = ((Fl_Round_Button *)widget)->value();
@@ -306,6 +327,11 @@ void HKOnCallback(Fl_Widget *widget)
     }
 }
 
+/**
+ * @brief Callback function for PB5.
+ *
+ * @param widget Pointer to the Fl_Widget triggering the callback.
+ */
 void PB5Callback(Fl_Widget *widget)
 {
     PB5IsOn = ((Fl_Round_Button *)widget)->value();
@@ -326,6 +352,11 @@ void PB5Callback(Fl_Widget *widget)
     }
 }
 
+/**
+ * @brief Callback function for PB6.
+ *
+ * @param widget Pointer to the Fl_Widget triggering the callback.
+ */
 void PB6Callback(Fl_Widget *widget)
 {
     int currValue = ((Fl_Round_Button *)widget)->value();
@@ -339,6 +370,11 @@ void PB6Callback(Fl_Widget *widget)
     }
 }
 
+/**
+ * @brief Callback function for PC10.
+ *
+ * @param widget Pointer to the Fl_Widget triggering the callback.
+ */
 void PC10Callback(Fl_Widget *widget)
 {
     int currValue = ((Fl_Round_Button *)widget)->value();
@@ -352,6 +388,11 @@ void PC10Callback(Fl_Widget *widget)
     }
 }
 
+/**
+ * @brief Callback function for PC13.
+ *
+ * @param widget Pointer to the Fl_Widget triggering the callback.
+ */
 void PC13Callback(Fl_Widget *widget)
 {
     int currValue = ((Fl_Round_Button *)widget)->value();
@@ -365,6 +406,11 @@ void PC13Callback(Fl_Widget *widget)
     }
 }
 
+/**
+ * @brief Callback function for PC17.
+ *
+ * @param widget Pointer to the Fl_Widget triggering the callback.
+ */
 void PC7Callback(Fl_Widget *widget)
 {
     int currValue = ((Fl_Round_Button *)widget)->value();
@@ -378,22 +424,30 @@ void PC7Callback(Fl_Widget *widget)
     }
 }
 
+/**
+ * @brief Callback function for PC8.
+ *
+ * @param widget Pointer to the Fl_Widget triggering the callback.
+ */
 void PC8Callback(Fl_Widget *widget)
 {
     int currValue = ((Fl_Round_Button *)widget)->value();
     if (currValue == 1)
     {
         writeSerialData(serialPort, 0x05);
-        printf("0x05\n");
     }
     else
     {
         writeSerialData(serialPort, 0x18);
-                printf("0x18\n");
 
     }
 }
 
+/**
+ * @brief Callback function for PC9.
+ *
+ * @param widget Pointer to the Fl_Widget triggering the callback.
+ */
 void PC9Callback(Fl_Widget *widget)
 {
     int currValue = ((Fl_Round_Button *)widget)->value();
@@ -407,6 +461,11 @@ void PC9Callback(Fl_Widget *widget)
     }
 }
 
+/**
+ * @brief Callback function for PC6.
+ *
+ * @param widget Pointer to the Fl_Widget triggering the callback.
+ */
 void PC6Callback(Fl_Widget *widget)
 {
     int currValue = ((Fl_Round_Button *)widget)->value();
@@ -419,6 +478,7 @@ void PC6Callback(Fl_Widget *widget)
         writeSerialData(serialPort, 0x1A);
     }
 }
+
 /**
  * @brief The main entry point of the program.
  *
@@ -428,7 +488,7 @@ void PC6Callback(Fl_Widget *widget)
  */
 int main(int argc, char **argv)
 {
-    // ******************************************************************************************************************* GUI Widget Setup
+// ******************************************************************************************************************* GUI Widget Setup
     // GUI variables
     const int windowWidth = 1300;
     const int windowHeight = 800;
@@ -896,7 +956,7 @@ int main(int argc, char **argv)
     std::thread readingThread([&serialPort, &stopFlag, &outputFile]
                               { return readSerialData(serialPort, std::ref(stopFlag), std::ref(outputFile)); });
 
-    // ******************************************************************************************************************* Output Variables
+    // ******************************************************************************************************************* Pre-Startup Operations/Variables
     char buffer[32];
     float stepVoltages[8] = {0, 0.5, 1, 1.5, 2, 2.5, 3, 3.3};
 
@@ -913,7 +973,7 @@ int main(int argc, char **argv)
     window->show();
     Fl::check();
 
-    // ---------------- MAIN PROGRAM EVENT LOOP ----------------
+    // ******************************************************************************************************************* Event Loop
     while (1)
     {
         snprintf(buffer, sizeof(buffer), "%d", currentFactor);
