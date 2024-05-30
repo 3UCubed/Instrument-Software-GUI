@@ -571,6 +571,7 @@ int main(int argc, char **argv)
     Fl_Box *PMT4 = new Fl_Box(xPacketOffset + 18, yPacketOffset + 65, 50, 20, "Hours:");
     Fl_Box *PMT5 = new Fl_Box(xPacketOffset + 18, yPacketOffset + 85, 50, 20, "Minutes:");
     Fl_Box *PMT6 = new Fl_Box(xPacketOffset + 18, yPacketOffset + 105, 50, 20, "Seconds:");
+    Fl_Box *PMT7 = new Fl_Box(xPacketOffset + 18, yPacketOffset + 125, 50, 20, "Millis:");
 
     Fl_Box *HK1 = new Fl_Box(xPacketOffset + 580, yPacketOffset + 5, 50, 20, "SYNC:");
     Fl_Box *HK2 = new Fl_Box(xPacketOffset + 580, yPacketOffset + 25, 50, 20, "SEQ:");
@@ -628,6 +629,7 @@ int main(int argc, char **argv)
     Fl_Output *hour = new Fl_Output(xPacketOffset + 135, yPacketOffset + 65, 60, 20);
     Fl_Output *minute = new Fl_Output(xPacketOffset + 135, yPacketOffset + 85, 60, 20);
     Fl_Output *second = new Fl_Output(xPacketOffset + 135, yPacketOffset + 105, 60, 20);
+    Fl_Output *millis = new Fl_Output(xPacketOffset + 135, yPacketOffset + 125, 60, 20);
 
     Fl_Output *HKsync = new Fl_Output(xPacketOffset + 682, yPacketOffset + 5, 60, 20);
     Fl_Output *HKseq = new Fl_Output(xPacketOffset + 682, yPacketOffset + 25, 60, 20);
@@ -1195,6 +1197,12 @@ int main(int argc, char **argv)
                     {
                         snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
                         second->value(buffer);
+                        break;
+                    }
+                    case 'X':
+                    {
+                        snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
+                        millis->value(buffer);
                         break;
                     }
                     }

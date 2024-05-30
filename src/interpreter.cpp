@@ -87,8 +87,8 @@ vector<string> interpret(const string &inputStr)
     int erpaIndex = 0;
     int erpaValid = 0;
 
-    string pmtLabels[6] = {"i", "j", "k", "H", "M", "S"};
-    int pmtValues[6];
+    string pmtLabels[7] = {"i", "j", "k", "H", "M", "S", "X"};
+    int pmtValues[7];
     int pmtIndex = 0;
     int pmtValid = 0;
 
@@ -237,8 +237,17 @@ vector<string> interpret(const string &inputStr)
 
                     arrCounter++;
                     break;
+                case 6:
+                    /* Milliseconds */
+                    sprintf(result, "%s:%3d", pmtLabels[pmtIndex].c_str(), pmtValues[pmtIndex]);
+                    strings.push_back(result);
+                    cout << result << endl;
+
+                    arrCounter++;
+                    break;
                 }
-                pmtIndex = (pmtIndex + 1) % 6;
+
+                pmtIndex = (pmtIndex + 1) % 7;
             }
             pmtValid = !pmtValid;
         }
