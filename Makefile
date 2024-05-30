@@ -4,7 +4,7 @@ CXXFLAGS = -std=c++11 -Wall
 FLTKFLAGS = `fltk-config --cxxflags` `fltk-config --ldflags`
 
 # Source files
-SRCS = instrumentGUI.cpp
+SRCS = src/instrumentGUI.cpp
 
 # Object files
 BUILD_DIR = build

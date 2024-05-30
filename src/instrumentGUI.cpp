@@ -33,7 +33,7 @@
 #include <chrono>
 #include <mutex>
 #include <sstream>
-#include "interpreter/interpreter.cpp"
+#include "interpreter.cpp"
 
 // ******************************************************************************************************************* DEFINES
 
