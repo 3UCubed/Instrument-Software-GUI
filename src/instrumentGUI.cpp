@@ -34,6 +34,7 @@
 #include <mutex>
 #include <sstream>
 #include "interpreter.cpp"
+#include "logger.cpp"
 
 // ******************************************************************************************************************* DEFINES
 
@@ -128,11 +129,13 @@ void startRecordingCallback(Fl_Widget *widget)
     {
         recording = true;
         ((Fl_Button *)widget)->label("RECORDING @square");
+        createNewLogs();
     }
     else
     {
         recording = false;
         ((Fl_Button *)widget)->label("RECORD @circle");
+        closeLogs();
     }
 }
 
@@ -266,10 +269,14 @@ void SDN1Callback(Fl_Widget *widget)
     if (currValue == 1)
     {
         writeSerialData(serialPort, 0x0B);
+        Controls.c_sdn1 = true;
+        writeToLog(Controls);
     }
     else
     {
         writeSerialData(serialPort, 0x0A);
+        Controls.c_sdn1 = false;
+        writeToLog(Controls);
     }
 }
 
@@ -284,10 +291,14 @@ void PMTOnCallback(Fl_Widget *widget)
     if (currValue == 1)
     {
         writeSerialData(serialPort, 0x0D);
+        Controls.c_pmtOn = true;
+        writeToLog(Controls);
     }
     else
     {
         writeSerialData(serialPort, 0x10);
+        Controls.c_pmtOn = false;
+        writeToLog(Controls);
     }
 }
 
@@ -302,10 +313,14 @@ void ERPAOnCallback(Fl_Widget *widget)
     if (currValue == 1)
     {
         writeSerialData(serialPort, 0x0E);
+        Controls.c_erpaOn = true;
+        writeToLog(Controls);
     }
     else
     {
         writeSerialData(serialPort, 0x11);
+        Controls.c_erpaOn = false;
+        writeToLog(Controls);
     }
 }
 
@@ -320,10 +335,14 @@ void HKOnCallback(Fl_Widget *widget)
     if (currValue == 1)
     {
         writeSerialData(serialPort, 0x0F);
+        Controls.c_hkOn = true;
+        writeToLog(Controls);
     }
     else
     {
         writeSerialData(serialPort, 0x12);
+        Controls.c_hkOn = false;
+        writeToLog(Controls);
     }
 }
 
@@ -338,6 +357,8 @@ void PB5Callback(Fl_Widget *widget)
     if (PB5IsOn)
     {
         writeSerialData(serialPort, 0x00);
+        Controls.c_sysOn = true;
+        writeToLog(Controls);
     }
     else
     {
@@ -349,6 +370,9 @@ void PB5Callback(Fl_Widget *widget)
         writeSerialData(serialPort, 0x18);
         writeSerialData(serialPort, 0x19);
         writeSerialData(serialPort, 0x1A);
+
+        Controls.c_sysOn = false;
+        writeToLog(Controls);
     }
 }
 
@@ -363,10 +387,14 @@ void PB6Callback(Fl_Widget *widget)
     if (currValue == 1)
     {
         writeSerialData(serialPort, 0x01);
+        Controls.c_800v = true;
+        writeToLog(Controls);
     }
     else
     {
         writeSerialData(serialPort, 0x14);
+        Controls.c_800v = false;
+        writeToLog(Controls);
     }
 }
 
@@ -381,10 +409,14 @@ void PC10Callback(Fl_Widget *widget)
     if (currValue == 1)
     {
         writeSerialData(serialPort, 0x02);
+        Controls.c_5v = true;
+        writeToLog(Controls);
     }
     else
     {
         writeSerialData(serialPort, 0x15);
+        Controls.c_5v = false;
+        writeToLog(Controls);
     }
 }
 
@@ -399,10 +431,14 @@ void PC13Callback(Fl_Widget *widget)
     if (currValue == 1)
     {
         writeSerialData(serialPort, 0x03);
+        Controls.c_n150v = true;
+        writeToLog(Controls);
     }
     else
     {
         writeSerialData(serialPort, 0x16);
+        Controls.c_n150v = false;
+        writeToLog(Controls);
     }
 }
 
@@ -417,10 +453,14 @@ void PC7Callback(Fl_Widget *widget)
     if (currValue == 1)
     {
         writeSerialData(serialPort, 0x04);
+        Controls.c_3v3 = true;
+        writeToLog(Controls);
     }
     else
     {
         writeSerialData(serialPort, 0x17);
+        Controls.c_3v3 = false;
+        writeToLog(Controls);
     }
 }
 
@@ -435,10 +475,14 @@ void PC8Callback(Fl_Widget *widget)
     if (currValue == 1)
     {
         writeSerialData(serialPort, 0x05);
+        Controls.c_n5v = true;
+        writeToLog(Controls);
     }
     else
     {
         writeSerialData(serialPort, 0x18);
+        Controls.c_n5v = false;
+        writeToLog(Controls);
 
     }
 }
@@ -454,10 +498,14 @@ void PC9Callback(Fl_Widget *widget)
     if (currValue == 1)
     {
         writeSerialData(serialPort, 0x06);
+        Controls.c_15v = true;
+        writeToLog(Controls);
     }
     else
     {
         writeSerialData(serialPort, 0x19);
+        Controls.c_15v = false;
+        writeToLog(Controls);
     }
 }
 
@@ -472,10 +520,14 @@ void PC6Callback(Fl_Widget *widget)
     if (currValue == 1)
     {
         writeSerialData(serialPort, 0x07);
+        Controls.c_n3v3 = true;
+        writeToLog(Controls);
     }
     else
     {
         writeSerialData(serialPort, 0x1A);
+        Controls.c_n3v3 = false;
+        writeToLog(Controls);
     }
 }
 
@@ -1028,6 +1080,7 @@ int main(int argc, char **argv)
                     {
                         if (recording)
                         {
+                            writeToLog(ERPA, erpaFrame);
                         }
                         snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
                         ERPAsync->value(buffer);
@@ -1093,6 +1146,7 @@ int main(int argc, char **argv)
                     {
                         if (recording)
                         {
+                            writeToLog(PMT, pmtFrame);
                         }
                         snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
                         PMTsync->value(buffer);
@@ -1126,6 +1180,7 @@ int main(int argc, char **argv)
                     {
                         if (recording)
                         {
+                            writeToLog(HK, hkFrame);
                         }
                         snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
                         HKsync->value(buffer);
