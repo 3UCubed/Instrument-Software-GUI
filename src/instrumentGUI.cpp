@@ -483,7 +483,6 @@ void PC8Callback(Fl_Widget *widget)
         writeSerialData(serialPort, 0x18);
         Controls.c_n5v = false;
         writeToLog(Controls);
-
     }
 }
 
@@ -540,7 +539,7 @@ void PC6Callback(Fl_Widget *widget)
  */
 int main(int argc, char **argv)
 {
-// ******************************************************************************************************************* GUI Widget Setup
+    // ******************************************************************************************************************* GUI Widget Setup
     // GUI variables
     const int windowWidth = 1300;
     const int windowHeight = 800;
@@ -568,6 +567,11 @@ int main(int argc, char **argv)
     Fl_Box *PMT1 = new Fl_Box(xPacketOffset + 18, yPacketOffset + 5, 50, 20, "SYNC:");
     Fl_Box *PMT2 = new Fl_Box(xPacketOffset + 18, yPacketOffset + 25, 50, 20, "SEQ:");
     Fl_Box *PMT3 = new Fl_Box(xPacketOffset + 18, yPacketOffset + 45, 50, 20, "ADC:");
+
+    Fl_Box *PMT4 = new Fl_Box(xPacketOffset + 18, yPacketOffset + 65, 50, 20, "Hours:");
+    Fl_Box *PMT5 = new Fl_Box(xPacketOffset + 18, yPacketOffset + 85, 50, 20, "Minutes:");
+    Fl_Box *PMT6 = new Fl_Box(xPacketOffset + 18, yPacketOffset + 105, 50, 20, "Seconds:");
+
     Fl_Box *HK1 = new Fl_Box(xPacketOffset + 580, yPacketOffset + 5, 50, 20, "SYNC:");
     Fl_Box *HK2 = new Fl_Box(xPacketOffset + 580, yPacketOffset + 25, 50, 20, "SEQ:");
     Fl_Box *HK14 = new Fl_Box(xPacketOffset + 580, yPacketOffset + 45, 50, 20, "vsense:");
@@ -620,6 +624,11 @@ int main(int argc, char **argv)
     Fl_Output *PMTsync = new Fl_Output(xPacketOffset + 135, yPacketOffset + 5, 60, 20);
     Fl_Output *PMTseq = new Fl_Output(xPacketOffset + 135, yPacketOffset + 25, 60, 20);
     Fl_Output *PMTadc = new Fl_Output(xPacketOffset + 135, yPacketOffset + 45, 60, 20);
+
+    Fl_Output *hour = new Fl_Output(xPacketOffset + 135, yPacketOffset + 65, 60, 20);
+    Fl_Output *minute = new Fl_Output(xPacketOffset + 135, yPacketOffset + 85, 60, 20);
+    Fl_Output *second = new Fl_Output(xPacketOffset + 135, yPacketOffset + 105, 60, 20);
+
     Fl_Output *HKsync = new Fl_Output(xPacketOffset + 682, yPacketOffset + 5, 60, 20);
     Fl_Output *HKseq = new Fl_Output(xPacketOffset + 682, yPacketOffset + 25, 60, 20);
     Fl_Output *HKvsense = new Fl_Output(xPacketOffset + 682, yPacketOffset + 45, 60, 20);
@@ -1168,6 +1177,24 @@ int main(int argc, char **argv)
                         PMTadc->value(buffer);
                         string logMsg(buffer);
                         pmtFrame[2] = logMsg;
+                        break;
+                    }
+                    case 'H':
+                    {
+                        snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
+                        hour->value(buffer);
+                        break;
+                    }
+                    case 'M':
+                    {
+                        snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
+                        minute->value(buffer);
+                        break;
+                    }
+                    case 'S':
+                    {
+                        snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
+                        second->value(buffer);
                         break;
                     }
                     }
