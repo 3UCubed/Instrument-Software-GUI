@@ -1107,14 +1107,6 @@ int main(int argc, char **argv)
                         erpaFrame[1] = logMsg;
                         break;
                     }
-                    case 'c':
-                    {
-                        snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
-                        ERPAendmon->value(buffer);
-                        string logMsg(buffer);
-                        erpaFrame[6] = logMsg;
-                        break;
-                    }
                     case 'd':
                     {
                         snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
@@ -1129,14 +1121,6 @@ int main(int argc, char **argv)
                         ERPAtemp1->value(buffer);
                         string logMsg(buffer);
                         erpaFrame[4] = logMsg;
-                        break;
-                    }
-                    case 'f':
-                    {
-                        snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
-                        ERPAtemp2->value(buffer);
-                        string logMsg(buffer);
-                        erpaFrame[5] = logMsg;
                         break;
                     }
                     case 'g':

@@ -82,8 +82,8 @@ vector<string> interpret(const string &inputStr)
     char sync[2];
     int packet = 0;
 
-    string erpaLabels[8] = {"a", "b", "c", "d", "e", "f", "g"};
-    int erpaValues[8];
+    string erpaLabels[9] = {"a", "b", "d", "e", "g", "H", "M", "S", "X"};
+    int erpaValues[9];
     int erpaIndex = 0;
     int erpaValid = 0;
 
@@ -92,10 +92,10 @@ vector<string> interpret(const string &inputStr)
     int pmtIndex = 0;
     int pmtValid = 0;
 
-    string hkLabels[19] = {"l", "m", "n", "o", "p",
+    string hkLabels[23] = {"l", "m", "n", "o", "p",
                            "q", "r", "s", "t",
-                           "u", "v", "w", "x", "y", "z", "A", "B", "C", "D"};
-    int hkValues[19];
+                           "u", "v", "w", "x", "y", "z", "A", "B", "C", "D", "H", "M", "S", "X"};
+    int hkValues[23];
     int hkIndex = 0;
     int hkValid = 0;
 
@@ -149,42 +149,56 @@ vector<string> interpret(const string &inputStr)
                     arrCounter++;
                     break;
                 case 2:
-                    /* ENDMon */
-                    sprintf(result, "%s:%06.5f", erpaLabels[erpaIndex].c_str(),
-                            intToVoltage(erpaValues[erpaIndex], 12, 3.3, 1.0));
-                    strings.push_back(result);
-                    arrCounter++;
-                    break;
-                case 3:
                     /* SWP Monitored */
                     sprintf(result, "%s:%06.5f", erpaLabels[erpaIndex].c_str(),
                             intToVoltage(erpaValues[erpaIndex], 12, 3.3, 1.0));
                     strings.push_back(result);
                     arrCounter++;
                     break;
-                case 4:
+                case 3:
                     /* TEMP Op-Amp1 */
                     sprintf(result, "%s:%06.5f", erpaLabels[erpaIndex].c_str(),
                             intToVoltage(erpaValues[erpaIndex], 12, 3.3, 1.0));
                     strings.push_back(result);
                     arrCounter++;
                     break;
-                case 5:
-                    /* TEMP Op-Amp2 */
-                    sprintf(result, "%s:%06.5f", erpaLabels[erpaIndex].c_str(),
-                            intToVoltage(erpaValues[erpaIndex], 12, 3.3, 1.0));
-                    strings.push_back(result);
-                    arrCounter++;
-                    break;
-                case 6:
+                case 4:
                     /* ERPA eADC Bytes; Interpreted as Volts */
                     sprintf(result, "%s:%08.7f", erpaLabels[erpaIndex].c_str(),
                             intToVoltage(erpaValues[erpaIndex], 16, 5, 1.0));
                     strings.push_back(result);
                     arrCounter++;
                     break;
+                case 5:
+                    /* Hours*/
+                    sprintf(result, "%s:%3d", erpaLabels[erpaIndex].c_str(), erpaValues[erpaIndex]);
+                    strings.push_back(result);
+                    cout << result << endl;
+                    arrCounter++;
+                    break;
+                case 6:
+                    /* Minutes */
+                    sprintf(result, "%s:%3d", erpaLabels[erpaIndex].c_str(), erpaValues[erpaIndex]);
+                    strings.push_back(result);
+                    cout << result << endl;
+                    arrCounter++;
+                    break;
+                case 7:
+                    /* Seconds*/
+                    sprintf(result, "%s:%3d", erpaLabels[erpaIndex].c_str(), erpaValues[erpaIndex]);
+                    strings.push_back(result);
+                    cout << result << endl;
+                    arrCounter++;
+                    break;
+                case 8:
+                    /* Millis */
+                    sprintf(result, "%s:%3d", erpaLabels[erpaIndex].c_str(), erpaValues[erpaIndex]);
+                    strings.push_back(result);
+                    cout << result << endl;
+                    arrCounter++;
+                    break;
                 }
-                erpaIndex = (erpaIndex + 1) % 7;
+                erpaIndex = (erpaIndex + 1) % 9;
             }
             erpaValid = !erpaValid;
         }
@@ -389,8 +403,36 @@ vector<string> interpret(const string &inputStr)
                     strings.push_back(result);
                     arrCounter++;
                     break;
+                case 19:
+                    /* Hours*/
+                    sprintf(result, "%s:%3d", hkLabels[hkIndex].c_str(), hkValues[hkIndex]);
+                    strings.push_back(result);
+                    cout << result << endl;
+                    arrCounter++;
+                    break;
+                case 20:
+                    /* Minutes*/
+                    sprintf(result, "%s:%3d", hkLabels[hkIndex].c_str(), hkValues[hkIndex]);
+                    strings.push_back(result);
+                    cout << result << endl;
+                    arrCounter++;
+                    break;
+                case 21:
+                    /* Seconds */
+                    sprintf(result, "%s:%3d", hkLabels[hkIndex].c_str(), hkValues[hkIndex]);
+                    strings.push_back(result);
+                    cout << result << endl;
+                    arrCounter++;
+                    break;
+                case 22:
+                    /* Millis */
+                    sprintf(result, "%s:%3d", hkLabels[hkIndex].c_str(), hkValues[hkIndex]);
+                    strings.push_back(result);
+                    cout << result << endl;
+                    arrCounter++;
+                    break;
                 }
-                hkIndex = (hkIndex + 1) % 19;
+                hkIndex = (hkIndex + 1) % 23;
             }
             hkValid = !hkValid;
         }
