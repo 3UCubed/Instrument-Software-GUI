@@ -162,52 +162,59 @@ vector<string> interpret(const string &inputStr)
                     sprintf(result, "%s:%08.7f", erpaLabels[erpaIndex].c_str(),
                             intToVoltage(erpaValues[erpaIndex], 16, 5, 1.0));
                     strings.push_back(result);
+                    erpaValid = false;
                     break;
                 case 5:
                     /* Year YY*/
-                    sprintf(result, "%s:%3d", erpaLabels[erpaIndex].c_str(), sync[1]);
+                    sprintf(result, "%s:%02d", erpaLabels[erpaIndex].c_str(), byte);
                     strings.push_back(result);
                     cout << result << endl;
+                    erpaValid = false;
                     break;
                 case 6:
                     /* Month MM */
-                    sprintf(result, "%s:%3d", erpaLabels[erpaIndex].c_str(), sync[1]);
+                    sprintf(result, "%s:%02d", erpaLabels[erpaIndex].c_str(), byte);
                     strings.push_back(result);
                     cout << result << endl;
+                    erpaValid = false;
                     break;
                 case 7:
                     /* Day DD*/
-                    sprintf(result, "%s:%3d", erpaLabels[erpaIndex].c_str(), sync[1]);
+                    sprintf(result, "%s:%02d", erpaLabels[erpaIndex].c_str(), byte);
                     strings.push_back(result);
                     cout << result << endl;
+                    erpaValid = false;
                     break;
                 case 8:
                     /* Hour HH */
-                    sprintf(result, "%s:%3d", erpaLabels[erpaIndex].c_str(), sync[1]);
+                    sprintf(result, "%s:%02d", erpaLabels[erpaIndex].c_str(), byte);
                     strings.push_back(result);
                     cout << result << endl;
+                    erpaValid = false;
                     break;
                 case 9:
                     /* Minute MM */
-                    sprintf(result, "%s:%3d", erpaLabels[erpaIndex].c_str(), sync[1]);
+                    sprintf(result, "%s:%02d", erpaLabels[erpaIndex].c_str(), byte);
                     strings.push_back(result);
                     cout << result << endl;
+                    erpaValid = false;
                     break;
                 case 10:
                     /* Second SS */
-                    sprintf(result, "%s:%3d", erpaLabels[erpaIndex].c_str(), sync[1]);
+                    sprintf(result, "%s:%02d", erpaLabels[erpaIndex].c_str(), byte);
                     strings.push_back(result);
                     cout << result << endl;
+                    erpaValid = false;
                     break;
                 case 11:
                     /* Millisecond S */
-                    sprintf(result, "%s:%3d", erpaLabels[erpaIndex].c_str(), sync[1]);
-                    strings.push_back(result);
-                    cout << result << endl;
+                    // MSB
+                    erpaValid = false;
                     break;
                 case 12:
                     /* Millisecond S */
-                    sprintf(result, "%s:%3d", erpaLabels[erpaIndex].c_str(), sync[1]);
+                    // LSB
+                    sprintf(result, "%s:%003d", erpaLabels[erpaIndex].c_str(), erpaValues[erpaIndex]);
                     strings.push_back(result);
                     cout << result << endl;
                     break;
@@ -418,52 +425,59 @@ vector<string> interpret(const string &inputStr)
                     sprintf(result, "%s:%06.5f", hkLabels[hkIndex].c_str(),
                             intToVoltage(hkValues[hkIndex], 12, 3.3, 1.0));
                     strings.push_back(result);
+                    hkValid = false;
                     break;
                 case 19:
                     /* Year YY*/
-                    sprintf(result, "%s:%3d", hkLabels[hkIndex].c_str(), sync[1]);
+                    sprintf(result, "%s:%02d", hkLabels[hkIndex].c_str(), byte);
                     strings.push_back(result);
                     cout << result << endl;
+                    hkValid = false;
                     break;
                 case 20:
                     /* Month MM */
-                    sprintf(result, "%s:%3d", hkLabels[hkIndex].c_str(), sync[1]);
+                    sprintf(result, "%s:%02d", hkLabels[hkIndex].c_str(), byte);
                     strings.push_back(result);
                     cout << result << endl;
+                    hkValid = false;
                     break;
                 case 21:
                     /* Day DD*/
-                    sprintf(result, "%s:%3d", hkLabels[hkIndex].c_str(), sync[1]);
+                    sprintf(result, "%s:%02d", hkLabels[hkIndex].c_str(), byte);
                     strings.push_back(result);
                     cout << result << endl;
+                    hkValid = false;
                     break;
                 case 22:
                     /* Hour HH */
-                    sprintf(result, "%s:%3d", hkLabels[hkIndex].c_str(), sync[1]);
+                    sprintf(result, "%s:%02d", hkLabels[hkIndex].c_str(), byte);
                     strings.push_back(result);
                     cout << result << endl;
+                    hkValid = false;
                     break;
                 case 23:
                     /* Minute MM */
-                    sprintf(result, "%s:%3d", hkLabels[hkIndex].c_str(), sync[1]);
+                    sprintf(result, "%s:%02d", hkLabels[hkIndex].c_str(), byte);
                     strings.push_back(result);
                     cout << result << endl;
+                    hkValid = false;
                     break;
                 case 24:
                     /* Second SS */
-                    sprintf(result, "%s:%3d", hkLabels[hkIndex].c_str(), sync[1]);
+                    sprintf(result, "%s:%02d", hkLabels[hkIndex].c_str(), byte);
                     strings.push_back(result);
                     cout << result << endl;
+                    hkValid = false;
                     break;
                 case 25:
                     /* Millisecond S */
-                    sprintf(result, "%s:%3d", hkLabels[hkIndex].c_str(), sync[1]);
-                    strings.push_back(result);
-                    cout << result << endl;
+                    // MSB
+                    hkValid = false;
                     break;
                 case 26:
                     /* Millisecond S */
-                    sprintf(result, "%s:%3d", hkLabels[hkIndex].c_str(), sync[1]);
+                    // LSB
+                    sprintf(result, "%s:%003d", hkLabels[hkIndex].c_str(), hkValues[hkIndex]);
                     strings.push_back(result);
                     cout << result << endl;
                     break;

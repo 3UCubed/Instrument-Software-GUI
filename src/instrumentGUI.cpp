@@ -1084,6 +1084,10 @@ int main(int argc, char **argv)
                     {
                     case 'a':
                     {
+                        if (recording)
+                        {
+                            writeToLog(ERPA, erpaFrame);
+                        }
                         snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
                         ERPAsync->value(buffer);
                         string logMsg(buffer);
@@ -1163,10 +1167,6 @@ int main(int argc, char **argv)
                         erpaDate += "." + strings[i] + "Z";
                         dateTime->value(erpaDate.c_str());
                         erpaFrame[5] = erpaDate;
-                        if (recording)
-                        {
-                            writeToLog(ERPA, erpaFrame);
-                        }
                         break;
                     }
                     }
@@ -1177,6 +1177,10 @@ int main(int argc, char **argv)
                     {
                     case 'i':
                     {
+                        if (recording)
+                        {
+                            writeToLog(PMT, pmtFrame);
+                        }
                         snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
                         PMTsync->value(buffer);
                         string logMsg(buffer);
@@ -1240,10 +1244,6 @@ int main(int argc, char **argv)
                         pmtDate += "." + strings[i] + "Z";
                         dateTime->value(pmtDate.c_str());
                         pmtFrame[3] = pmtDate;
-                        if (recording)
-                        {
-                            writeToLog(PMT, pmtFrame);
-                        }
                         break;
                     }
                     }
@@ -1254,6 +1254,10 @@ int main(int argc, char **argv)
                     {
                     case 'l':
                     {
+                        if (recording)
+                        {
+                            writeToLog(HK, hkFrame);
+                        }
                         snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
                         HKsync->value(buffer);
                         string logMsg(buffer);
@@ -1380,7 +1384,6 @@ int main(int argc, char **argv)
                         hkFrame[12] = logMsg;
                         break;
                     }
-
                     case 'B':
                     {
                         snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
@@ -1446,10 +1449,6 @@ int main(int argc, char **argv)
                         hkDate += "." + strings[i] + "Z";
                         dateTime->value(hkDate.c_str());
                         hkFrame[19] = hkDate;
-                        if (recording)
-                        {
-                            writeToLog(HK, hkFrame);
-                        }
                         break;
                     }
                     }
