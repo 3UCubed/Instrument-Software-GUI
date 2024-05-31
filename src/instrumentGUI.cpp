@@ -115,6 +115,14 @@ void readSerialData(const int &serialPort, std::atomic<bool> &stopFlag, std::ofs
 }
 
 // ******************************************************************************************************************* CALLBACKS
+
+
+void syncCallback(Fl_Widget *)
+{
+// TODO: Implement Handshake
+}
+
+
 /**
  * @brief Callback function to start or stop recording logs.
  *
@@ -543,8 +551,16 @@ int main(int argc, char **argv)
     // GUI variables
     const int windowWidth = 1300;
     const int windowHeight = 800;
-    const int xPacketOffset = 320;
+    const int xPacketOffset = 420;
     const int yPacketOffset = 200;
+    const int xControlOffset = 0;
+    const int yControlOffset = 0;
+    const int xDACOffset = 0;
+    const int yDACOffset = 0;
+    const int xGUIOffset = 0;
+    const int yGUIOffset = 0;
+
+    const string versionNumber = "1.0.0-beta";
 
     // GUI widgets
     Fl_Color darkBackground = fl_rgb_color(28, 28, 30);
@@ -553,7 +569,9 @@ int main(int argc, char **argv)
     Fl_Color output = fl_rgb_color(60, 116, 239);
     Fl_Color white = fl_rgb_color(255, 255, 255);
     Fl_Window *window = new Fl_Window(windowWidth, windowHeight, "IS Packet Interpreter");
-    Fl_Box *group4 = new Fl_Box(15, 75, 130, 700, "CONTROLS");
+    Fl_Box *group6 = new Fl_Box(xGUIOffset + 285, yGUIOffset + 75, 130, 400, "GUI");
+    Fl_Box *group5 = new Fl_Box(xDACOffset + 150, yDACOffset + 75, 130, 400, "DAC");
+    Fl_Box *group4 = new Fl_Box(xControlOffset + 15, yControlOffset + 75, 130, 400, "CONTROLS");
     Fl_Box *group2 = new Fl_Box(xPacketOffset + 295, yPacketOffset, 200, 400, "ERPA PACKET");
     Fl_Box *group1 = new Fl_Box(xPacketOffset + 15, yPacketOffset, 200, 400, "PMT PACKET");
     Fl_Box *group3 = new Fl_Box(xPacketOffset + 575, yPacketOffset, 200, 400, "HK PACKET");
@@ -586,29 +604,30 @@ int main(int argc, char **argv)
     Fl_Box *HK12 = new Fl_Box(xPacketOffset + 580, yPacketOffset + 325, 50, 20, "5vrefmon:");
     Fl_Box *HK6 = new Fl_Box(xPacketOffset + 580, yPacketOffset + 345, 50, 20, "n200vmon:");
     Fl_Box *HK7 = new Fl_Box(xPacketOffset + 580, yPacketOffset + 365, 50, 20, "n800vmon:");
-    Fl_Button *quit = new Fl_Button(15, 10, 40, 40, "ⓧ");
-    Fl_Button *autoSweep = new Fl_Button(25, 475, 110, 25, "Auto Sweep");
-    Fl_Button *stepUp = new Fl_Button(25, 510, 110, 25, "Step Up");
-    Fl_Button *stepDown = new Fl_Button(25, 565, 110, 25, "Step Down");
-    Fl_Button *enterStopMode = new Fl_Button(25, 610, 110, 35, "Sleep");
-    Fl_Button *exitStopMode = new Fl_Button(25, 660, 110, 35, "Wake Up");
-    Fl_Button *increaseFactor = new Fl_Button(300, 75, 110, 25, "Factor Up");
-    Fl_Button *decreaseFactor = new Fl_Button(300, 115, 110, 25, "Factor Down");
-    Fl_Button *startRecording = new Fl_Button(25, 720, 110, 35, "RECORD @circle");
+    Fl_Button *quit = new Fl_Button(xGUIOffset + 295, yGUIOffset + 430, 110, 35, "Quit");
+    Fl_Button *sync = new Fl_Button(xGUIOffset + 295, yGUIOffset + 90, 110, 35, "Sync");
+    Fl_Button *autoSweep = new Fl_Button(xDACOffset + 160, yDACOffset + 90, 110, 35, "Auto Sweep");
+    Fl_Button *stepUp = new Fl_Button(xDACOffset + 160, yDACOffset + 230, 110, 25, "Step Up");
+    Fl_Button *stepDown = new Fl_Button(xDACOffset + 160, yDACOffset + 285, 110, 25, "Step Down");
+    Fl_Button *enterStopMode = new Fl_Button(xGUIOffset + 295, yGUIOffset + 183, 110, 35, "Sleep");
+    Fl_Button *exitStopMode = new Fl_Button(xGUIOffset + 295, yGUIOffset + 266, 110, 35, "Wake Up");
+    Fl_Button *increaseFactor = new Fl_Button(xDACOffset + 160, yDACOffset + 385, 110, 25, "Factor Up");
+    Fl_Button *decreaseFactor = new Fl_Button(xDACOffset + 160, yDACOffset + 440, 110, 25, "Factor Down"); // 270
+    Fl_Button *startRecording = new Fl_Button(xGUIOffset + 295, yGUIOffset + 349, 110, 35, "RECORD @circle");
     Fl_Round_Button *PMTOn = new Fl_Round_Button(xPacketOffset + 165, yPacketOffset - 18, 20, 20);
     Fl_Round_Button *ERPAOn = new Fl_Round_Button(xPacketOffset + 450, yPacketOffset - 18, 20, 20);
     Fl_Round_Button *HKOn = new Fl_Round_Button(xPacketOffset + 725, yPacketOffset - 18, 20, 20);
-    Fl_Round_Button *PB5 = new Fl_Round_Button(20, 80, 100, 50, "sys_on PB5");
-    Fl_Round_Button *PC7 = new Fl_Round_Button(20, 130, 100, 50, "3v3_en PC7");
-    Fl_Round_Button *PC10 = new Fl_Round_Button(20, 180, 100, 50, "5v_en PC10");
-    Fl_Round_Button *PC6 = new Fl_Round_Button(20, 230, 100, 50, "n3v3_en PC6");
-    Fl_Round_Button *PC8 = new Fl_Round_Button(20, 280, 100, 50, "n5v_en PC8");
-    Fl_Round_Button *PC9 = new Fl_Round_Button(20, 330, 100, 50, "15v_en PC9");
-    Fl_Round_Button *PC13 = new Fl_Round_Button(20, 380, 100, 50, "n200v_en PC13");
-    Fl_Round_Button *PB6 = new Fl_Round_Button(20, 430, 100, 50, "800v_en PB6");
-    Fl_Output *curFactor = new Fl_Output(300, 155, 110, 25);
-    Fl_Output *currStep = new Fl_Output(112, 540, 20, 20);
-    Fl_Output *stepVoltage = new Fl_Output(40, 540, 20, 20);
+    Fl_Round_Button *PB5 = new Fl_Round_Button(xControlOffset + 20, yControlOffset + 80, 100, 50, "sys_on PB5");
+    Fl_Round_Button *PC7 = new Fl_Round_Button(xControlOffset + 20, yControlOffset + 130, 100, 50, "3v3_en PC7");
+    Fl_Round_Button *PC10 = new Fl_Round_Button(xControlOffset + 20, yControlOffset + 180, 100, 50, "5v_en PC10");
+    Fl_Round_Button *PC6 = new Fl_Round_Button(xControlOffset + 20, yControlOffset + 230, 100, 50, "n3v3_en PC6");
+    Fl_Round_Button *PC8 = new Fl_Round_Button(xControlOffset + 20, yControlOffset + 280, 100, 50, "n5v_en PC8");
+    Fl_Round_Button *PC9 = new Fl_Round_Button(xControlOffset + 20, yControlOffset + 330, 100, 50, "15v_en PC9");
+    Fl_Round_Button *PC13 = new Fl_Round_Button(xControlOffset + 20, yControlOffset + 380, 100, 50, "n200v_en PC13");
+    Fl_Round_Button *PB6 = new Fl_Round_Button(xControlOffset + 20, yControlOffset + 430, 100, 50, "800v_en PB6");
+    Fl_Output *curFactor = new Fl_Output(xDACOffset + 207, yDACOffset + 415, 20, 20);
+    Fl_Output *currStep = new Fl_Output(xDACOffset + 247, yDACOffset + 260, 20, 20);
+    Fl_Output *stepVoltage = new Fl_Output(xDACOffset + 175, yDACOffset + 260, 20, 20);
     Fl_Output *ERPAsync = new Fl_Output(xPacketOffset + 417, yPacketOffset + 5, 60, 20);
     Fl_Output *ERPAseq = new Fl_Output(xPacketOffset + 417, yPacketOffset + 25, 60, 20);
     Fl_Output *ERPAendmon = new Fl_Output(xPacketOffset + 417, yPacketOffset + 45, 60, 20);
@@ -619,9 +638,6 @@ int main(int argc, char **argv)
     Fl_Output *PMTsync = new Fl_Output(xPacketOffset + 135, yPacketOffset + 5, 60, 20);
     Fl_Output *PMTseq = new Fl_Output(xPacketOffset + 135, yPacketOffset + 25, 60, 20);
     Fl_Output *PMTadc = new Fl_Output(xPacketOffset + 135, yPacketOffset + 45, 60, 20);
-
-    Fl_Output *dateTime = new Fl_Output(xPacketOffset + 25, yPacketOffset + 75, 180, 20);
-
     Fl_Output *HKsync = new Fl_Output(xPacketOffset + 682, yPacketOffset + 5, 60, 20);
     Fl_Output *HKseq = new Fl_Output(xPacketOffset + 682, yPacketOffset + 25, 60, 20);
     Fl_Output *HKvsense = new Fl_Output(xPacketOffset + 682, yPacketOffset + 45, 60, 20);
@@ -642,27 +658,48 @@ int main(int argc, char **argv)
     Fl_Output *HKn150vmon = new Fl_Output(xPacketOffset + 682, yPacketOffset + 345, 60, 20);
     Fl_Output *HKn800vmon = new Fl_Output(xPacketOffset + 682, yPacketOffset + 365, 60, 20);
     Fl_Light_Button *SDN1 = new Fl_Light_Button(xPacketOffset + 305, yPacketOffset + 185, 150, 50, " SDN1 HIGH");
+    Fl_Output *version = new Fl_Output(5, 775, 100, 20);
+    Fl_Output *dateTime = new Fl_Output(100, 775, 200, 20);
 
     // Main window styling
     window->color(darkBackground);
+    dateTime->color(darkBackground);
+    dateTime->value(0);
+    dateTime->box(FL_FLAT_BOX);
+    dateTime->textcolor(output);
+    dateTime->labelsize(2);
 
-    // Control group styling
-    group4->color(box);
-    group4->box(FL_BORDER_BOX);
-    group4->labelcolor(text);
-    group4->labelfont(FL_BOLD);
-    group4->align(FL_ALIGN_TOP);
+    version->color(darkBackground);
+    version->value(versionNumber.c_str());
+    version->box(FL_FLAT_BOX);
+    version->textcolor(output);
+    version->labelsize(2);
+
+    // GUI group styling
+    group6->color(box);
+    group6->box(FL_BORDER_BOX);
+    group6->labelcolor(text);
+    group6->labelfont(FL_BOLD);
+    group6->align(FL_ALIGN_TOP);
     startRecording->labelcolor(FL_RED);
     startRecording->callback(startRecordingCallback);
-    autoSweep->callback(autoSweepCallback);
-    stepDown->callback(stepDownCallback);
-    stepUp->callback(stepUpCallback);
-    stepUp->label("Step Up      @8->");
-    stepUp->align(FL_ALIGN_CENTER);
-    stepDown->label("Step Down  @2->");
-    stepDown->align(FL_ALIGN_CENTER);
     enterStopMode->callback(stopModeCallback);
     exitStopMode->callback(exitStopModeCallback);
+    sync->align(FL_ALIGN_CENTER);
+    sync->callback(syncCallback);
+    quit->align(FL_ALIGN_CENTER);
+    quit->color(FL_RED);
+    quit->callback(quitCallback);
+    curFactor->color(box);
+    curFactor->value(0);
+    curFactor->box(FL_FLAT_BOX);
+    curFactor->textcolor(output);
+    // DAC group styling
+    group5->color(box);
+    group5->box(FL_BORDER_BOX);
+    group5->labelcolor(text);
+    group5->labelfont(FL_BOLD);
+    group5->align(FL_ALIGN_TOP);
     currStep->color(box);
     currStep->value(0);
     currStep->box(FL_FLAT_BOX);
@@ -671,6 +708,26 @@ int main(int argc, char **argv)
     stepVoltage->value(0);
     stepVoltage->box(FL_FLAT_BOX);
     stepVoltage->textcolor(output);
+    autoSweep->callback(autoSweepCallback);
+    stepDown->callback(stepDownCallback);
+    stepUp->callback(stepUpCallback);
+    stepUp->label("Step Up         @8->");
+    stepUp->align(FL_ALIGN_CENTER);
+    stepDown->label("Step Down     @2->");
+    stepDown->align(FL_ALIGN_CENTER);
+    increaseFactor->callback(factorUpCallback);
+    decreaseFactor->callback(factorDownCallback);
+    increaseFactor->label("Factor Up       @8->");
+    increaseFactor->align(FL_ALIGN_CENTER);
+    decreaseFactor->label("Factor Down  @2->");
+    decreaseFactor->align(FL_ALIGN_CENTER);
+
+    // Control group styling
+    group4->color(box);
+    group4->box(FL_BORDER_BOX);
+    group4->labelcolor(text);
+    group4->labelfont(FL_BOLD);
+    group4->align(FL_ALIGN_TOP);
     PB5->labelcolor(text);
     PB5->callback(PB5Callback);
     PB6->labelcolor(text);
@@ -978,19 +1035,6 @@ int main(int argc, char **argv)
     HK7->labelfont();
     HK7->labelcolor(text);
     HK7->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
-
-    // Exterior buttons styling
-    quit->box(FL_FLAT_BOX);
-    quit->color(darkBackground);
-    quit->labelcolor(FL_RED);
-    quit->labelsize(40);
-    quit->callback(quitCallback);
-    increaseFactor->callback(factorUpCallback);
-    decreaseFactor->callback(factorDownCallback);
-    curFactor->color(box);
-    curFactor->value(0);
-    curFactor->box(FL_FLAT_BOX);
-    curFactor->textcolor(output);
 
     // ******************************************************************************************************************* Thread Setup
     struct termios options = {};
