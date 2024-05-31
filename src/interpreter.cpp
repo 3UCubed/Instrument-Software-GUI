@@ -69,7 +69,6 @@ vector<string> interpret(const string &inputStr)
     vector<string> strings;
     //  char strings[1000][1000];
     char result[1000];
-    int arrCounter = 0;
     std::ifstream inputFile(inputStr, std::ios::binary);
 
     if (!inputFile)
@@ -82,20 +81,20 @@ vector<string> interpret(const string &inputStr)
     char sync[2];
     int packet = 0;
 
-    string erpaLabels[9] = {"a", "b", "d", "e", "g", "H", "M", "S", "X"};
-    int erpaValues[9];
+    string erpaLabels[13] = {"a", "b", "d", "e", "g", "1", "2", "3", "4", "5", "6", "7", "8"};
+    int erpaValues[13];
     int erpaIndex = 0;
     int erpaValid = 0;
 
-    string pmtLabels[7] = {"i", "j", "k", "H", "M", "S", "X"};
-    int pmtValues[7];
+    string pmtLabels[11] = {"i", "j", "k", "1", "2", "3", "4", "5", "6", "7", "8"};
+    int pmtValues[11];
     int pmtIndex = 0;
     int pmtValid = 0;
 
-    string hkLabels[23] = {"l", "m", "n", "o", "p",
+    string hkLabels[27] = {"l", "m", "n", "o", "p",
                            "q", "r", "s", "t",
-                           "u", "v", "w", "x", "y", "z", "A", "B", "C", "D", "H", "M", "S", "X"};
-    int hkValues[23];
+                           "u", "v", "w", "x", "y", "z", "A", "B", "C", "D", "1", "2", "3", "4", "5", "6", "7", "8"};
+    int hkValues[27];
     int hkIndex = 0;
     int hkValid = 0;
 
@@ -140,65 +139,80 @@ vector<string> interpret(const string &inputStr)
                     /* SYNC Bytes; should be 0xAAAA */
                     sprintf(result, "%s:0x%X", erpaLabels[erpaIndex].c_str(), erpaValues[erpaIndex]);
                     strings.push_back(result);
-                    arrCounter++;
                     break;
                 case 1:
                     /* SEQ Bytes; 0-65535 */
                     sprintf(result, "%s:%04d", erpaLabels[erpaIndex].c_str(), erpaValues[erpaIndex]);
                     strings.push_back(result);
-                    arrCounter++;
                     break;
                 case 2:
                     /* SWP Monitored */
                     sprintf(result, "%s:%06.5f", erpaLabels[erpaIndex].c_str(),
                             intToVoltage(erpaValues[erpaIndex], 12, 3.3, 1.0));
                     strings.push_back(result);
-                    arrCounter++;
                     break;
                 case 3:
                     /* TEMP Op-Amp1 */
                     sprintf(result, "%s:%06.5f", erpaLabels[erpaIndex].c_str(),
                             intToVoltage(erpaValues[erpaIndex], 12, 3.3, 1.0));
                     strings.push_back(result);
-                    arrCounter++;
                     break;
                 case 4:
                     /* ERPA eADC Bytes; Interpreted as Volts */
                     sprintf(result, "%s:%08.7f", erpaLabels[erpaIndex].c_str(),
                             intToVoltage(erpaValues[erpaIndex], 16, 5, 1.0));
                     strings.push_back(result);
-                    arrCounter++;
                     break;
                 case 5:
-                    /* Hours*/
-                    sprintf(result, "%s:%3d", erpaLabels[erpaIndex].c_str(), erpaValues[erpaIndex]);
+                    /* Year YY*/
+                    sprintf(result, "%s:%3d", erpaLabels[erpaIndex].c_str(), sync[1]);
                     strings.push_back(result);
                     cout << result << endl;
-                    arrCounter++;
                     break;
                 case 6:
-                    /* Minutes */
-                    sprintf(result, "%s:%3d", erpaLabels[erpaIndex].c_str(), erpaValues[erpaIndex]);
+                    /* Month MM */
+                    sprintf(result, "%s:%3d", erpaLabels[erpaIndex].c_str(), sync[1]);
                     strings.push_back(result);
                     cout << result << endl;
-                    arrCounter++;
                     break;
                 case 7:
-                    /* Seconds*/
-                    sprintf(result, "%s:%3d", erpaLabels[erpaIndex].c_str(), erpaValues[erpaIndex]);
+                    /* Day DD*/
+                    sprintf(result, "%s:%3d", erpaLabels[erpaIndex].c_str(), sync[1]);
                     strings.push_back(result);
                     cout << result << endl;
-                    arrCounter++;
                     break;
                 case 8:
-                    /* Millis */
-                    sprintf(result, "%s:%3d", erpaLabels[erpaIndex].c_str(), erpaValues[erpaIndex]);
+                    /* Hour HH */
+                    sprintf(result, "%s:%3d", erpaLabels[erpaIndex].c_str(), sync[1]);
                     strings.push_back(result);
                     cout << result << endl;
-                    arrCounter++;
+                    break;
+                case 9:
+                    /* Minute MM */
+                    sprintf(result, "%s:%3d", erpaLabels[erpaIndex].c_str(), sync[1]);
+                    strings.push_back(result);
+                    cout << result << endl;
+                    break;
+                case 10:
+                    /* Second SS */
+                    sprintf(result, "%s:%3d", erpaLabels[erpaIndex].c_str(), sync[1]);
+                    strings.push_back(result);
+                    cout << result << endl;
+                    break;
+                case 11:
+                    /* Millisecond S */
+                    sprintf(result, "%s:%3d", erpaLabels[erpaIndex].c_str(), sync[1]);
+                    strings.push_back(result);
+                    cout << result << endl;
+                    break;
+                case 12:
+                    /* Millisecond S */
+                    sprintf(result, "%s:%3d", erpaLabels[erpaIndex].c_str(), sync[1]);
+                    strings.push_back(result);
+                    cout << result << endl;
                     break;
                 }
-                erpaIndex = (erpaIndex + 1) % 9;
+                erpaIndex = (erpaIndex + 1) % 13;
             }
             erpaValid = !erpaValid;
         }
@@ -213,55 +227,76 @@ vector<string> interpret(const string &inputStr)
                     /* SEQ Bytes; should be 0xBBBB */
                     sprintf(result, "%s:0x%X", pmtLabels[pmtIndex].c_str(), pmtValues[pmtIndex]);
                     strings.push_back(result);
-                    arrCounter++;
                     break;
                 case 1:
                     /* SYNC Bytes; 0-65535 */
                     sprintf(result, "%s:%04d", pmtLabels[pmtIndex].c_str(), pmtValues[pmtIndex]);
                     strings.push_back(result);
-                    arrCounter++;
                     break;
                 case 2:
                     /* PMT eADC Bytes; Interpreted as Volts */
                     sprintf(result, "%s:%08.7f", pmtLabels[pmtIndex].c_str(),
                             intToVoltage(pmtValues[pmtIndex], 16, 5, 1.0));
                     strings.push_back(result);
-                    arrCounter++;
+                    pmtValid = false;
                     break;
                 case 3:
-                    /* Hours*/
-                    sprintf(result, "%s:%3d", pmtLabels[pmtIndex].c_str(), pmtValues[pmtIndex]);
+                    /* Year YY*/
+                    sprintf(result, "%s:%02d", pmtLabels[pmtIndex].c_str(), byte);
                     strings.push_back(result);
                     cout << result << endl;
-                    arrCounter++;
+                    pmtValid = false;
                     break;
                 case 4:
-                    /* Minutes*/
-                    sprintf(result, "%s:%3d", pmtLabels[pmtIndex].c_str(), pmtValues[pmtIndex]);
+                    /* Month MM */
+                    sprintf(result, "%s:%02d", pmtLabels[pmtIndex].c_str(), byte);
                     strings.push_back(result);
                     cout << result << endl;
-
-                    arrCounter++;
+                    pmtValid = false;
                     break;
                 case 5:
-                    /* Seconds*/
-                    sprintf(result, "%s:%3d", pmtLabels[pmtIndex].c_str(), pmtValues[pmtIndex]);
+                    /* Day DD*/
+                    sprintf(result, "%s:%02d", pmtLabels[pmtIndex].c_str(), byte);
                     strings.push_back(result);
                     cout << result << endl;
-
-                    arrCounter++;
+                    pmtValid = false;
                     break;
                 case 6:
-                    /* Milliseconds */
-                    sprintf(result, "%s:%3d", pmtLabels[pmtIndex].c_str(), pmtValues[pmtIndex]);
+                    /* Hour HH */
+                    sprintf(result, "%s:%02d", pmtLabels[pmtIndex].c_str(), byte);
                     strings.push_back(result);
                     cout << result << endl;
-
-                    arrCounter++;
+                    pmtValid = false;
+                    break;
+                case 7:
+                    /* Minute MM */
+                    sprintf(result, "%s:%02d", pmtLabels[pmtIndex].c_str(), byte);
+                    strings.push_back(result);
+                    cout << result << endl;
+                    pmtValid = false;
+                    break;
+                case 8:
+                    /* Second SS */
+                    sprintf(result, "%s:%02d", pmtLabels[pmtIndex].c_str(), byte);
+                    strings.push_back(result);
+                    cout << result << endl;
+                    pmtValid = false;
+                    break;
+                case 9:
+                    /* Millisecond S */
+                    // MSB
+                    pmtValid = false;
+                    break;
+                case 10:
+                    /* Millisecond S */
+                    // LSB
+                    sprintf(result, "%s:%003d", pmtLabels[pmtIndex].c_str(), pmtValues[pmtIndex]);
+                    strings.push_back(result);
+                    cout << result << endl;
                     break;
                 }
 
-                pmtIndex = (pmtIndex + 1) % 7;
+                pmtIndex = (pmtIndex + 1) % 11;
             }
             pmtValid = !pmtValid;
         }
@@ -276,163 +311,164 @@ vector<string> interpret(const string &inputStr)
                     /* l SYNC Bytes; should be 0xCCCC */
                     sprintf(result, "%s:0x%X ", hkLabels[hkIndex].c_str(), hkValues[hkIndex]);
                     strings.push_back(result);
-                    arrCounter++;
                     break;
                 case 1:
                     /* m SEQ Bytes; 0-65535 */
                     sprintf(result, "%s:%04d ", hkLabels[hkIndex].c_str(), hkValues[hkIndex]);
                     strings.push_back(result);
-                    arrCounter++;
                     break;
                 case 2:
                     /* n vsense */
                     sprintf(result, "%s:%06.5f", hkLabels[hkIndex].c_str(),
                             intToVoltage(hkValues[hkIndex], 12, 3.3, 1.0));
                     strings.push_back(result);
-                    arrCounter++;
                     break;
                 case 3:
                     /* o vrefint */
                     sprintf(result, "%s:%06.5f", hkLabels[hkIndex].c_str(),
                             intToVoltage(hkValues[hkIndex], 12, 3, 1.0));
                     strings.push_back(result);
-                    arrCounter++;
                     break;
                 case 4:
                     /* p temp1 */
                     sprintf(result, "%s:%06.5f", hkLabels[hkIndex].c_str(),
                             tempsToCelsius(hkValues[hkIndex]));
                     strings.push_back(result);
-                    arrCounter++;
                     break;
                 case 5:
                     /* q temp2 */
                     sprintf(result, "%s:%06.5f", hkLabels[hkIndex].c_str(),
                             tempsToCelsius(hkValues[hkIndex]));
                     strings.push_back(result);
-                    arrCounter++;
                     break;
                 case 6:
                     /* r temp3 */
                     sprintf(result, "%s:%06.5f", hkLabels[hkIndex].c_str(),
                             tempsToCelsius(hkValues[hkIndex]));
                     strings.push_back(result);
-                    arrCounter++;
                     break;
                 case 7:
                     /* s temp4 */
                     sprintf(result, "%s:%06.5f", hkLabels[hkIndex].c_str(),
                             tempsToCelsius(hkValues[hkIndex]));
                     strings.push_back(result);
-                    arrCounter++;
                     break;
                 case 8:
                     /* t BUS_Vmon */
                     sprintf(result, "%s:%06.5f", hkLabels[hkIndex].c_str(),
                             intToVoltage(hkValues[hkIndex], 12, 3.3, 1.0));
                     strings.push_back(result);
-                    arrCounter++;
                     break;
                 case 9:
                     /* u BUS_Imon */
                     sprintf(result, "%s:%06.5f", hkLabels[hkIndex].c_str(),
                             intToVoltage(hkValues[hkIndex], 12, 3.3, 1.0));
                     strings.push_back(result);
-                    arrCounter++;
                     break;
                 case 10:
                     /* v 2v5_mon */
                     sprintf(result, "%s:%06.5f", hkLabels[hkIndex].c_str(),
                             intToVoltage(hkValues[hkIndex], 12, 3.3, 1.0));
                     strings.push_back(result);
-                    arrCounter++;
                     break;
                 case 11:
                     /* w 3v3_mon */
                     sprintf(result, "%s:%06.5f", hkLabels[hkIndex].c_str(),
                             intToVoltage(hkValues[hkIndex], 12, 3.3, 1.0));
                     strings.push_back(result);
-                    arrCounter++;
                     break;
                 case 12:
                     /* x 5v_mon */
                     sprintf(result, "%s:%06.5f", hkLabels[hkIndex].c_str(),
                             intToVoltage(hkValues[hkIndex], 12, 3.3, 1.0));
                     strings.push_back(result);
-                    arrCounter++;
                     break;
                 case 13:
                     /* y n3v3_mon */
                     sprintf(result, "%s:%06.5f", hkLabels[hkIndex].c_str(),
                             intToVoltage(hkValues[hkIndex], 12, 3.3, 1.0));
                     strings.push_back(result);
-                    arrCounter++;
                     break;
                 case 14:
                     /* z n5v_mon */
                     sprintf(result, "%s:%06.5f", hkLabels[hkIndex].c_str(),
                             intToVoltage(hkValues[hkIndex], 12, 3.3, 1.0));
                     strings.push_back(result);
-                    arrCounter++;
                     break;
                 case 15:
                     /* A 15v_mon */
                     sprintf(result, "%s:%06.5f", hkLabels[hkIndex].c_str(),
                             intToVoltage(hkValues[hkIndex], 12, 3.3, 1.0));
                     strings.push_back(result);
-                    arrCounter++;
                     break;
                 case 16:
                     /* B 5vref_mon */
                     sprintf(result, "%s:%06.5f", hkLabels[hkIndex].c_str(),
                             intToVoltage(hkValues[hkIndex], 12, 3.3, 1.0));
                     strings.push_back(result);
-                    arrCounter++;
                     break;
                 case 17:
                     /* C n150v_mon */
                     sprintf(result, "%s:%06.5f", hkLabels[hkIndex].c_str(),
                             intToVoltage(hkValues[hkIndex], 12, 3.3, 1.0));
                     strings.push_back(result);
-                    arrCounter++;
                     break;
                 case 18:
                     /* D n800v_mon */
                     sprintf(result, "%s:%06.5f", hkLabels[hkIndex].c_str(),
                             intToVoltage(hkValues[hkIndex], 12, 3.3, 1.0));
                     strings.push_back(result);
-                    arrCounter++;
                     break;
                 case 19:
-                    /* Hours*/
-                    sprintf(result, "%s:%3d", hkLabels[hkIndex].c_str(), hkValues[hkIndex]);
+                    /* Year YY*/
+                    sprintf(result, "%s:%3d", hkLabels[hkIndex].c_str(), sync[1]);
                     strings.push_back(result);
                     cout << result << endl;
-                    arrCounter++;
                     break;
                 case 20:
-                    /* Minutes*/
-                    sprintf(result, "%s:%3d", hkLabels[hkIndex].c_str(), hkValues[hkIndex]);
+                    /* Month MM */
+                    sprintf(result, "%s:%3d", hkLabels[hkIndex].c_str(), sync[1]);
                     strings.push_back(result);
                     cout << result << endl;
-                    arrCounter++;
                     break;
                 case 21:
-                    /* Seconds */
-                    sprintf(result, "%s:%3d", hkLabels[hkIndex].c_str(), hkValues[hkIndex]);
+                    /* Day DD*/
+                    sprintf(result, "%s:%3d", hkLabels[hkIndex].c_str(), sync[1]);
                     strings.push_back(result);
                     cout << result << endl;
-                    arrCounter++;
                     break;
                 case 22:
-                    /* Millis */
-                    sprintf(result, "%s:%3d", hkLabels[hkIndex].c_str(), hkValues[hkIndex]);
+                    /* Hour HH */
+                    sprintf(result, "%s:%3d", hkLabels[hkIndex].c_str(), sync[1]);
                     strings.push_back(result);
                     cout << result << endl;
-                    arrCounter++;
+                    break;
+                case 23:
+                    /* Minute MM */
+                    sprintf(result, "%s:%3d", hkLabels[hkIndex].c_str(), sync[1]);
+                    strings.push_back(result);
+                    cout << result << endl;
+                    break;
+                case 24:
+                    /* Second SS */
+                    sprintf(result, "%s:%3d", hkLabels[hkIndex].c_str(), sync[1]);
+                    strings.push_back(result);
+                    cout << result << endl;
+                    break;
+                case 25:
+                    /* Millisecond S */
+                    sprintf(result, "%s:%3d", hkLabels[hkIndex].c_str(), sync[1]);
+                    strings.push_back(result);
+                    cout << result << endl;
+                    break;
+                case 26:
+                    /* Millisecond S */
+                    sprintf(result, "%s:%3d", hkLabels[hkIndex].c_str(), sync[1]);
+                    strings.push_back(result);
+                    cout << result << endl;
                     break;
                 }
-                hkIndex = (hkIndex + 1) % 23;
+                hkIndex = (hkIndex + 1) % 27;
             }
             hkValid = !hkValid;
         }

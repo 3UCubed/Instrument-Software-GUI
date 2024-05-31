@@ -112,15 +112,10 @@ void writeToLog(Log log, string data[])
     {
     case ERPA:
     {
-        auto t = std::time(nullptr);
-        auto tm = *std::localtime(&t);
-
-        auto now = chrono::system_clock::now();
-        time_t now_c = chrono::system_clock::to_time_t(now);
-        auto ms = chrono::duration_cast<chrono::milliseconds>(now.time_since_epoch()) % 1000;
-        erpaStream << put_time(&tm, "%m-%d-%Y, %H:%M:%S:") << ms.count();
-
-        for (int i = 0; i < 7; i++)
+        string date = data[5].substr(0,8);
+        string time = data[5].substr(8, 14);
+        erpaStream << date << ", " << time;
+        for (int i = 0; i < 5; i++)
         {
             erpaStream << ", " << data[i];
         }
@@ -129,13 +124,9 @@ void writeToLog(Log log, string data[])
     }
     case PMT:
     {
-        auto t = std::time(nullptr);
-        auto tm = *std::localtime(&t);
-
-        auto now = chrono::system_clock::now();
-        time_t now_c = chrono::system_clock::to_time_t(now);
-        auto ms = chrono::duration_cast<chrono::milliseconds>(now.time_since_epoch()) % 1000;
-        pmtStream << put_time(&tm, "%m-%d-%Y, %H:%M:%S:") << ms.count();
+        string date = data[3].substr(0,8);
+        string time = data[3].substr(8, 14);
+        pmtStream << date << ", " << time;
 
         for (int i = 0; i < 3; i++)
         {
@@ -146,13 +137,9 @@ void writeToLog(Log log, string data[])
     }
     case HK:
     {
-        auto t = std::time(nullptr);
-        auto tm = *std::localtime(&t);
-
-        auto now = chrono::system_clock::now();
-        time_t now_c = chrono::system_clock::to_time_t(now);
-        auto ms = chrono::duration_cast<chrono::milliseconds>(now.time_since_epoch()) % 1000;
-        hkStream << put_time(&tm, "%m-%d-%Y, %H:%M:%S:") << ms.count();
+        string date = data[19].substr(0,8);
+        string time = data[19].substr(8, 14);
+        hkStream << date << ", " << time;
 
         for (int i = 0; i < 19; i++)
         {

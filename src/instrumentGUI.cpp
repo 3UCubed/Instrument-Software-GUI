@@ -45,9 +45,9 @@ int currentFactor = 1;
 char currentFactorBuf[8];
 int serialPort = open(portName, O_RDWR | O_NOCTTY); // Opening serial port
 int step = 0;
-string erpaFrame[7];
-string pmtFrame[3];
-string hkFrame[19];
+string erpaFrame[6];
+string pmtFrame[4];
+string hkFrame[20];
 using namespace std;
 bool recording = false;
 bool autoSweepStarted = false;
@@ -567,12 +567,6 @@ int main(int argc, char **argv)
     Fl_Box *PMT1 = new Fl_Box(xPacketOffset + 18, yPacketOffset + 5, 50, 20, "SYNC:");
     Fl_Box *PMT2 = new Fl_Box(xPacketOffset + 18, yPacketOffset + 25, 50, 20, "SEQ:");
     Fl_Box *PMT3 = new Fl_Box(xPacketOffset + 18, yPacketOffset + 45, 50, 20, "ADC:");
-
-    Fl_Box *PMT4 = new Fl_Box(xPacketOffset + 18, yPacketOffset + 65, 50, 20, "Hours:");
-    Fl_Box *PMT5 = new Fl_Box(xPacketOffset + 18, yPacketOffset + 85, 50, 20, "Minutes:");
-    Fl_Box *PMT6 = new Fl_Box(xPacketOffset + 18, yPacketOffset + 105, 50, 20, "Seconds:");
-    Fl_Box *PMT7 = new Fl_Box(xPacketOffset + 18, yPacketOffset + 125, 50, 20, "Millis:");
-
     Fl_Box *HK1 = new Fl_Box(xPacketOffset + 580, yPacketOffset + 5, 50, 20, "SYNC:");
     Fl_Box *HK2 = new Fl_Box(xPacketOffset + 580, yPacketOffset + 25, 50, 20, "SEQ:");
     Fl_Box *HK14 = new Fl_Box(xPacketOffset + 580, yPacketOffset + 45, 50, 20, "vsense:");
@@ -626,10 +620,7 @@ int main(int argc, char **argv)
     Fl_Output *PMTseq = new Fl_Output(xPacketOffset + 135, yPacketOffset + 25, 60, 20);
     Fl_Output *PMTadc = new Fl_Output(xPacketOffset + 135, yPacketOffset + 45, 60, 20);
 
-    Fl_Output *hour = new Fl_Output(xPacketOffset + 135, yPacketOffset + 65, 60, 20);
-    Fl_Output *minute = new Fl_Output(xPacketOffset + 135, yPacketOffset + 85, 60, 20);
-    Fl_Output *second = new Fl_Output(xPacketOffset + 135, yPacketOffset + 105, 60, 20);
-    Fl_Output *millis = new Fl_Output(xPacketOffset + 135, yPacketOffset + 125, 60, 20);
+    Fl_Output *dateTime = new Fl_Output(xPacketOffset + 25, yPacketOffset + 75, 180, 20);
 
     Fl_Output *HKsync = new Fl_Output(xPacketOffset + 682, yPacketOffset + 5, 60, 20);
     Fl_Output *HKseq = new Fl_Output(xPacketOffset + 682, yPacketOffset + 25, 60, 20);
@@ -1078,6 +1069,10 @@ int main(int argc, char **argv)
         if (!strings.empty())
         {
             truncate("mylog.0", 0);
+            string pmtDate = "";
+            string erpaDate = "";
+            string hkDate = "";
+
             for (int i = 0; i < strings.size(); i++)
             {
                 // cout << strings[i] << endl;
@@ -1089,10 +1084,6 @@ int main(int argc, char **argv)
                     {
                     case 'a':
                     {
-                        if (recording)
-                        {
-                            writeToLog(ERPA, erpaFrame);
-                        }
                         snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
                         ERPAsync->value(buffer);
                         string logMsg(buffer);
@@ -1131,6 +1122,53 @@ int main(int argc, char **argv)
                         erpaFrame[2] = logMsg;
                         break;
                     }
+                    case '1':
+                    {
+                        erpaDate = strings[i];
+                        break;
+                    }
+                    case '2':
+                    {
+                        erpaDate += "-" + strings[i];
+                        break;
+                    }
+                    case '3':
+                    {
+                        erpaDate += "-" + strings[i];
+                        break;
+                    }
+                    case '4':
+                    {
+                        erpaDate += "T" + strings[i];
+                        break;
+                    }
+                    case '5':
+                    {
+                        erpaDate += ":" + strings[i];
+                        break;
+                    }
+                    case '6':
+                    {
+                        erpaDate += ":" + strings[i];
+                        break;
+                    }
+                    case '7':
+                    {
+                        // Millis MSB
+                        break;
+                    }
+                    case '8':
+                    {
+                        // Millis MSB & LSB
+                        erpaDate += "." + strings[i] + "Z";
+                        dateTime->value(erpaDate.c_str());
+                        erpaFrame[5] = erpaDate;
+                        if (recording)
+                        {
+                            writeToLog(ERPA, erpaFrame);
+                        }
+                        break;
+                    }
                     }
                 }
                 if (PMTOn->value())
@@ -1139,10 +1177,6 @@ int main(int argc, char **argv)
                     {
                     case 'i':
                     {
-                        if (recording)
-                        {
-                            writeToLog(PMT, pmtFrame);
-                        }
                         snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
                         PMTsync->value(buffer);
                         string logMsg(buffer);
@@ -1165,28 +1199,51 @@ int main(int argc, char **argv)
                         pmtFrame[2] = logMsg;
                         break;
                     }
-                    case 'H':
+                    case '1':
                     {
-                        snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
-                        hour->value(buffer);
+                        pmtDate = strings[i];
                         break;
                     }
-                    case 'M':
+                    case '2':
                     {
-                        snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
-                        minute->value(buffer);
+                        pmtDate += "-" + strings[i];
                         break;
                     }
-                    case 'S':
+                    case '3':
                     {
-                        snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
-                        second->value(buffer);
+                        pmtDate += "-" + strings[i];
                         break;
                     }
-                    case 'X':
+                    case '4':
                     {
-                        snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
-                        millis->value(buffer);
+                        pmtDate += "T" + strings[i];
+                        break;
+                    }
+                    case '5':
+                    {
+                        pmtDate += ":" + strings[i];
+                        break;
+                    }
+                    case '6':
+                    {
+                        pmtDate += ":" + strings[i];
+                        break;
+                    }
+                    case '7':
+                    {
+                        // Millis MSB
+                        break;
+                    }
+                    case '8':
+                    {
+                        // Millis MSB & LSB
+                        pmtDate += "." + strings[i] + "Z";
+                        dateTime->value(pmtDate.c_str());
+                        pmtFrame[3] = pmtDate;
+                        if (recording)
+                        {
+                            writeToLog(PMT, pmtFrame);
+                        }
                         break;
                     }
                     }
@@ -1197,10 +1254,6 @@ int main(int argc, char **argv)
                     {
                     case 'l':
                     {
-                        if (recording)
-                        {
-                            writeToLog(HK, hkFrame);
-                        }
                         snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
                         HKsync->value(buffer);
                         string logMsg(buffer);
@@ -1350,6 +1403,53 @@ int main(int argc, char **argv)
                         HKn800vmon->value(buffer);
                         string logMsg(buffer);
                         hkFrame[6] = logMsg;
+                        break;
+                    }
+                    case '1':
+                    {
+                        hkDate = strings[i];
+                        break;
+                    }
+                    case '2':
+                    {
+                        hkDate += "-" + strings[i];
+                        break;
+                    }
+                    case '3':
+                    {
+                        hkDate += "-" + strings[i];
+                        break;
+                    }
+                    case '4':
+                    {
+                        hkDate += "T" + strings[i];
+                        break;
+                    }
+                    case '5':
+                    {
+                        hkDate += ":" + strings[i];
+                        break;
+                    }
+                    case '6':
+                    {
+                        hkDate += ":" + strings[i];
+                        break;
+                    }
+                    case '7':
+                    {
+                        // Millis MSB
+                        break;
+                    }
+                    case '8':
+                    {
+                        // Millis MSB & LSB
+                        hkDate += "." + strings[i] + "Z";
+                        dateTime->value(hkDate.c_str());
+                        hkFrame[19] = hkDate;
+                        if (recording)
+                        {
+                            writeToLog(HK, hkFrame);
+                        }
                         break;
                     }
                     }
