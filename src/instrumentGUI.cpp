@@ -550,9 +550,9 @@ int main(int argc, char **argv)
     // ******************************************************************************************************************* GUI Widget Setup
     // GUI variables
     const int windowWidth = 1300;
-    const int windowHeight = 800;
+    const int windowHeight = 600;
     const int xPacketOffset = 420;
-    const int yPacketOffset = 200;
+    const int yPacketOffset = 75;
     const int xControlOffset = 0;
     const int yControlOffset = 0;
     const int xDACOffset = 0;
@@ -607,12 +607,12 @@ int main(int argc, char **argv)
     Fl_Button *quit = new Fl_Button(xGUIOffset + 295, yGUIOffset + 430, 110, 35, "Quit");
     Fl_Button *sync = new Fl_Button(xGUIOffset + 295, yGUIOffset + 90, 110, 35, "Sync");
     Fl_Button *autoSweep = new Fl_Button(xDACOffset + 160, yDACOffset + 90, 110, 35, "Auto Sweep");
-    Fl_Button *stepUp = new Fl_Button(xDACOffset + 160, yDACOffset + 230, 110, 25, "Step Up");
-    Fl_Button *stepDown = new Fl_Button(xDACOffset + 160, yDACOffset + 285, 110, 25, "Step Down");
+    Fl_Button *stepUp = new Fl_Button(xDACOffset + 160, yDACOffset + 183, 110, 35, "Step Up");
+    Fl_Button *stepDown = new Fl_Button(xDACOffset + 160, yDACOffset + 266, 110, 35, "Step Down");
     Fl_Button *enterStopMode = new Fl_Button(xGUIOffset + 295, yGUIOffset + 183, 110, 35, "Sleep");
     Fl_Button *exitStopMode = new Fl_Button(xGUIOffset + 295, yGUIOffset + 266, 110, 35, "Wake Up");
-    Fl_Button *increaseFactor = new Fl_Button(xDACOffset + 160, yDACOffset + 385, 110, 25, "Factor Up");
-    Fl_Button *decreaseFactor = new Fl_Button(xDACOffset + 160, yDACOffset + 440, 110, 25, "Factor Down"); // 270
+    Fl_Button *increaseFactor = new Fl_Button(xDACOffset + 160, yDACOffset + 349, 110, 35, "Factor Up");
+    Fl_Button *decreaseFactor = new Fl_Button(xDACOffset + 160, yDACOffset + 430, 110, 35, "Factor Down"); // 270
     Fl_Button *startRecording = new Fl_Button(xGUIOffset + 295, yGUIOffset + 349, 110, 35, "RECORD @circle");
     Fl_Round_Button *PMTOn = new Fl_Round_Button(xPacketOffset + 165, yPacketOffset - 18, 20, 20);
     Fl_Round_Button *ERPAOn = new Fl_Round_Button(xPacketOffset + 450, yPacketOffset - 18, 20, 20);
@@ -625,9 +625,9 @@ int main(int argc, char **argv)
     Fl_Round_Button *PC9 = new Fl_Round_Button(xControlOffset + 20, yControlOffset + 330, 100, 50, "15v_en PC9");
     Fl_Round_Button *PC13 = new Fl_Round_Button(xControlOffset + 20, yControlOffset + 380, 100, 50, "n200v_en PC13");
     Fl_Round_Button *PB6 = new Fl_Round_Button(xControlOffset + 20, yControlOffset + 430, 100, 50, "800v_en PB6");
-    Fl_Output *curFactor = new Fl_Output(xDACOffset + 207, yDACOffset + 415, 20, 20);
-    Fl_Output *currStep = new Fl_Output(xDACOffset + 247, yDACOffset + 260, 20, 20);
-    Fl_Output *stepVoltage = new Fl_Output(xDACOffset + 175, yDACOffset + 260, 20, 20);
+    Fl_Output *curFactor = new Fl_Output(xDACOffset + 207, yDACOffset + 397, 20, 20);
+    Fl_Output *currStep = new Fl_Output(xDACOffset + 247, yDACOffset + 235, 20, 20);
+    Fl_Output *stepVoltage = new Fl_Output(xDACOffset + 175, yDACOffset + 235, 20, 20);
     Fl_Output *ERPAsync = new Fl_Output(xPacketOffset + 417, yPacketOffset + 5, 60, 20);
     Fl_Output *ERPAseq = new Fl_Output(xPacketOffset + 417, yPacketOffset + 25, 60, 20);
     Fl_Output *ERPAendmon = new Fl_Output(xPacketOffset + 417, yPacketOffset + 45, 60, 20);
@@ -658,8 +658,8 @@ int main(int argc, char **argv)
     Fl_Output *HKn150vmon = new Fl_Output(xPacketOffset + 682, yPacketOffset + 345, 60, 20);
     Fl_Output *HKn800vmon = new Fl_Output(xPacketOffset + 682, yPacketOffset + 365, 60, 20);
     Fl_Light_Button *SDN1 = new Fl_Light_Button(xPacketOffset + 305, yPacketOffset + 185, 150, 50, " SDN1 HIGH");
-    Fl_Output *version = new Fl_Output(5, 775, 100, 20);
-    Fl_Output *dateTime = new Fl_Output(100, 775, 200, 20);
+    Fl_Output *version = new Fl_Output(5, 575, 100, 20);
+    Fl_Output *dateTime = new Fl_Output(100, 575, 200, 20);
 
     // Main window styling
     window->color(darkBackground);
