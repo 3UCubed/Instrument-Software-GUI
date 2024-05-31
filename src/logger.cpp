@@ -8,7 +8,7 @@
 
 using namespace std;
 
-#define ERPA_HEADER "date, time, sync, seq, endMon, SWPMON, temp1, temp2, adc"
+#define ERPA_HEADER "date, time, sync, seq, SWPMON, temp1, adc"
 #define PMT_HEADER "date, time, sync, seq, adc"
 #define HK_HEADER "date, time, sync, seq, vsense, vrefint, temp1, temp2, temp3, temp4, busvmon, busimon, 2v5mov, 3v3mon, 5vmon, n3v3mon, n5vmon, 15vmon, 5refmon, n200vmon, n800vmon"
 #define CONTROLS_HEADER "date, time, pmt_on, erpa_on, hk_on, c_sys_on, c_800v_en, c_5v_en, c_n150v_en, c_3v3_en, c_n5v_en, c_15v_en, c_n3v3_en, c_sdn1"
