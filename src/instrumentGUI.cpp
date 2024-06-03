@@ -39,6 +39,7 @@
 // ******************************************************************************************************************* DEFINES
 
 // ******************************************************************************************************************* GLOBALS
+bool synced = false;
 bool PB5IsOn = false;
 const char *portName = "/dev/cu.usbserial-FT6DXVWX"; // CHANGE TO YOUR PORT NAME
 int currentFactor = 1;
@@ -116,21 +117,35 @@ void readSerialData(const int &serialPort, std::atomic<bool> &stopFlag, std::ofs
 
 // ******************************************************************************************************************* CALLBACKS
 
-
 void syncCallback(Fl_Widget *)
 {
     uint8_t buffer[1];
-    uint8_t key;
+    uint8_t key = 0x00;
+    int bytesRead = 0;
+    int tries = 0;
+
     writeSerialData(serialPort, 0xFF);
 
     do
     {
-        read(serialPort, buffer, 1);
-        key = buffer[0];
-    } while (key !=0xFA);
-    cout << "ACK Received\n";
+        bytesRead = read(serialPort, buffer, 1);
+        if (bytesRead > 0)
+        {
+            key = buffer[0];
+        }
+        tries++;
+    } while (key != 0xFA && tries < 10);
+    if (tries >= 9)
+    {
+        cout << "Too many tries\n";
+        synced = false;
+    }
+    else
+    {
+        cout << "ACK Received\n";
+        synced = true;
+    }
 }
-
 
 /**
  * @brief Callback function to start or stop recording logs.
@@ -610,11 +625,11 @@ int main(int argc, char **argv)
     Fl_Box *HK7 = new Fl_Box(xPacketOffset + 580, yPacketOffset + 365, 50, 20, "n800vmon:");
     Fl_Button *quit = new Fl_Button(xGUIOffset + 295, yGUIOffset + 386, 110, 74, "Quit");
     Fl_Button *sync = new Fl_Button(xGUIOffset + 295, yGUIOffset + 90, 110, 74, "Sync");
-    Fl_Button *stepUp = new Fl_Button(xPacketOffset + 305, yPacketOffset + 195, 180, 20, "Step Up");            
+    Fl_Button *stepUp = new Fl_Button(xPacketOffset + 305, yPacketOffset + 195, 180, 20, "Step Up");
     Fl_Button *stepDown = new Fl_Button(xPacketOffset + 305, yPacketOffset + 245, 180, 20, "Step Down");
     Fl_Button *enterStopMode = new Fl_Button(xGUIOffset + 295, yGUIOffset + 164, 110, 74, "Sleep");
     Fl_Button *exitStopMode = new Fl_Button(xGUIOffset + 295, yGUIOffset + 238, 110, 74, "Wake Up");
-    Fl_Button *increaseFactor = new Fl_Button(xPacketOffset + 305, yPacketOffset + 305, 180, 20, "Factor Up"); 
+    Fl_Button *increaseFactor = new Fl_Button(xPacketOffset + 305, yPacketOffset + 305, 180, 20, "Factor Up");
     Fl_Button *decreaseFactor = new Fl_Button(xPacketOffset + 305, yPacketOffset + 355, 180, 20, "Factor Down");
     Fl_Button *startRecording = new Fl_Button(xGUIOffset + 295, yGUIOffset + 312, 110, 74, "RECORD @circle");
     Fl_Round_Button *PMTOn = new Fl_Round_Button(xPacketOffset + 165, yPacketOffset - 18, 20, 20);
@@ -1020,20 +1035,30 @@ int main(int argc, char **argv)
     HK7->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
 
     // ******************************************************************************************************************* Thread Setup
-    struct termios options = {};
     std::atomic<bool> stopFlag(false);
     std::ofstream outputFile("mylog.0", std::ios::out | std::ios::trunc);
-    int serialPort = open(portName, O_RDWR | O_NOCTTY); // Opening serial port
+    int serialPort = open(portName, O_RDWR | O_NOCTTY | O_NONBLOCK); // Opening serial port with non-blocking flag
     if (serialPort == -1)
     {
         std::cerr << "Failed to open the serial port." << std::endl;
-        ::exit(0);
+        exit(1);
     }
+
+    struct termios options;
     tcgetattr(serialPort, &options);
+
+    options.c_cc[VMIN] = 0; // Minimum number of characters for non-canonical read
+    options.c_cc[VTIME] = 10; // Timeout in deciseconds (1 second)
+
     cfsetispeed(&options, 460800);
     cfsetospeed(&options, 460800);
-    options.c_cflag |= O_NONBLOCK;
-    tcsetattr(serialPort, TCSANOW, &options);
+
+    options.c_cflag &= ~PARENB; // No parity bit
+    options.c_cflag &= ~CSTOPB; // 1 stop bit
+    options.c_cflag &= ~CSIZE; // Clear current char size mask
+    options.c_cflag |= CS8; // 8 data bits
+
+    tcsetattr(serialPort, TCSANOW, &options); // Apply settings
     std::thread readingThread([&serialPort, &stopFlag, &outputFile]
                               { return readSerialData(serialPort, std::ref(stopFlag), std::ref(outputFile)); });
 
@@ -1057,430 +1082,471 @@ int main(int argc, char **argv)
     // ******************************************************************************************************************* Event Loop
     while (1)
     {
-        snprintf(buffer, sizeof(buffer), "%d", currentFactor);
-        curFactor->value(buffer);
-        snprintf(buffer, sizeof(buffer), "%d", step);
-        currStep->value(buffer);
-        snprintf(buffer, sizeof(buffer), "%f", stepVoltages[step]);
-        stepVoltage->value(buffer);
+        if (synced)
+        {
+            sync->deactivate();
+            stepUp->activate();
+            stepDown->activate();
+            enterStopMode->activate();
+            exitStopMode->activate();
+            increaseFactor->activate();
+            decreaseFactor->activate();
+            startRecording->activate();
+            PMTOn->activate();
+            ERPAOn->activate();
+            HKOn->activate();
+            PB5->activate();
+            SDN1->activate();
+            autoSweep->activate();
 
-        if (PB5IsOn) // Making sure sys_on (PB5) is on before activating other GPIO buttons
-        {
-            PB6->activate();
-            PC10->activate();
-            PC13->activate();
-            PC7->activate();
-            PC8->activate();
-            PC9->activate();
-            PC6->activate();
-        }
-        else
-        {
-            PB6->deactivate();
-            PC10->deactivate();
-            PC13->deactivate();
-            PC7->deactivate();
-            PC8->deactivate();
-            PC9->deactivate();
-            PC6->deactivate();
-            PB6->value(0);
-            PC6->value(0);
-            PC9->value(0);
-            PC10->value(0);
-            PC13->value(0);
-            PC7->value(0);
-            PC8->value(0);
-        }
-        outputFile.flush();
-        vector<string> strings = interpret("mylog.0");
-        if (!strings.empty())
-        {
-            truncate("mylog.0", 0);
-            string pmtDate = "";
-            string erpaDate = "";
-            string hkDate = "";
+            snprintf(buffer, sizeof(buffer), "%d", currentFactor);
+            curFactor->value(buffer);
+            snprintf(buffer, sizeof(buffer), "%d", step);
+            currStep->value(buffer);
+            snprintf(buffer, sizeof(buffer), "%f", stepVoltages[step]);
+            stepVoltage->value(buffer);
 
-            for (int i = 0; i < strings.size(); i++)
+            if (PB5IsOn) // Making sure sys_on (PB5) is on before activating other GPIO buttons
             {
-                // cout << strings[i] << endl;
-                char letter = strings[i][0];
-                strings[i] = strings[i].substr(2);
-                if (ERPAOn->value())
+                PB6->activate();
+                PC10->activate();
+                PC13->activate();
+                PC7->activate();
+                PC8->activate();
+                PC9->activate();
+                PC6->activate();
+            }
+            else
+            {
+                PB6->deactivate();
+                PC10->deactivate();
+                PC13->deactivate();
+                PC7->deactivate();
+                PC8->deactivate();
+                PC9->deactivate();
+                PC6->deactivate();
+                PB6->value(0);
+                PC6->value(0);
+                PC9->value(0);
+                PC10->value(0);
+                PC13->value(0);
+                PC7->value(0);
+                PC8->value(0);
+            }
+            outputFile.flush();
+            vector<string> strings = interpret("mylog.0");
+            if (!strings.empty())
+            {
+                truncate("mylog.0", 0);
+                string pmtDate = "";
+                string erpaDate = "";
+                string hkDate = "";
+
+                for (int i = 0; i < strings.size(); i++)
                 {
-                    switch (letter)
+                    // cout << strings[i] << endl;
+                    char letter = strings[i][0];
+                    strings[i] = strings[i].substr(2);
+                    if (ERPAOn->value())
                     {
-                    case 'a':
-                    {
-                        if (recording)
+                        switch (letter)
                         {
-                            writeToLog(ERPA, erpaFrame);
-                        }
-                        snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
-                        ERPAsync->value(buffer);
-                        string logMsg(buffer);
-                        erpaFrame[0] = logMsg;
-                        break;
-                    }
-                    case 'b':
-                    {
-                        snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
-                        ERPAseq->value(buffer);
-                        string logMsg(buffer);
-                        erpaFrame[1] = logMsg;
-                        break;
-                    }
-                    case 'd':
-                    {
-                        snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
-                        ERPAswp->value(buffer);
-                        string logMsg(buffer);
-                        erpaFrame[3] = logMsg;
-                        break;
-                    }
-                    case 'e':
-                    {
-                        snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
-                        ERPAtemp1->value(buffer);
-                        string logMsg(buffer);
-                        erpaFrame[4] = logMsg;
-                        break;
-                    }
-                    case 'g':
-                    {
-                        snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
-                        ERPAadc->value(buffer);
-                        string logMsg(buffer);
-                        erpaFrame[2] = logMsg;
-                        break;
-                    }
-                    case '1':
-                    {
-                        erpaDate = strings[i];
-                        break;
-                    }
-                    case '2':
-                    {
-                        erpaDate += "-" + strings[i];
-                        break;
-                    }
-                    case '3':
-                    {
-                        erpaDate += "-" + strings[i];
-                        break;
-                    }
-                    case '4':
-                    {
-                        erpaDate += "T" + strings[i];
-                        break;
-                    }
-                    case '5':
-                    {
-                        erpaDate += ":" + strings[i];
-                        break;
-                    }
-                    case '6':
-                    {
-                        erpaDate += ":" + strings[i];
-                        break;
-                    }
-                    case '7':
-                    {
-                        // Millis MSB
-                        break;
-                    }
-                    case '8':
-                    {
-                        // Millis MSB & LSB
-                        erpaDate += "." + strings[i] + "Z";
-                        dateTime->value(erpaDate.c_str());
-                        erpaFrame[5] = erpaDate;
-                        break;
-                    }
-                    }
-                }
-                if (PMTOn->value())
-                {
-                    switch (letter)
-                    {
-                    case 'i':
-                    {
-                        if (recording)
+                        case 'a':
                         {
-                            writeToLog(PMT, pmtFrame);
+                            if (recording)
+                            {
+                                writeToLog(ERPA, erpaFrame);
+                            }
+                            snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
+                            ERPAsync->value(buffer);
+                            string logMsg(buffer);
+                            erpaFrame[0] = logMsg;
+                            break;
                         }
-                        snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
-                        PMTsync->value(buffer);
-                        string logMsg(buffer);
-                        pmtFrame[0] = logMsg;
-                        break;
-                    }
-                    case 'j':
-                    {
-                        snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
-                        PMTseq->value(buffer);
-                        string logMsg(buffer);
-                        pmtFrame[1] = logMsg;
-                        break;
-                    }
-                    case 'k':
-                    {
-                        snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
-                        PMTadc->value(buffer);
-                        string logMsg(buffer);
-                        pmtFrame[2] = logMsg;
-                        break;
-                    }
-                    case '1':
-                    {
-                        pmtDate = strings[i];
-                        break;
-                    }
-                    case '2':
-                    {
-                        pmtDate += "-" + strings[i];
-                        break;
-                    }
-                    case '3':
-                    {
-                        pmtDate += "-" + strings[i];
-                        break;
-                    }
-                    case '4':
-                    {
-                        pmtDate += "T" + strings[i];
-                        break;
-                    }
-                    case '5':
-                    {
-                        pmtDate += ":" + strings[i];
-                        break;
-                    }
-                    case '6':
-                    {
-                        pmtDate += ":" + strings[i];
-                        break;
-                    }
-                    case '7':
-                    {
-                        // Millis MSB
-                        break;
-                    }
-                    case '8':
-                    {
-                        // Millis MSB & LSB
-                        pmtDate += "." + strings[i] + "Z";
-                        dateTime->value(pmtDate.c_str());
-                        pmtFrame[3] = pmtDate;
-                        break;
-                    }
-                    }
-                }
-                if (HKOn->value())
-                {
-                    switch (letter)
-                    {
-                    case 'l':
-                    {
-                        if (recording)
+                        case 'b':
                         {
-                            writeToLog(HK, hkFrame);
+                            snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
+                            ERPAseq->value(buffer);
+                            string logMsg(buffer);
+                            erpaFrame[1] = logMsg;
+                            break;
                         }
-                        snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
-                        HKsync->value(buffer);
-                        string logMsg(buffer);
-                        hkFrame[0] = logMsg;
-                        break;
+                        case 'd':
+                        {
+                            snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
+                            ERPAswp->value(buffer);
+                            string logMsg(buffer);
+                            erpaFrame[3] = logMsg;
+                            break;
+                        }
+                        case 'e':
+                        {
+                            snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
+                            ERPAtemp1->value(buffer);
+                            string logMsg(buffer);
+                            erpaFrame[4] = logMsg;
+                            break;
+                        }
+                        case 'g':
+                        {
+                            snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
+                            ERPAadc->value(buffer);
+                            string logMsg(buffer);
+                            erpaFrame[2] = logMsg;
+                            break;
+                        }
+                        case '1':
+                        {
+                            erpaDate = strings[i];
+                            break;
+                        }
+                        case '2':
+                        {
+                            erpaDate += "-" + strings[i];
+                            break;
+                        }
+                        case '3':
+                        {
+                            erpaDate += "-" + strings[i];
+                            break;
+                        }
+                        case '4':
+                        {
+                            erpaDate += "T" + strings[i];
+                            break;
+                        }
+                        case '5':
+                        {
+                            erpaDate += ":" + strings[i];
+                            break;
+                        }
+                        case '6':
+                        {
+                            erpaDate += ":" + strings[i];
+                            break;
+                        }
+                        case '7':
+                        {
+                            // Millis MSB
+                            break;
+                        }
+                        case '8':
+                        {
+                            // Millis MSB & LSB
+                            erpaDate += "." + strings[i] + "Z";
+                            dateTime->value(erpaDate.c_str());
+                            erpaFrame[5] = erpaDate;
+                            break;
+                        }
+                        }
                     }
-                    case 'm':
+                    if (PMTOn->value())
                     {
-                        snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
-                        HKseq->value(buffer);
-                        string logMsg(buffer);
-                        hkFrame[1] = logMsg;
-                        break;
+                        switch (letter)
+                        {
+                        case 'i':
+                        {
+                            if (recording)
+                            {
+                                writeToLog(PMT, pmtFrame);
+                            }
+                            snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
+                            PMTsync->value(buffer);
+                            string logMsg(buffer);
+                            pmtFrame[0] = logMsg;
+                            break;
+                        }
+                        case 'j':
+                        {
+                            snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
+                            PMTseq->value(buffer);
+                            string logMsg(buffer);
+                            pmtFrame[1] = logMsg;
+                            break;
+                        }
+                        case 'k':
+                        {
+                            snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
+                            PMTadc->value(buffer);
+                            string logMsg(buffer);
+                            pmtFrame[2] = logMsg;
+                            break;
+                        }
+                        case '1':
+                        {
+                            pmtDate = strings[i];
+                            break;
+                        }
+                        case '2':
+                        {
+                            pmtDate += "-" + strings[i];
+                            break;
+                        }
+                        case '3':
+                        {
+                            pmtDate += "-" + strings[i];
+                            break;
+                        }
+                        case '4':
+                        {
+                            pmtDate += "T" + strings[i];
+                            break;
+                        }
+                        case '5':
+                        {
+                            pmtDate += ":" + strings[i];
+                            break;
+                        }
+                        case '6':
+                        {
+                            pmtDate += ":" + strings[i];
+                            break;
+                        }
+                        case '7':
+                        {
+                            // Millis MSB
+                            break;
+                        }
+                        case '8':
+                        {
+                            // Millis MSB & LSB
+                            pmtDate += "." + strings[i] + "Z";
+                            dateTime->value(pmtDate.c_str());
+                            pmtFrame[3] = pmtDate;
+                            break;
+                        }
+                        }
                     }
-                    case 'n':
+                    if (HKOn->value())
                     {
-                        snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
-                        HKvsense->value(buffer);
-                        string logMsg(buffer);
-                        hkFrame[13] = logMsg;
-                        break;
-                    }
-                    case 'o':
-                    {
-                        snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
-                        HKvrefint->value(buffer);
-                        string logMsg(buffer);
-                        hkFrame[14] = logMsg;
-                        break;
-                    }
-                    case 'p':
-                    {
-                        snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
-                        HKtemp1->value(buffer);
-                        string logMsg(buffer);
-                        hkFrame[15] = logMsg;
-                        break;
-                    }
-                    case 'q':
-                    {
-                        snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
-                        HKtemp2->value(buffer);
-                        string logMsg(buffer);
-                        hkFrame[16] = logMsg;
-                        break;
-                    }
-                    case 'r':
-                    {
-                        snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
-                        HKtemp3->value(buffer);
-                        string logMsg(buffer);
-                        hkFrame[17] = logMsg;
-                        break;
-                    }
-                    case 's':
-                    {
-                        snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
-                        HKtemp4->value(buffer);
-                        string logMsg(buffer);
-                        hkFrame[18] = logMsg;
-                        break;
-                    }
-                    case 't':
-                    {
-                        snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
-                        HKbusvmon->value(buffer);
-                        string logMsg(buffer);
-                        hkFrame[2] = logMsg;
-                        break;
-                    }
-                    case 'u':
-                    {
-                        snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
-                        HKbusimon->value(buffer);
-                        string logMsg(buffer);
-                        hkFrame[3] = logMsg;
-                        break;
-                    }
-                    case 'v':
-                    {
-                        snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
-                        HK2v5mon->value(buffer);
-                        string logMsg(buffer);
-                        hkFrame[7] = logMsg;
-                        break;
-                    }
-                    case 'w':
-                    {
-                        snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
-                        HK3v3mon->value(buffer);
-                        string logMsg(buffer);
-                        hkFrame[4] = logMsg;
-                        break;
-                    }
-                    case 'x':
-                    {
-                        snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
-                        HK5vmon->value(buffer);
-                        string logMsg(buffer);
-                        hkFrame[9] = logMsg;
-                        break;
-                    }
-                    case 'y':
-                    {
-                        snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
-                        HKn3v3mon->value(buffer);
-                        string logMsg(buffer);
-                        hkFrame[10] = logMsg;
-                        break;
-                    }
-                    case 'z':
-                    {
-                        snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
-                        HKn5vmon->value(buffer);
-                        string logMsg(buffer);
-                        hkFrame[8] = logMsg;
-                        break;
-                    }
-                    case 'A':
-                    {
-                        snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
-                        HK15vmon->value(buffer);
-                        string logMsg(buffer);
-                        hkFrame[12] = logMsg;
-                        break;
-                    }
-                    case 'B':
-                    {
-                        snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
-                        HK5vrefmon->value(buffer);
-                        string logMsg(buffer);
-                        hkFrame[11] = logMsg;
-                        break;
-                    }
-                    case 'C':
-                    {
-                        snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
-                        HKn150vmon->value(buffer);
-                        string logMsg(buffer);
-                        hkFrame[5] = logMsg;
-                        break;
-                    }
-                    case 'D':
-                    {
-                        snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
-                        HKn800vmon->value(buffer);
-                        string logMsg(buffer);
-                        hkFrame[6] = logMsg;
-                        break;
-                    }
-                    case '1':
-                    {
-                        hkDate = strings[i];
-                        break;
-                    }
-                    case '2':
-                    {
-                        hkDate += "-" + strings[i];
-                        break;
-                    }
-                    case '3':
-                    {
-                        hkDate += "-" + strings[i];
-                        break;
-                    }
-                    case '4':
-                    {
-                        hkDate += "T" + strings[i];
-                        break;
-                    }
-                    case '5':
-                    {
-                        hkDate += ":" + strings[i];
-                        break;
-                    }
-                    case '6':
-                    {
-                        hkDate += ":" + strings[i];
-                        break;
-                    }
-                    case '7':
-                    {
-                        // Millis MSB
-                        break;
-                    }
-                    case '8':
-                    {
-                        // Millis MSB & LSB
-                        hkDate += "." + strings[i] + "Z";
-                        dateTime->value(hkDate.c_str());
-                        hkFrame[19] = hkDate;
-                        break;
-                    }
+                        switch (letter)
+                        {
+                        case 'l':
+                        {
+                            if (recording)
+                            {
+                                writeToLog(HK, hkFrame);
+                            }
+                            snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
+                            HKsync->value(buffer);
+                            string logMsg(buffer);
+                            hkFrame[0] = logMsg;
+                            break;
+                        }
+                        case 'm':
+                        {
+                            snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
+                            HKseq->value(buffer);
+                            string logMsg(buffer);
+                            hkFrame[1] = logMsg;
+                            break;
+                        }
+                        case 'n':
+                        {
+                            snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
+                            HKvsense->value(buffer);
+                            string logMsg(buffer);
+                            hkFrame[13] = logMsg;
+                            break;
+                        }
+                        case 'o':
+                        {
+                            snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
+                            HKvrefint->value(buffer);
+                            string logMsg(buffer);
+                            hkFrame[14] = logMsg;
+                            break;
+                        }
+                        case 'p':
+                        {
+                            snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
+                            HKtemp1->value(buffer);
+                            string logMsg(buffer);
+                            hkFrame[15] = logMsg;
+                            break;
+                        }
+                        case 'q':
+                        {
+                            snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
+                            HKtemp2->value(buffer);
+                            string logMsg(buffer);
+                            hkFrame[16] = logMsg;
+                            break;
+                        }
+                        case 'r':
+                        {
+                            snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
+                            HKtemp3->value(buffer);
+                            string logMsg(buffer);
+                            hkFrame[17] = logMsg;
+                            break;
+                        }
+                        case 's':
+                        {
+                            snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
+                            HKtemp4->value(buffer);
+                            string logMsg(buffer);
+                            hkFrame[18] = logMsg;
+                            break;
+                        }
+                        case 't':
+                        {
+                            snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
+                            HKbusvmon->value(buffer);
+                            string logMsg(buffer);
+                            hkFrame[2] = logMsg;
+                            break;
+                        }
+                        case 'u':
+                        {
+                            snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
+                            HKbusimon->value(buffer);
+                            string logMsg(buffer);
+                            hkFrame[3] = logMsg;
+                            break;
+                        }
+                        case 'v':
+                        {
+                            snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
+                            HK2v5mon->value(buffer);
+                            string logMsg(buffer);
+                            hkFrame[7] = logMsg;
+                            break;
+                        }
+                        case 'w':
+                        {
+                            snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
+                            HK3v3mon->value(buffer);
+                            string logMsg(buffer);
+                            hkFrame[4] = logMsg;
+                            break;
+                        }
+                        case 'x':
+                        {
+                            snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
+                            HK5vmon->value(buffer);
+                            string logMsg(buffer);
+                            hkFrame[9] = logMsg;
+                            break;
+                        }
+                        case 'y':
+                        {
+                            snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
+                            HKn3v3mon->value(buffer);
+                            string logMsg(buffer);
+                            hkFrame[10] = logMsg;
+                            break;
+                        }
+                        case 'z':
+                        {
+                            snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
+                            HKn5vmon->value(buffer);
+                            string logMsg(buffer);
+                            hkFrame[8] = logMsg;
+                            break;
+                        }
+                        case 'A':
+                        {
+                            snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
+                            HK15vmon->value(buffer);
+                            string logMsg(buffer);
+                            hkFrame[12] = logMsg;
+                            break;
+                        }
+                        case 'B':
+                        {
+                            snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
+                            HK5vrefmon->value(buffer);
+                            string logMsg(buffer);
+                            hkFrame[11] = logMsg;
+                            break;
+                        }
+                        case 'C':
+                        {
+                            snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
+                            HKn150vmon->value(buffer);
+                            string logMsg(buffer);
+                            hkFrame[5] = logMsg;
+                            break;
+                        }
+                        case 'D':
+                        {
+                            snprintf(buffer, sizeof(buffer), "%s", strings[i].c_str());
+                            HKn800vmon->value(buffer);
+                            string logMsg(buffer);
+                            hkFrame[6] = logMsg;
+                            break;
+                        }
+                        case '1':
+                        {
+                            hkDate = strings[i];
+                            break;
+                        }
+                        case '2':
+                        {
+                            hkDate += "-" + strings[i];
+                            break;
+                        }
+                        case '3':
+                        {
+                            hkDate += "-" + strings[i];
+                            break;
+                        }
+                        case '4':
+                        {
+                            hkDate += "T" + strings[i];
+                            break;
+                        }
+                        case '5':
+                        {
+                            hkDate += ":" + strings[i];
+                            break;
+                        }
+                        case '6':
+                        {
+                            hkDate += ":" + strings[i];
+                            break;
+                        }
+                        case '7':
+                        {
+                            // Millis MSB
+                            break;
+                        }
+                        case '8':
+                        {
+                            // Millis MSB & LSB
+                            hkDate += "." + strings[i] + "Z";
+                            dateTime->value(hkDate.c_str());
+                            hkFrame[19] = hkDate;
+                            break;
+                        }
+                        }
                     }
                 }
             }
+        }
+        else
+        {
+            stepUp->deactivate();
+            stepDown->deactivate();
+            enterStopMode->deactivate();
+            exitStopMode->deactivate();
+            increaseFactor->deactivate();
+            decreaseFactor->deactivate();
+            startRecording->deactivate();
+            PMTOn->deactivate();
+            ERPAOn->deactivate();
+            HKOn->deactivate();
+            PB5->deactivate();
+            PC7->deactivate();
+            PC10->deactivate();
+            PC6->deactivate();
+            PC8->deactivate();
+            PC9->deactivate();
+            PC13->deactivate();
+            PB6->deactivate();
+            SDN1->deactivate();
+            autoSweep->deactivate();
         }
 
         window->redraw(); // Refreshing main window with new data every loop
