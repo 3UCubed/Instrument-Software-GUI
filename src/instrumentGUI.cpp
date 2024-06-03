@@ -115,36 +115,68 @@ void readSerialData(const int &serialPort, std::atomic<bool> &stopFlag, std::ofs
     }
 }
 
+void generateTimestamp(uint8_t *buffer)
+{
+    auto now = std::chrono::system_clock::now();
+    std::time_t currentTime = std::chrono::system_clock::to_time_t(now);
+    std::tm *timeInfo = std::localtime(&currentTime);
+    auto milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(
+                            now.time_since_epoch())
+                            .count();
+
+    buffer[1] = static_cast<uint8_t>(timeInfo->tm_year % 100);    // Year (LSB of year)
+    buffer[2] = static_cast<uint8_t>(timeInfo->tm_mon + 1);       // Month
+    buffer[3] = static_cast<uint8_t>(timeInfo->tm_mday);          // Day
+    buffer[4] = static_cast<uint8_t>(timeInfo->tm_hour);          // Hour
+    buffer[5] = static_cast<uint8_t>(timeInfo->tm_min);           // Minute
+    buffer[6] = static_cast<uint8_t>(timeInfo->tm_sec);           // Second
+    buffer[7] = static_cast<uint8_t>((milliseconds >> 8) & 0xFF); // MSB of milliseconds
+    buffer[8] = static_cast<uint8_t>(milliseconds & 0xFF);        // LSB of milliseconds
+}
+
 // ******************************************************************************************************************* CALLBACKS
 
 void syncCallback(Fl_Widget *)
 {
-    uint8_t buffer[1];
+    uint8_t rx_buffer[9];
+    uint8_t tx_buffer[9];
     uint8_t key = 0x00;
     int bytesRead = 0;
     int tries = 0;
+    
+    // Set first byte of tx_buffer to 0xFF and fill rest with timestamp info
+    tx_buffer[0] = 0xFF;
+    generateTimestamp(tx_buffer);
+    cout << "Generated Timestamp:\n";
+    for (int i = 0; i < 9; i++){
+        cout << static_cast<int>(tx_buffer[i]) << endl;
+    }
 
-    writeSerialData(serialPort, 0xFF);
-
+    // Continually send tx_buffer until we have received 0xFA from MCU
     do
     {
-        bytesRead = read(serialPort, buffer, 1);
+        write(serialPort, tx_buffer, 9 * sizeof(uint8_t));
+        bytesRead = read(serialPort, rx_buffer, 9 * sizeof(uint8_t));
         if (bytesRead > 0)
         {
-            key = buffer[0];
+            key = rx_buffer[0];
         }
         tries++;
     } while (key != 0xFA && tries < 10);
+
     if (tries >= 9)
     {
-        cout << "Too many tries\n";
+        cerr << "Too many tries" << tries << endl;
         synced = false;
+        return;
     }
-    else
-    {
-        cout << "ACK Received\n";
-        synced = true;
+
+    cout << "ACK Received\n";
+    cout << "Received Timestamp:\n";
+    for (int i = 0; i < 9; i++){
+        cout << static_cast<int>(rx_buffer[i]) << endl;
     }
+    synced = true;
 }
 
 /**
@@ -1047,7 +1079,7 @@ int main(int argc, char **argv)
     struct termios options;
     tcgetattr(serialPort, &options);
 
-    options.c_cc[VMIN] = 0; // Minimum number of characters for non-canonical read
+    options.c_cc[VMIN] = 0;   // Minimum number of characters for non-canonical read
     options.c_cc[VTIME] = 10; // Timeout in deciseconds (1 second)
 
     cfsetispeed(&options, 460800);
@@ -1055,8 +1087,8 @@ int main(int argc, char **argv)
 
     options.c_cflag &= ~PARENB; // No parity bit
     options.c_cflag &= ~CSTOPB; // 1 stop bit
-    options.c_cflag &= ~CSIZE; // Clear current char size mask
-    options.c_cflag |= CS8; // 8 data bits
+    options.c_cflag &= ~CSIZE;  // Clear current char size mask
+    options.c_cflag |= CS8;     // 8 data bits
 
     tcsetattr(serialPort, TCSANOW, &options); // Apply settings
     std::thread readingThread([&serialPort, &stopFlag, &outputFile]
