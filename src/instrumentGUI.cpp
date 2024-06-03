@@ -119,7 +119,16 @@ void readSerialData(const int &serialPort, std::atomic<bool> &stopFlag, std::ofs
 
 void syncCallback(Fl_Widget *)
 {
-// TODO: Implement Handshake
+    uint8_t buffer[1];
+    uint8_t key;
+    writeSerialData(serialPort, 0xFF);
+
+    do
+    {
+        read(serialPort, buffer, 1);
+        key = buffer[0];
+    } while (key !=0xFA);
+    cout << "ACK Received\n";
 }
 
 
