@@ -130,7 +130,62 @@ void cleanup()
     close(serialPort);
 }
 
+
+
 // ******************************************************************************************************************* CALLBACKS
+
+void autoStartUpCallback(Fl_Widget *)
+{
+    PB6->activate();
+    PC10->activate();
+    PC13->activate();
+    PC7->activate();
+    PC8->activate();
+    PC9->activate();
+    PC6->activate();
+
+    SDN1->value(1);
+    PB5->value(1);
+    PC7->value(1);
+    PC10->value(1);
+    PC6->value(1);
+    PC8->value(1);
+    PC9->value(1);
+
+    writeSerialData(serialPort, 0x0B); // sdn1
+    writeSerialData(serialPort, 0x00); // pb5
+    writeSerialData(serialPort, 0x04); // pc7
+    writeSerialData(serialPort, 0x02); // pc10
+    writeSerialData(serialPort, 0x07); // pc6
+    writeSerialData(serialPort, 0x05); // pc8
+    writeSerialData(serialPort, 0x06); // pc9
+}
+
+void autoShutDownCallback(Fl_Widget *){
+    PB6->deactivate();
+    PC10->deactivate();
+    PC13->deactivate();
+    PC7->deactivate();
+    PC8->deactivate();
+    PC9->deactivate();
+    PC6->deactivate();
+
+    SDN1->value(0);
+    PB5->value(0);
+    PC7->value(0);
+    PC10->value(0);
+    PC6->value(0);
+    PC8->value(0);
+    PC9->value(0);
+
+    writeSerialData(serialPort, 0x19); // pc9
+    writeSerialData(serialPort, 0x18); // pc8
+    writeSerialData(serialPort, 0x1A); // pc6
+    writeSerialData(serialPort, 0x15); // pc10
+    writeSerialData(serialPort, 0x17); // pc7
+    writeSerialData(serialPort, 0x13); // pb5
+    writeSerialData(serialPort, 0x0A); // sdn1
+}
 
 void syncCallback(Fl_Widget *)
 {
@@ -212,6 +267,8 @@ void syncCallback(Fl_Widget *)
         PB5->activate();
         SDN1->activate();
         autoSweep->activate();
+        autoStartUp->activate();
+        autoShutDown->activate();
         return;
     }
 
@@ -703,15 +760,20 @@ int main()
     HK12 = new Fl_Box(xPacketOffset + 580, yPacketOffset + 325, 50, 20, "5vrefmon:");
     HK6 = new Fl_Box(xPacketOffset + 580, yPacketOffset + 345, 50, 20, "n200vmon:");
     HK7 = new Fl_Box(xPacketOffset + 580, yPacketOffset + 365, 50, 20, "n800vmon:");
-    quit = new Fl_Button(xGUIOffset + 295, yGUIOffset + 386, 110, 74, "Quit");
-    syncWithInstruments = new Fl_Button(xGUIOffset + 295, yGUIOffset + 90, 110, 74, "Sync");
+   
+    syncWithInstruments = new Fl_Button(xGUIOffset + 295, yGUIOffset + 90, 110, 53, "Sync");
+    autoStartUp = new Fl_Button(xGUIOffset + 295, yGUIOffset + 143, 110, 53, "Auto Init");
+    autoShutDown = new Fl_Button(xGUIOffset + 295, yGUIOffset + 196, 110, 53, "Auto DeInit");
+    enterStopMode = new Fl_Button(xGUIOffset + 295, yGUIOffset + 249, 110, 53, "Sleep");
+    exitStopMode = new Fl_Button(xGUIOffset + 295, yGUIOffset + 302, 110, 53, "Wake Up");
+    startRecording = new Fl_Button(xGUIOffset + 295, yGUIOffset + 355, 110, 53, "RECORD @circle");
+    quit = new Fl_Button(xGUIOffset + 295, yGUIOffset + 408, 110, 53, "Quit");
+
+
     stepUp = new Fl_Button(xPacketOffset + 305, yPacketOffset + 195, 180, 20, "Step Up");
     stepDown = new Fl_Button(xPacketOffset + 305, yPacketOffset + 245, 180, 20, "Step Down");
-    enterStopMode = new Fl_Button(xGUIOffset + 295, yGUIOffset + 164, 110, 74, "Sleep");
-    exitStopMode = new Fl_Button(xGUIOffset + 295, yGUIOffset + 238, 110, 74, "Wake Up");
     increaseFactor = new Fl_Button(xPacketOffset + 305, yPacketOffset + 305, 180, 20, "Factor Up");
     decreaseFactor = new Fl_Button(xPacketOffset + 305, yPacketOffset + 355, 180, 20, "Factor Down");
-    startRecording = new Fl_Button(xGUIOffset + 295, yGUIOffset + 312, 110, 74, "RECORD @circle");
     PMTOn = new Fl_Round_Button(xPacketOffset + 165, yPacketOffset - 18, 20, 20);
     ERPAOn = new Fl_Round_Button(xPacketOffset + 450, yPacketOffset - 18, 20, 20);
     HKOn = new Fl_Round_Button(xPacketOffset + 725, yPacketOffset - 18, 20, 20);
@@ -787,6 +849,8 @@ int main()
     startRecording->callback(startRecordingCallback);
     enterStopMode->callback(stopModeCallback);
     exitStopMode->callback(exitStopModeCallback);
+    autoStartUp->callback(autoStartUpCallback);
+    autoShutDown->callback(autoShutDownCallback);
     syncWithInstruments->align(FL_ALIGN_CENTER);
     syncWithInstruments->callback(syncCallback);
     quit->align(FL_ALIGN_CENTER);
@@ -1143,6 +1207,8 @@ int main()
     PB6->deactivate();
     SDN1->deactivate();
     autoSweep->deactivate();
+    autoStartUp->deactivate();
+    autoShutDown->deactivate();
     ERPAOn->value(0);
     HKOn->value(0);
 

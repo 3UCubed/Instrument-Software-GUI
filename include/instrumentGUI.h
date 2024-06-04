@@ -89,6 +89,8 @@ Fl_Box *HK6;
 Fl_Box *HK7;
 Fl_Button *quit;
 Fl_Button *syncWithInstruments;
+Fl_Button *autoStartUp;
+Fl_Button *autoShutDown;
 Fl_Button *stepUp;
 Fl_Button *stepDown;
 Fl_Button *enterStopMode;
