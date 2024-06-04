@@ -39,6 +39,8 @@
 // ******************************************************************************************************************* DEFINES
 
 // ******************************************************************************************************************* GLOBALS
+Fl_Output *instrumentVersionPtr;
+const char *GUI_VERSION_NUM = "G-1.0.0-beta";
 bool synced = false;
 bool PB5IsOn = false;
 const char *portName = "/dev/cu.usbserial-FT6DXVWX"; // CHANGE TO YOUR PORT NAME
@@ -138,25 +140,26 @@ void generateTimestamp(uint8_t *buffer)
 
 void syncCallback(Fl_Widget *)
 {
-    uint8_t rx_buffer[9];
+    uint8_t rx_buffer[5];
     uint8_t tx_buffer[9];
     uint8_t key = 0x00;
     int bytesRead = 0;
     int tries = 0;
-    
+
     // Set first byte of tx_buffer to 0xFF and fill rest with timestamp info
     tx_buffer[0] = 0xFF;
     generateTimestamp(tx_buffer);
     cout << "Generated Timestamp:\n";
-    for (int i = 0; i < 9; i++){
+    for (int i = 0; i < 9; i++)
+    {
         cout << static_cast<int>(tx_buffer[i]) << endl;
     }
 
-    // Continually send tx_buffer until we have received 0xFA from MCU
+    // Continually send tx_buffer until we have received 0xFA (along with version #) from MCU
     do
     {
         write(serialPort, tx_buffer, 9 * sizeof(uint8_t));
-        bytesRead = read(serialPort, rx_buffer, 9 * sizeof(uint8_t));
+        bytesRead = read(serialPort, rx_buffer, 5 * sizeof(uint8_t));
         if (bytesRead > 0)
         {
             key = rx_buffer[0];
@@ -171,11 +174,37 @@ void syncCallback(Fl_Widget *)
         return;
     }
 
+    // [0]    [1]    [2]    [3]    [4]
+    // 0xFA     1      0      0      2   = I-1.0.0-beta
     cout << "ACK Received\n";
-    cout << "Received Timestamp:\n";
-    for (int i = 0; i < 9; i++){
-        cout << static_cast<int>(rx_buffer[i]) << endl;
+    cout << "Received Version #:\n";
+    string versionNum = "I-";
+    versionNum += to_string(rx_buffer[1]) + "." + to_string(rx_buffer[2]) + "." + to_string(rx_buffer[3]);
+    
+    switch (rx_buffer[4])
+    {
+    case 0:
+    {
+        // No alpha or beta
+        break;
     }
+    case 1:
+    {
+        versionNum += "-alpha";
+        break;
+    }
+    case 2:
+    {
+        versionNum += "-beta";
+        break;
+    }
+    default:
+    {
+        break;
+    }
+    }
+    cout << versionNum << endl;
+    instrumentVersionPtr->value(versionNum.c_str());
     synced = true;
 }
 
@@ -707,8 +736,9 @@ int main(int argc, char **argv)
     Fl_Output *HKn800vmon = new Fl_Output(xPacketOffset + 682, yPacketOffset + 365, 60, 20);
     Fl_Light_Button *SDN1 = new Fl_Light_Button(xPacketOffset + 305, yPacketOffset + 105, 150, 35, "  SDN1 High");
     Fl_Light_Button *autoSweep = new Fl_Light_Button(xPacketOffset + 305, yPacketOffset + 155, 150, 35, "  Auto Sweep");
-    Fl_Output *version = new Fl_Output(5, 575, 100, 20);
-    Fl_Output *dateTime = new Fl_Output(100, 575, 200, 20);
+    Fl_Output *guiVersion = new Fl_Output(5, 575, 100, 20);
+    Fl_Output *instrumentVersion = new Fl_Output(110, 575, 100, 20);
+    Fl_Output *dateTime = new Fl_Output(215, 575, 200, 20);
 
     // Main window styling
     window->color(darkBackground);
@@ -718,11 +748,20 @@ int main(int argc, char **argv)
     dateTime->textcolor(output);
     dateTime->labelsize(2);
 
-    version->color(darkBackground);
-    version->value(versionNumber.c_str());
-    version->box(FL_FLAT_BOX);
-    version->textcolor(output);
-    version->labelsize(2);
+    guiVersion->color(darkBackground);
+    guiVersion->value(versionNumber.c_str());
+    guiVersion->box(FL_FLAT_BOX);
+    guiVersion->textcolor(output);
+    guiVersion->labelsize(2);
+    guiVersion->value(GUI_VERSION_NUM);
+
+    instrumentVersion->color(darkBackground);
+    instrumentVersion->value(versionNumber.c_str());
+    instrumentVersion->box(FL_FLAT_BOX);
+    instrumentVersion->textcolor(output);
+    instrumentVersion->labelsize(2);
+    instrumentVersion->value("I-x.y.z-n");
+    instrumentVersionPtr = instrumentVersion;
 
     // GUI group styling
     group6->color(box);
