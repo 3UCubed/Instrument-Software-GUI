@@ -11,7 +11,6 @@ using namespace std;
 #define ERPA_HEADER "date, time, sync, seq, SWPMON, temp1, adc"
 #define PMT_HEADER "date, time, sync, seq, adc"
 #define HK_HEADER "date, time, sync, seq, vsense, vrefint, temp1, temp2, temp3, temp4, busvmon, busimon, 2v5mov, 3v3mon, 5vmon, n3v3mon, n5vmon, 15vmon, 5refmon, n200vmon, n800vmon"
-#define CONTROLS_HEADER "date, time, pmt_on, erpa_on, hk_on, c_sys_on, c_800v_en, c_5v_en, c_n150v_en, c_3v3_en, c_n5v_en, c_15v_en, c_n3v3_en, c_sdn1"
 #define CONTROLS_HEADER "date, time, c_pmtOn, c_erpaOn, c_hkOn, c_sysOn, c_3v3, c_5v, c_n3v3, c_n5v, c_15v, c_n150v, c_800v, c_sdn1"
 
 
@@ -20,7 +19,6 @@ ofstream pmtStream;
 ofstream hkStream;
 ofstream controlsStream;
 
-string getCurrentDateTime();
 string createLogName(string logType);
 
 enum Log
@@ -87,7 +85,6 @@ void writeToLog(ControlsEnabled &controls)
     auto tm = *std::localtime(&t);
 
     auto now = chrono::system_clock::now();
-    time_t now_c = chrono::system_clock::to_time_t(now);
     auto ms = chrono::duration_cast<chrono::milliseconds>(now.time_since_epoch()) % 1000;
     controlsStream << put_time(&tm, "%m-%d-%Y, %H:%M:%S:") << ms.count();
 

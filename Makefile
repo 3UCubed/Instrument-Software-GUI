@@ -1,7 +1,8 @@
 # Compiler and flags
 CXX = g++
 CXXFLAGS = -std=c++11 -Wall
-FLTKFLAGS = `fltk-config --cxxflags` `fltk-config --ldflags`
+FLTK_CXXFLAGS = `fltk-config --cxxflags`
+FLTK_LDFLAGS = `fltk-config --ldflags`
 
 # Source files
 SRCS = src/instrumentGUI.cpp
@@ -23,12 +24,12 @@ ALL = all
 $(ALL): $(TARGET)
 
 $(TARGET): $(OBJS)
-	$(CXX) $(CXXFLAGS) $(FLTKFLAGS) -o $(TARGET) $(OBJS)
+	$(CXX) $(CXXFLAGS) $(OBJS) $(FLTK_LDFLAGS) -o $(TARGET)
 
 # Compile source files
 $(BUILD_DIR)/%.o: %.cpp
 	@mkdir -p $(dir $@)
-	$(CXX) $(CXXFLAGS) $(FLTKFLAGS) -c $< -o $@
+	$(CXX) $(CXXFLAGS) $(FLTK_CXXFLAGS) -c $< -o $@
 
 # Clean target
 $(CLEAN):

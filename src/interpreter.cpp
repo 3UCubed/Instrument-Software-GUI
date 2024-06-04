@@ -4,12 +4,8 @@
 #include <fstream>
 
 using namespace std;
-
 double tempsToCelsius(int val)
 {
-    char *convertedChar;
-    double convertedTemp;
-
     // Convert to 2's complement, since temperature can be negative
     if (val > 0x7FF)
     {
@@ -22,16 +18,16 @@ double tempsToCelsius(int val)
     // Convert temperature to decimal value
     temp_c *= 100;
 
-    sprintf(convertedChar, "%u.%u",
-            ((unsigned int)temp_c / 100),
-            ((unsigned int)temp_c % 100));
+    // Convert float temperature to string
+    std::string temp_str = std::to_string(static_cast<unsigned int>(temp_c) / 100) + "." +
+                           std::to_string(static_cast<unsigned int>(temp_c) % 100);
 
-    convertedTemp = std::stod(convertedChar);
+    // Convert string temperature to double
+    double convertedTemp = std::stod(temp_str);
 
     return convertedTemp;
 }
-
-double intToVoltage(int value, int resolution, int ref, float mult)
+double intToVoltage(int value, int resolution, double ref, float mult)
 {
     double voltage;
     if (resolution == 12)
@@ -137,71 +133,71 @@ vector<string> interpret(const string &inputStr)
                 {
                 case 0:
                     /* SYNC Bytes; should be 0xAAAA */
-                    sprintf(result, "%s:0x%X", erpaLabels[erpaIndex].c_str(), erpaValues[erpaIndex]);
+                    snprintf(result, sizeof(result), "%s:0x%X", erpaLabels[erpaIndex].c_str(), erpaValues[erpaIndex]);
                     strings.push_back(result);
                     break;
                 case 1:
                     /* SEQ Bytes; 0-65535 */
-                    sprintf(result, "%s:%04d", erpaLabels[erpaIndex].c_str(), erpaValues[erpaIndex]);
+                    snprintf(result, sizeof(result), "%s:%04d", erpaLabels[erpaIndex].c_str(), erpaValues[erpaIndex]);
                     strings.push_back(result);
                     break;
                 case 2:
                     /* SWP Monitored */
-                    sprintf(result, "%s:%06.5f", erpaLabels[erpaIndex].c_str(),
-                            intToVoltage(erpaValues[erpaIndex], 12, 3.3, 1.0));
+                    snprintf(result, sizeof(result), "%s:%06.5f", erpaLabels[erpaIndex].c_str(),
+                             intToVoltage(erpaValues[erpaIndex], 12, 3.3, 1.0));
                     strings.push_back(result);
                     break;
                 case 3:
                     /* TEMP Op-Amp1 */
-                    sprintf(result, "%s:%06.5f", erpaLabels[erpaIndex].c_str(),
-                            intToVoltage(erpaValues[erpaIndex], 12, 3.3, 1.0));
+                    snprintf(result, sizeof(result), "%s:%06.5f", erpaLabels[erpaIndex].c_str(),
+                             intToVoltage(erpaValues[erpaIndex], 12, 3.3, 1.0));
                     strings.push_back(result);
                     break;
                 case 4:
                     /* ERPA eADC Bytes; Interpreted as Volts */
-                    sprintf(result, "%s:%08.7f", erpaLabels[erpaIndex].c_str(),
-                            intToVoltage(erpaValues[erpaIndex], 16, 5, 1.0));
+                    snprintf(result, sizeof(result), "%s:%08.7f", erpaLabels[erpaIndex].c_str(),
+                             intToVoltage(erpaValues[erpaIndex], 16, 5, 1.0));
                     strings.push_back(result);
                     erpaValid = false;
                     break;
                 case 5:
                     /* Year YY*/
-                    sprintf(result, "%s:%02d", erpaLabels[erpaIndex].c_str(), byte);
+                    snprintf(result, sizeof(result), "%s:%02d", erpaLabels[erpaIndex].c_str(), byte);
                     strings.push_back(result);
                     cout << result << endl;
                     erpaValid = false;
                     break;
                 case 6:
                     /* Month MM */
-                    sprintf(result, "%s:%02d", erpaLabels[erpaIndex].c_str(), byte);
+                    snprintf(result, sizeof(result), "%s:%02d", erpaLabels[erpaIndex].c_str(), byte);
                     strings.push_back(result);
                     cout << result << endl;
                     erpaValid = false;
                     break;
                 case 7:
                     /* Day DD*/
-                    sprintf(result, "%s:%02d", erpaLabels[erpaIndex].c_str(), byte);
+                    snprintf(result, sizeof(result), "%s:%02d", erpaLabels[erpaIndex].c_str(), byte);
                     strings.push_back(result);
                     cout << result << endl;
                     erpaValid = false;
                     break;
                 case 8:
                     /* Hour HH */
-                    sprintf(result, "%s:%02d", erpaLabels[erpaIndex].c_str(), byte);
+                    snprintf(result, sizeof(result), "%s:%02d", erpaLabels[erpaIndex].c_str(), byte);
                     strings.push_back(result);
                     cout << result << endl;
                     erpaValid = false;
                     break;
                 case 9:
                     /* Minute MM */
-                    sprintf(result, "%s:%02d", erpaLabels[erpaIndex].c_str(), byte);
+                    snprintf(result, sizeof(result), "%s:%02d", erpaLabels[erpaIndex].c_str(), byte);
                     strings.push_back(result);
                     cout << result << endl;
                     erpaValid = false;
                     break;
                 case 10:
                     /* Second SS */
-                    sprintf(result, "%s:%02d", erpaLabels[erpaIndex].c_str(), byte);
+                    snprintf(result, sizeof(result), "%s:%02d", erpaLabels[erpaIndex].c_str(), byte);
                     strings.push_back(result);
                     cout << result << endl;
                     erpaValid = false;
@@ -214,7 +210,7 @@ vector<string> interpret(const string &inputStr)
                 case 12:
                     /* Millisecond S */
                     // LSB
-                    sprintf(result, "%s:%003d", erpaLabels[erpaIndex].c_str(), erpaValues[erpaIndex]);
+                    snprintf(result, sizeof(result), "%s:%003d", erpaLabels[erpaIndex].c_str(), erpaValues[erpaIndex]);
                     strings.push_back(result);
                     cout << result << endl;
                     break;
@@ -232,59 +228,59 @@ vector<string> interpret(const string &inputStr)
                 {
                 case 0:
                     /* SEQ Bytes; should be 0xBBBB */
-                    sprintf(result, "%s:0x%X", pmtLabels[pmtIndex].c_str(), pmtValues[pmtIndex]);
+                    snprintf(result, sizeof(result), "%s:0x%X", pmtLabels[pmtIndex].c_str(), pmtValues[pmtIndex]);
                     strings.push_back(result);
                     break;
                 case 1:
                     /* SYNC Bytes; 0-65535 */
-                    sprintf(result, "%s:%04d", pmtLabels[pmtIndex].c_str(), pmtValues[pmtIndex]);
+                    snprintf(result, sizeof(result), "%s:%04d", pmtLabels[pmtIndex].c_str(), pmtValues[pmtIndex]);
                     strings.push_back(result);
                     break;
                 case 2:
                     /* PMT eADC Bytes; Interpreted as Volts */
-                    sprintf(result, "%s:%08.7f", pmtLabels[pmtIndex].c_str(),
-                            intToVoltage(pmtValues[pmtIndex], 16, 5, 1.0));
+                    snprintf(result, sizeof(result), "%s:%08.7f", pmtLabels[pmtIndex].c_str(),
+                             intToVoltage(pmtValues[pmtIndex], 16, 5, 1.0));
                     strings.push_back(result);
                     pmtValid = false;
                     break;
                 case 3:
                     /* Year YY*/
-                    sprintf(result, "%s:%02d", pmtLabels[pmtIndex].c_str(), byte);
+                    snprintf(result, sizeof(result), "%s:%02d", pmtLabels[pmtIndex].c_str(), byte);
                     strings.push_back(result);
                     cout << result << endl;
                     pmtValid = false;
                     break;
                 case 4:
                     /* Month MM */
-                    sprintf(result, "%s:%02d", pmtLabels[pmtIndex].c_str(), byte);
+                    snprintf(result, sizeof(result), "%s:%02d", pmtLabels[pmtIndex].c_str(), byte);
                     strings.push_back(result);
                     cout << result << endl;
                     pmtValid = false;
                     break;
                 case 5:
                     /* Day DD*/
-                    sprintf(result, "%s:%02d", pmtLabels[pmtIndex].c_str(), byte);
+                    snprintf(result, sizeof(result), "%s:%02d", pmtLabels[pmtIndex].c_str(), byte);
                     strings.push_back(result);
                     cout << result << endl;
                     pmtValid = false;
                     break;
                 case 6:
                     /* Hour HH */
-                    sprintf(result, "%s:%02d", pmtLabels[pmtIndex].c_str(), byte);
+                    snprintf(result, sizeof(result), "%s:%02d", pmtLabels[pmtIndex].c_str(), byte);
                     strings.push_back(result);
                     cout << result << endl;
                     pmtValid = false;
                     break;
                 case 7:
                     /* Minute MM */
-                    sprintf(result, "%s:%02d", pmtLabels[pmtIndex].c_str(), byte);
+                    snprintf(result, sizeof(result), "%s:%02d", pmtLabels[pmtIndex].c_str(), byte);
                     strings.push_back(result);
                     cout << result << endl;
                     pmtValid = false;
                     break;
                 case 8:
                     /* Second SS */
-                    sprintf(result, "%s:%02d", pmtLabels[pmtIndex].c_str(), byte);
+                    snprintf(result, sizeof(result), "%s:%02d", pmtLabels[pmtIndex].c_str(), byte);
                     strings.push_back(result);
                     cout << result << endl;
                     pmtValid = false;
@@ -297,7 +293,7 @@ vector<string> interpret(const string &inputStr)
                 case 10:
                     /* Millisecond S */
                     // LSB
-                    sprintf(result, "%s:%003d", pmtLabels[pmtIndex].c_str(), pmtValues[pmtIndex]);
+                    snprintf(result, sizeof(result), "%s:%003d", pmtLabels[pmtIndex].c_str(), pmtValues[pmtIndex]);
                     strings.push_back(result);
                     cout << result << endl;
                     break;
@@ -316,155 +312,155 @@ vector<string> interpret(const string &inputStr)
                 {
                 case 0:
                     /* l SYNC Bytes; should be 0xCCCC */
-                    sprintf(result, "%s:0x%X ", hkLabels[hkIndex].c_str(), hkValues[hkIndex]);
+                    snprintf(result, sizeof(result), "%s:0x%X ", hkLabels[hkIndex].c_str(), hkValues[hkIndex]);
                     strings.push_back(result);
                     break;
                 case 1:
                     /* m SEQ Bytes; 0-65535 */
-                    sprintf(result, "%s:%04d ", hkLabels[hkIndex].c_str(), hkValues[hkIndex]);
+                    snprintf(result, sizeof(result), "%s:%04d ", hkLabels[hkIndex].c_str(), hkValues[hkIndex]);
                     strings.push_back(result);
                     break;
                 case 2:
                     /* n vsense */
-                    sprintf(result, "%s:%06.5f", hkLabels[hkIndex].c_str(),
-                            intToVoltage(hkValues[hkIndex], 12, 3.3, 1.0));
+                    snprintf(result, sizeof(result), "%s:%06.5f", hkLabels[hkIndex].c_str(),
+                             intToVoltage(hkValues[hkIndex], 12, 3.3, 1.0));
                     strings.push_back(result);
                     break;
                 case 3:
                     /* o vrefint */
-                    sprintf(result, "%s:%06.5f", hkLabels[hkIndex].c_str(),
-                            intToVoltage(hkValues[hkIndex], 12, 3, 1.0));
+                    snprintf(result, sizeof(result), "%s:%06.5f", hkLabels[hkIndex].c_str(),
+                             intToVoltage(hkValues[hkIndex], 12, 3, 1.0));
                     strings.push_back(result);
                     break;
                 case 4:
                     /* p temp1 */
-                    sprintf(result, "%s:%06.5f", hkLabels[hkIndex].c_str(),
-                            tempsToCelsius(hkValues[hkIndex]));
+                    snprintf(result, sizeof(result), "%s:%06.5f", hkLabels[hkIndex].c_str(),
+                             tempsToCelsius(hkValues[hkIndex]));
                     strings.push_back(result);
                     break;
                 case 5:
                     /* q temp2 */
-                    sprintf(result, "%s:%06.5f", hkLabels[hkIndex].c_str(),
-                            tempsToCelsius(hkValues[hkIndex]));
+                    snprintf(result, sizeof(result), "%s:%06.5f", hkLabels[hkIndex].c_str(),
+                             tempsToCelsius(hkValues[hkIndex]));
                     strings.push_back(result);
                     break;
                 case 6:
                     /* r temp3 */
-                    sprintf(result, "%s:%06.5f", hkLabels[hkIndex].c_str(),
-                            tempsToCelsius(hkValues[hkIndex]));
+                    snprintf(result, sizeof(result), "%s:%06.5f", hkLabels[hkIndex].c_str(),
+                             tempsToCelsius(hkValues[hkIndex]));
                     strings.push_back(result);
                     break;
                 case 7:
                     /* s temp4 */
-                    sprintf(result, "%s:%06.5f", hkLabels[hkIndex].c_str(),
-                            tempsToCelsius(hkValues[hkIndex]));
+                    snprintf(result, sizeof(result), "%s:%06.5f", hkLabels[hkIndex].c_str(),
+                             tempsToCelsius(hkValues[hkIndex]));
                     strings.push_back(result);
                     break;
                 case 8:
                     /* t BUS_Vmon */
-                    sprintf(result, "%s:%06.5f", hkLabels[hkIndex].c_str(),
-                            intToVoltage(hkValues[hkIndex], 12, 3.3, 1.0));
+                    snprintf(result, sizeof(result), "%s:%06.5f", hkLabels[hkIndex].c_str(),
+                             intToVoltage(hkValues[hkIndex], 12, 3.3, 1.0));
                     strings.push_back(result);
                     break;
                 case 9:
                     /* u BUS_Imon */
-                    sprintf(result, "%s:%06.5f", hkLabels[hkIndex].c_str(),
-                            intToVoltage(hkValues[hkIndex], 12, 3.3, 1.0));
+                    snprintf(result, sizeof(result), "%s:%06.5f", hkLabels[hkIndex].c_str(),
+                             intToVoltage(hkValues[hkIndex], 12, 3.3, 1.0));
                     strings.push_back(result);
                     break;
                 case 10:
                     /* v 2v5_mon */
-                    sprintf(result, "%s:%06.5f", hkLabels[hkIndex].c_str(),
-                            intToVoltage(hkValues[hkIndex], 12, 3.3, 1.0));
+                    snprintf(result, sizeof(result), "%s:%06.5f", hkLabels[hkIndex].c_str(),
+                             intToVoltage(hkValues[hkIndex], 12, 3.3, 1.0));
                     strings.push_back(result);
                     break;
                 case 11:
                     /* w 3v3_mon */
-                    sprintf(result, "%s:%06.5f", hkLabels[hkIndex].c_str(),
-                            intToVoltage(hkValues[hkIndex], 12, 3.3, 1.0));
+                    snprintf(result, sizeof(result), "%s:%06.5f", hkLabels[hkIndex].c_str(),
+                             intToVoltage(hkValues[hkIndex], 12, 3.3, 1.0));
                     strings.push_back(result);
                     break;
                 case 12:
                     /* x 5v_mon */
-                    sprintf(result, "%s:%06.5f", hkLabels[hkIndex].c_str(),
-                            intToVoltage(hkValues[hkIndex], 12, 3.3, 1.0));
+                    snprintf(result, sizeof(result), "%s:%06.5f", hkLabels[hkIndex].c_str(),
+                             intToVoltage(hkValues[hkIndex], 12, 3.3, 1.0));
                     strings.push_back(result);
                     break;
                 case 13:
                     /* y n3v3_mon */
-                    sprintf(result, "%s:%06.5f", hkLabels[hkIndex].c_str(),
-                            intToVoltage(hkValues[hkIndex], 12, 3.3, 1.0));
+                    snprintf(result, sizeof(result), "%s:%06.5f", hkLabels[hkIndex].c_str(),
+                             intToVoltage(hkValues[hkIndex], 12, 3.3, 1.0));
                     strings.push_back(result);
                     break;
                 case 14:
                     /* z n5v_mon */
-                    sprintf(result, "%s:%06.5f", hkLabels[hkIndex].c_str(),
-                            intToVoltage(hkValues[hkIndex], 12, 3.3, 1.0));
+                    snprintf(result, sizeof(result), "%s:%06.5f", hkLabels[hkIndex].c_str(),
+                             intToVoltage(hkValues[hkIndex], 12, 3.3, 1.0));
                     strings.push_back(result);
                     break;
                 case 15:
                     /* A 15v_mon */
-                    sprintf(result, "%s:%06.5f", hkLabels[hkIndex].c_str(),
-                            intToVoltage(hkValues[hkIndex], 12, 3.3, 1.0));
+                    snprintf(result, sizeof(result), "%s:%06.5f", hkLabels[hkIndex].c_str(),
+                             intToVoltage(hkValues[hkIndex], 12, 3.3, 1.0));
                     strings.push_back(result);
                     break;
                 case 16:
                     /* B 5vref_mon */
-                    sprintf(result, "%s:%06.5f", hkLabels[hkIndex].c_str(),
-                            intToVoltage(hkValues[hkIndex], 12, 3.3, 1.0));
+                    snprintf(result, sizeof(result), "%s:%06.5f", hkLabels[hkIndex].c_str(),
+                             intToVoltage(hkValues[hkIndex], 12, 3.3, 1.0));
                     strings.push_back(result);
                     break;
                 case 17:
                     /* C n150v_mon */
-                    sprintf(result, "%s:%06.5f", hkLabels[hkIndex].c_str(),
-                            intToVoltage(hkValues[hkIndex], 12, 3.3, 1.0));
+                    snprintf(result, sizeof(result), "%s:%06.5f", hkLabels[hkIndex].c_str(),
+                             intToVoltage(hkValues[hkIndex], 12, 3.3, 1.0));
                     strings.push_back(result);
                     break;
                 case 18:
                     /* D n800v_mon */
-                    sprintf(result, "%s:%06.5f", hkLabels[hkIndex].c_str(),
-                            intToVoltage(hkValues[hkIndex], 12, 3.3, 1.0));
+                    snprintf(result, sizeof(result), "%s:%06.5f", hkLabels[hkIndex].c_str(),
+                             intToVoltage(hkValues[hkIndex], 12, 3.3, 1.0));
                     strings.push_back(result);
                     hkValid = false;
                     break;
                 case 19:
                     /* Year YY*/
-                    sprintf(result, "%s:%02d", hkLabels[hkIndex].c_str(), byte);
+                    snprintf(result, sizeof(result), "%s:%02d", hkLabels[hkIndex].c_str(), byte);
                     strings.push_back(result);
                     cout << result << endl;
                     hkValid = false;
                     break;
                 case 20:
                     /* Month MM */
-                    sprintf(result, "%s:%02d", hkLabels[hkIndex].c_str(), byte);
+                    snprintf(result, sizeof(result), "%s:%02d", hkLabels[hkIndex].c_str(), byte);
                     strings.push_back(result);
                     cout << result << endl;
                     hkValid = false;
                     break;
                 case 21:
                     /* Day DD*/
-                    sprintf(result, "%s:%02d", hkLabels[hkIndex].c_str(), byte);
+                    snprintf(result, sizeof(result), "%s:%02d", hkLabels[hkIndex].c_str(), byte);
                     strings.push_back(result);
                     cout << result << endl;
                     hkValid = false;
                     break;
                 case 22:
                     /* Hour HH */
-                    sprintf(result, "%s:%02d", hkLabels[hkIndex].c_str(), byte);
+                    snprintf(result, sizeof(result), "%s:%02d", hkLabels[hkIndex].c_str(), byte);
                     strings.push_back(result);
                     cout << result << endl;
                     hkValid = false;
                     break;
                 case 23:
                     /* Minute MM */
-                    sprintf(result, "%s:%02d", hkLabels[hkIndex].c_str(), byte);
+                    snprintf(result, sizeof(result), "%s:%02d", hkLabels[hkIndex].c_str(), byte);
                     strings.push_back(result);
                     cout << result << endl;
                     hkValid = false;
                     break;
                 case 24:
                     /* Second SS */
-                    sprintf(result, "%s:%02d", hkLabels[hkIndex].c_str(), byte);
+                    snprintf(result, sizeof(result), "%s:%02d", hkLabels[hkIndex].c_str(), byte);
                     strings.push_back(result);
                     cout << result << endl;
                     hkValid = false;
@@ -477,7 +473,7 @@ vector<string> interpret(const string &inputStr)
                 case 26:
                     /* Millisecond S */
                     // LSB
-                    sprintf(result, "%s:%003d", hkLabels[hkIndex].c_str(), hkValues[hkIndex]);
+                    snprintf(result, sizeof(result), "%s:%003d", hkLabels[hkIndex].c_str(), hkValues[hkIndex]);
                     strings.push_back(result);
                     cout << result << endl;
                     break;
