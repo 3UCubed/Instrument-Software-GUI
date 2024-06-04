@@ -1,37 +1,27 @@
-\doxysection{/\+Users/jaredmorrison/\+Desktop/3\+UCubed/\+Git/\+Instrument-\/\+Software-\/\+GUI/instrument\+GUI.cpp File Reference}
-\hypertarget{instrument_g_u_i_8cpp}{}\label{instrument_g_u_i_8cpp}\index{/Users/jaredmorrison/Desktop/3UCubed/Git/Instrument-\/Software-\/GUI/instrumentGUI.cpp@{/Users/jaredmorrison/Desktop/3UCubed/Git/Instrument-\/Software-\/GUI/instrumentGUI.cpp}}
-{\ttfamily \#include $<$FL/\+Fl.\+H$>$}\newline
-{\ttfamily \#include $<$FL/\+Fl\+\_\+\+Window.\+H$>$}\newline
-{\ttfamily \#include $<$FL/\+Fl\+\_\+\+Value\+\_\+\+Input.\+H$>$}\newline
-{\ttfamily \#include $<$FL/\+Fl\+\_\+\+Box.\+H$>$}\newline
-{\ttfamily \#include $<$FL/\+Fl\+\_\+\+Output.\+H$>$}\newline
-{\ttfamily \#include $<$FL/\+Fl\+\_\+\+PNG\+\_\+\+Image.\+H$>$}\newline
-{\ttfamily \#include $<$FL/\+Fl\+\_\+\+Button.\+H$>$}\newline
-{\ttfamily \#include $<$FL/\+Fl\+\_\+\+Round\+\_\+\+Button.\+H$>$}\newline
-{\ttfamily \#include $<$FL/\+Fl\+\_\+\+Value\+\_\+\+Slider.\+H$>$}\newline
-{\ttfamily \#include $<$FL/\+Fl\+\_\+\+Light\+\_\+\+Button.\+H$>$}\newline
-{\ttfamily \#include $<$iomanip$>$}\newline
-{\ttfamily \#include $<$string$>$}\newline
-{\ttfamily \#include $<$iostream$>$}\newline
-{\ttfamily \#include $<$fstream$>$}\newline
-{\ttfamily \#include $<$termios.\+h$>$}\newline
-{\ttfamily \#include $<$fcntl.\+h$>$}\newline
-{\ttfamily \#include $<$unistd.\+h$>$}\newline
-{\ttfamily \#include $<$dirent.\+h$>$}\newline
-{\ttfamily \#include $<$thread$>$}\newline
-{\ttfamily \#include $<$atomic$>$}\newline
-{\ttfamily \#include $<$functional$>$}\newline
-{\ttfamily \#include $<$chrono$>$}\newline
-{\ttfamily \#include $<$mutex$>$}\newline
-{\ttfamily \#include $<$sstream$>$}\newline
-{\ttfamily \#include "{}interpreter/interpreter.\+cpp"{}}\newline
+\doxysection{/\+Users/jaredmorrison/\+Desktop/3\+UCubed/\+Git/\+Instrument-\/\+Software-\/\+GUI/src/instrument\+GUI.cpp File Reference}
+\hypertarget{instrument_g_u_i_8cpp}{}\label{instrument_g_u_i_8cpp}\index{/Users/jaredmorrison/Desktop/3UCubed/Git/Instrument-\/Software-\/GUI/src/instrumentGUI.cpp@{/Users/jaredmorrison/Desktop/3UCubed/Git/Instrument-\/Software-\/GUI/src/instrumentGUI.cpp}}
+{\ttfamily \#include "{}../include/instrument\+GUI.\+h"{}}\newline
 \doxysubsubsection*{Functions}
 \begin{DoxyCompactItemize}
 \item 
 void \mbox{\hyperlink{instrument_g_u_i_8cpp_a0635f2e51c6a9fcedcd5da08987919f1}{write\+Serial\+Data}} (const int \&serial\+Port, const unsigned char data)
 \begin{DoxyCompactList}\small\item\em Writes a single byte of data to the specified serial port. \end{DoxyCompactList}\item 
-void \mbox{\hyperlink{instrument_g_u_i_8cpp_adef2b8937bb096f498c3762409be6a09}{read\+Serial\+Data}} (const int \&serial\+Port, std\+::atomic$<$ bool $>$ \&stop\+Flag, std\+::ofstream \&output\+File)
+void \mbox{\hyperlink{instrument_g_u_i_8cpp_a1c4bb5db1895118839fe3761db7edbf8}{read\+Serial\+Data}} (const int \&serial\+Port, std\+::atomic$<$ bool $>$ \&flag, std\+::ofstream \&output\+File)
 \begin{DoxyCompactList}\small\item\em Reads data from the serial port and writes it to an output file. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{instrument_g_u_i_8cpp_ae874f8d9d6be321611a9e53785f3f433}{generate\+Timestamp}} (uint8\+\_\+t \texorpdfstring{$\ast$}{*}buffer)
+\begin{DoxyCompactList}\small\item\em Generate a timestamp and store it in the provided buffer. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{instrument_g_u_i_8cpp_a1d65889ebb441486c6b4c921c367bc60}{open\+Serial\+Port}} ()
+\begin{DoxyCompactList}\small\item\em Opens a serial port with specified settings. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{instrument_g_u_i_8cpp_a97e2ac12bcf73c041e55eb85fbec74c4}{start\+Thread}} ()
+\begin{DoxyCompactList}\small\item\em Starts a thread for reading serial data. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{instrument_g_u_i_8cpp_a4b66d5e31b5dc18b314c8a68163263bd}{cleanup}} ()
+\begin{DoxyCompactList}\small\item\em Cleans up resources used for serial communication and threading. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{instrument_g_u_i_8cpp_a7c50ee5d9f5c43d3900189a6bbbbb431}{auto\+Start\+Up\+Callback}} (Fl\+\_\+\+Widget \texorpdfstring{$\ast$}{*})
+\begin{DoxyCompactList}\small\item\em Callback function for auto-\/startup. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{instrument_g_u_i_8cpp_adfb5157546d7468be65729cba16e0875}{auto\+Shut\+Down\+Callback}} (Fl\+\_\+\+Widget \texorpdfstring{$\ast$}{*})
+\begin{DoxyCompactList}\small\item\em Callback function for auto-\/shutdown. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{instrument_g_u_i_8cpp_ad7c87c703138307977d89cbb242b2b63}{sync\+Callback}} (Fl\+\_\+\+Widget \texorpdfstring{$\ast$}{*})
+\begin{DoxyCompactList}\small\item\em Callback function for synchronization. \end{DoxyCompactList}\item 
 void \mbox{\hyperlink{instrument_g_u_i_8cpp_a2ce61d68a4032d586f6394d0abd91e63}{start\+Recording\+Callback}} (Fl\+\_\+\+Widget \texorpdfstring{$\ast$}{*}widget)
 \begin{DoxyCompactList}\small\item\em Callback function to start or stop recording logs. \end{DoxyCompactList}\item 
 void \mbox{\hyperlink{instrument_g_u_i_8cpp_a2012fc9578686e55fc30c024a3ccecde}{quit\+Callback}} (Fl\+\_\+\+Widget \texorpdfstring{$\ast$}{*})
@@ -59,7 +49,7 @@ void \mbox{\hyperlink{instrument_g_u_i_8cpp_a031dede413f279469589f9db187c56ec}{E
 void \mbox{\hyperlink{instrument_g_u_i_8cpp_ace42385f1e6c7efb259e28dfa949e6d5}{HKOn\+Callback}} (Fl\+\_\+\+Widget \texorpdfstring{$\ast$}{*}widget)
 \begin{DoxyCompactList}\small\item\em Callback function for HK ON. \end{DoxyCompactList}\item 
 void \mbox{\hyperlink{instrument_g_u_i_8cpp_a63cf838ecbf4e0f2f6a1a697a1424a1f}{PB5\+Callback}} (Fl\+\_\+\+Widget \texorpdfstring{$\ast$}{*}widget)
-\begin{DoxyCompactList}\small\item\em Callback function for PB5. \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em Callback function for PB5 state change. \end{DoxyCompactList}\item 
 void \mbox{\hyperlink{instrument_g_u_i_8cpp_a6455a4bfafd6a72dd6539a1b046dfe5b}{PB6\+Callback}} (Fl\+\_\+\+Widget \texorpdfstring{$\ast$}{*}widget)
 \begin{DoxyCompactList}\small\item\em Callback function for PB6. \end{DoxyCompactList}\item 
 void \mbox{\hyperlink{instrument_g_u_i_8cpp_a43b3cf12702d35e013dd63a66cacbbfb}{PC10\+Callback}} (Fl\+\_\+\+Widget \texorpdfstring{$\ast$}{*}widget)
@@ -74,47 +64,8 @@ void \mbox{\hyperlink{instrument_g_u_i_8cpp_aa5df99dc6d43852a4d2c375dd514cc31}{P
 \begin{DoxyCompactList}\small\item\em Callback function for PC9. \end{DoxyCompactList}\item 
 void \mbox{\hyperlink{instrument_g_u_i_8cpp_a347114b3b72df762d125e7b0f4e7df8f}{PC6\+Callback}} (Fl\+\_\+\+Widget \texorpdfstring{$\ast$}{*}widget)
 \begin{DoxyCompactList}\small\item\em Callback function for PC6. \end{DoxyCompactList}\item 
-int \mbox{\hyperlink{instrument_g_u_i_8cpp_a3c04138a5bfe5d72780bb7e82a18e627}{main}} (int argc, char \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}argv)
+int \mbox{\hyperlink{instrument_g_u_i_8cpp_ae66f6b31b5ad750f1fe042a706a4e3d4}{main}} ()
 \begin{DoxyCompactList}\small\item\em The main entry point of the program. \end{DoxyCompactList}\end{DoxyCompactItemize}
-\doxysubsubsection*{Variables}
-\begin{DoxyCompactItemize}
-\item 
-\Hypertarget{instrument_g_u_i_8cpp_a789fb9aea047d867aff9d9ff53c867e7}\label{instrument_g_u_i_8cpp_a789fb9aea047d867aff9d9ff53c867e7} 
-bool {\bfseries PB5\+Is\+On} = false
-\item 
-\Hypertarget{instrument_g_u_i_8cpp_a071e1cb0252c4e58d948e4ccc7a427b7}\label{instrument_g_u_i_8cpp_a071e1cb0252c4e58d948e4ccc7a427b7} 
-const char \texorpdfstring{$\ast$}{*} {\bfseries port\+Name} = "{}/dev/cu.\+usbserial-\/FT6\+DXVWX"{}
-\item 
-\Hypertarget{instrument_g_u_i_8cpp_a4d628471e971d2d5f623c9c1162276cf}\label{instrument_g_u_i_8cpp_a4d628471e971d2d5f623c9c1162276cf} 
-int {\bfseries current\+Factor} = 1
-\item 
-\Hypertarget{instrument_g_u_i_8cpp_a5a36f0bb503f386d4b82378c67d911ce}\label{instrument_g_u_i_8cpp_a5a36f0bb503f386d4b82378c67d911ce} 
-char {\bfseries current\+Factor\+Buf} \mbox{[}8\mbox{]}
-\item 
-\Hypertarget{instrument_g_u_i_8cpp_aa20749990357c57fbb6cc1e5b2c8a23c}\label{instrument_g_u_i_8cpp_aa20749990357c57fbb6cc1e5b2c8a23c} 
-int {\bfseries serial\+Port} = open(port\+Name, O\+\_\+\+RDWR \texorpdfstring{$\vert$}{|} O\+\_\+\+NOCTTY)
-\item 
-\Hypertarget{instrument_g_u_i_8cpp_abc16e65f240ed0c8f3e876e8732c0a33}\label{instrument_g_u_i_8cpp_abc16e65f240ed0c8f3e876e8732c0a33} 
-int {\bfseries step} = 0
-\item 
-\Hypertarget{instrument_g_u_i_8cpp_a90c49a5f1e64c0dbe065ed70beedf473}\label{instrument_g_u_i_8cpp_a90c49a5f1e64c0dbe065ed70beedf473} 
-string {\bfseries erpa\+Frame} \mbox{[}7\mbox{]}
-\item 
-\Hypertarget{instrument_g_u_i_8cpp_a0846ee7b88df0efbf3af05f39f440672}\label{instrument_g_u_i_8cpp_a0846ee7b88df0efbf3af05f39f440672} 
-string {\bfseries pmt\+Frame} \mbox{[}3\mbox{]}
-\item 
-\Hypertarget{instrument_g_u_i_8cpp_a37fb6c70863c8e3adf61fb543e58232e}\label{instrument_g_u_i_8cpp_a37fb6c70863c8e3adf61fb543e58232e} 
-string {\bfseries hk\+Frame} \mbox{[}19\mbox{]}
-\item 
-\Hypertarget{instrument_g_u_i_8cpp_aaaa86cbd88875817d7896b26080d35d4}\label{instrument_g_u_i_8cpp_aaaa86cbd88875817d7896b26080d35d4} 
-bool {\bfseries recording} = false
-\item 
-\Hypertarget{instrument_g_u_i_8cpp_a825f0f653142e7dbe33eb47eba17978a}\label{instrument_g_u_i_8cpp_a825f0f653142e7dbe33eb47eba17978a} 
-bool {\bfseries auto\+Sweep\+Started} = false
-\item 
-\Hypertarget{instrument_g_u_i_8cpp_af8e781bbfd870b100d1f57877446bef4}\label{instrument_g_u_i_8cpp_af8e781bbfd870b100d1f57877446bef4} 
-bool {\bfseries stepping\+Up} = true
-\end{DoxyCompactItemize}
 
 
 \doxysubsection{Detailed Description}
@@ -122,12 +73,46 @@ bool {\bfseries stepping\+Up} = true
 Jared Morrison, Jared King, Shane Woods 
 \end{DoxyAuthor}
 \begin{DoxyVersion}{Version}
-1.\+0 
+1.\+0.\+0-\/beta 
 \end{DoxyVersion}
-\hypertarget{instrument_g_u_i_8cpp_DESCRIPTION}{}\doxysubsection{\texorpdfstring{DESCRIPTION}{DESCRIPTION}}\label{instrument_g_u_i_8cpp_DESCRIPTION}
+\hypertarget{logger_8cpp_DESCRIPTION}{}\doxysubsection{\texorpdfstring{DESCRIPTION}{DESCRIPTION}}\label{logger_8cpp_DESCRIPTION}
 GUI that connects to H7-\/\+Instrument-\/\+Software and shows packet data in real time 
 
 \doxysubsection{Function Documentation}
+\Hypertarget{instrument_g_u_i_8cpp_adfb5157546d7468be65729cba16e0875}\index{instrumentGUI.cpp@{instrumentGUI.cpp}!autoShutDownCallback@{autoShutDownCallback}}
+\index{autoShutDownCallback@{autoShutDownCallback}!instrumentGUI.cpp@{instrumentGUI.cpp}}
+\doxysubsubsection{\texorpdfstring{autoShutDownCallback()}{autoShutDownCallback()}}
+{\footnotesize\ttfamily \label{instrument_g_u_i_8cpp_adfb5157546d7468be65729cba16e0875} 
+void auto\+Shut\+Down\+Callback (\begin{DoxyParamCaption}\item[{Fl\+\_\+\+Widget \texorpdfstring{$\ast$}{*}}]{}{}\end{DoxyParamCaption})}
+
+
+
+Callback function for auto-\/shutdown. 
+
+Deactivates specified pins and sets their values. Writes data to serial port for configuration.
+
+
+\begin{DoxyParams}{Parameters}
+{\em widget} & Pointer to the Fl\+\_\+\+Widget triggering the callback (unused). \\
+\hline
+\end{DoxyParams}
+\Hypertarget{instrument_g_u_i_8cpp_a7c50ee5d9f5c43d3900189a6bbbbb431}\index{instrumentGUI.cpp@{instrumentGUI.cpp}!autoStartUpCallback@{autoStartUpCallback}}
+\index{autoStartUpCallback@{autoStartUpCallback}!instrumentGUI.cpp@{instrumentGUI.cpp}}
+\doxysubsubsection{\texorpdfstring{autoStartUpCallback()}{autoStartUpCallback()}}
+{\footnotesize\ttfamily \label{instrument_g_u_i_8cpp_a7c50ee5d9f5c43d3900189a6bbbbb431} 
+void auto\+Start\+Up\+Callback (\begin{DoxyParamCaption}\item[{Fl\+\_\+\+Widget \texorpdfstring{$\ast$}{*}}]{}{}\end{DoxyParamCaption})}
+
+
+
+Callback function for auto-\/startup. 
+
+Activates specified pins and sets their values. Writes data to serial port for configuration.
+
+
+\begin{DoxyParams}{Parameters}
+{\em widget} & Pointer to the Fl\+\_\+\+Widget triggering the callback (unused). \\
+\hline
+\end{DoxyParams}
 \Hypertarget{instrument_g_u_i_8cpp_a7435fae06d024bbe3e0ab003a1f0af6a}\index{instrumentGUI.cpp@{instrumentGUI.cpp}!autoSweepCallback@{autoSweepCallback}}
 \index{autoSweepCallback@{autoSweepCallback}!instrumentGUI.cpp@{instrumentGUI.cpp}}
 \doxysubsubsection{\texorpdfstring{autoSweepCallback()}{autoSweepCallback()}}
@@ -145,7 +130,17 @@ This function sends a command to initiate auto sweep via the serial port.
 {\em widget} & The Fl\+\_\+\+Widget triggering the callback. \\
 \hline
 \end{DoxyParams}
-\Hypertarget{instrument_g_u_i_8cpp_a031dede413f279469589f9db187c56ec}\index{instrumentGUI.cpp@{instrumentGUI.cpp}!ERPAOnCallback@{ERPAOnCallback}}
+\Hypertarget{instrument_g_u_i_8cpp_a4b66d5e31b5dc18b314c8a68163263bd}\index{instrumentGUI.cpp@{instrumentGUI.cpp}!cleanup@{cleanup}}
+\index{cleanup@{cleanup}!instrumentGUI.cpp@{instrumentGUI.cpp}}
+\doxysubsubsection{\texorpdfstring{cleanup()}{cleanup()}}
+{\footnotesize\ttfamily \label{instrument_g_u_i_8cpp_a4b66d5e31b5dc18b314c8a68163263bd} 
+void cleanup (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Cleans up resources used for serial communication and threading. 
+
+Stops the thread for reading serial data, closes the output file, and closes the serial port. \Hypertarget{instrument_g_u_i_8cpp_a031dede413f279469589f9db187c56ec}\index{instrumentGUI.cpp@{instrumentGUI.cpp}!ERPAOnCallback@{ERPAOnCallback}}
 \index{ERPAOnCallback@{ERPAOnCallback}!instrumentGUI.cpp@{instrumentGUI.cpp}}
 \doxysubsubsection{\texorpdfstring{ERPAOnCallback()}{ERPAOnCallback()}}
 {\footnotesize\ttfamily \label{instrument_g_u_i_8cpp_a031dede413f279469589f9db187c56ec} 
@@ -211,6 +206,23 @@ This function sends a command to increase a factor via the serial port. If the c
 {\em widget} & The Fl\+\_\+\+Widget triggering the callback. \\
 \hline
 \end{DoxyParams}
+\Hypertarget{instrument_g_u_i_8cpp_ae874f8d9d6be321611a9e53785f3f433}\index{instrumentGUI.cpp@{instrumentGUI.cpp}!generateTimestamp@{generateTimestamp}}
+\index{generateTimestamp@{generateTimestamp}!instrumentGUI.cpp@{instrumentGUI.cpp}}
+\doxysubsubsection{\texorpdfstring{generateTimestamp()}{generateTimestamp()}}
+{\footnotesize\ttfamily \label{instrument_g_u_i_8cpp_ae874f8d9d6be321611a9e53785f3f433} 
+void generate\+Timestamp (\begin{DoxyParamCaption}\item[{uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{buffer}{}\end{DoxyParamCaption})}
+
+
+
+Generate a timestamp and store it in the provided buffer. 
+
+The timestamp includes year (LSB), month, day, hour, minute, second, and milliseconds.
+
+
+\begin{DoxyParams}{Parameters}
+{\em buffer} & Pointer to the buffer where the timestamp will be stored. \\
+\hline
+\end{DoxyParams}
 \Hypertarget{instrument_g_u_i_8cpp_ace42385f1e6c7efb259e28dfa949e6d5}\index{instrumentGUI.cpp@{instrumentGUI.cpp}!HKOnCallback@{HKOnCallback}}
 \index{HKOnCallback@{HKOnCallback}!instrumentGUI.cpp@{instrumentGUI.cpp}}
 \doxysubsubsection{\texorpdfstring{HKOnCallback()}{HKOnCallback()}}
@@ -226,25 +238,33 @@ Callback function for HK ON.
 {\em widget} & Pointer to the Fl\+\_\+\+Widget triggering the callback. \\
 \hline
 \end{DoxyParams}
-\Hypertarget{instrument_g_u_i_8cpp_a3c04138a5bfe5d72780bb7e82a18e627}\index{instrumentGUI.cpp@{instrumentGUI.cpp}!main@{main}}
+\Hypertarget{instrument_g_u_i_8cpp_ae66f6b31b5ad750f1fe042a706a4e3d4}\index{instrumentGUI.cpp@{instrumentGUI.cpp}!main@{main}}
 \index{main@{main}!instrumentGUI.cpp@{instrumentGUI.cpp}}
 \doxysubsubsection{\texorpdfstring{main()}{main()}}
-{\footnotesize\ttfamily \label{instrument_g_u_i_8cpp_a3c04138a5bfe5d72780bb7e82a18e627} 
-int main (\begin{DoxyParamCaption}\item[{int}]{argc}{, }\item[{char \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}}]{argv}{}\end{DoxyParamCaption})}
+{\footnotesize\ttfamily \label{instrument_g_u_i_8cpp_ae66f6b31b5ad750f1fe042a706a4e3d4} 
+int main (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
 
 
 
 The main entry point of the program. 
 
-
-\begin{DoxyParams}{Parameters}
-{\em argc} & The number of command-\/line arguments. \\
-\hline
-{\em argv} & An array of command-\/line arguments. \\
-\hline
-\end{DoxyParams}
 \begin{DoxyReturn}{Returns}
 An integer representing the exit status of the program. 
+\end{DoxyReturn}
+\Hypertarget{instrument_g_u_i_8cpp_a1d65889ebb441486c6b4c921c367bc60}\index{instrumentGUI.cpp@{instrumentGUI.cpp}!openSerialPort@{openSerialPort}}
+\index{openSerialPort@{openSerialPort}!instrumentGUI.cpp@{instrumentGUI.cpp}}
+\doxysubsubsection{\texorpdfstring{openSerialPort()}{openSerialPort()}}
+{\footnotesize\ttfamily \label{instrument_g_u_i_8cpp_a1d65889ebb441486c6b4c921c367bc60} 
+bool open\+Serial\+Port (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Opens a serial port with specified settings. 
+
+Attempts to open the serial port specified by \textquotesingle{}port\+Name\textquotesingle{} with read-\/write access and non-\/blocking mode. Sets baud rate to 460800, 8 data bits, no parity, and 1 stop bit.
+
+\begin{DoxyReturn}{Returns}
+true if the serial port is opened successfully, false otherwise. 
 \end{DoxyReturn}
 \Hypertarget{instrument_g_u_i_8cpp_a63cf838ecbf4e0f2f6a1a697a1424a1f}\index{instrumentGUI.cpp@{instrumentGUI.cpp}!PB5Callback@{PB5Callback}}
 \index{PB5Callback@{PB5Callback}!instrumentGUI.cpp@{instrumentGUI.cpp}}
@@ -254,7 +274,9 @@ void PB5\+Callback (\begin{DoxyParamCaption}\item[{Fl\+\_\+\+Widget \texorpdfstr
 
 
 
-Callback function for PB5. 
+Callback function for PB5 state change. 
+
+Handles the state change of PB5 button. If PB5 is turned on, it sends corresponding data to the serial port and activates related controls. If PB5 is turned off, it sends data to turn off related controls and updates internal state accordingly.
 
 
 \begin{DoxyParams}{Parameters}
@@ -398,11 +420,11 @@ This function closes the controls log stream and terminates the application.
 {\em widget} & Unused parameter for the FLTK widget triggering this callback. \\
 \hline
 \end{DoxyParams}
-\Hypertarget{instrument_g_u_i_8cpp_adef2b8937bb096f498c3762409be6a09}\index{instrumentGUI.cpp@{instrumentGUI.cpp}!readSerialData@{readSerialData}}
+\Hypertarget{instrument_g_u_i_8cpp_a1c4bb5db1895118839fe3761db7edbf8}\index{instrumentGUI.cpp@{instrumentGUI.cpp}!readSerialData@{readSerialData}}
 \index{readSerialData@{readSerialData}!instrumentGUI.cpp@{instrumentGUI.cpp}}
 \doxysubsubsection{\texorpdfstring{readSerialData()}{readSerialData()}}
-{\footnotesize\ttfamily \label{instrument_g_u_i_8cpp_adef2b8937bb096f498c3762409be6a09} 
-void read\+Serial\+Data (\begin{DoxyParamCaption}\item[{const int \&}]{serial\+Port}{, }\item[{std\+::atomic$<$ bool $>$ \&}]{stop\+Flag}{, }\item[{std\+::ofstream \&}]{output\+File}{}\end{DoxyParamCaption})}
+{\footnotesize\ttfamily \label{instrument_g_u_i_8cpp_a1c4bb5db1895118839fe3761db7edbf8} 
+void read\+Serial\+Data (\begin{DoxyParamCaption}\item[{const int \&}]{serial\+Port}{, }\item[{std\+::atomic$<$ bool $>$ \&}]{flag}{, }\item[{std\+::ofstream \&}]{output\+File}{}\end{DoxyParamCaption})}
 
 
 
@@ -414,7 +436,7 @@ This function continuously reads data from the specified serial port and writes 
 \begin{DoxyParams}{Parameters}
 {\em serial\+Port} & The file descriptor for the open serial port. \\
 \hline
-{\em stop\+Flag} & Atomic boolean flag indicating whether to stop reading. \\
+{\em flag} & Atomic boolean flag indicating whether to stop reading. \\
 \hline
 {\em output\+File} & The output file stream where the data will be written. \\
 \hline
@@ -451,7 +473,17 @@ This function toggles the recording state. When recording starts, it creates new
 {\em widget} & Pointer to the FLTK widget triggering this callback. \\
 \hline
 \end{DoxyParams}
-\Hypertarget{instrument_g_u_i_8cpp_a139d80a4c8bc67191d39c65ac29ea46b}\index{instrumentGUI.cpp@{instrumentGUI.cpp}!stepDownCallback@{stepDownCallback}}
+\Hypertarget{instrument_g_u_i_8cpp_a97e2ac12bcf73c041e55eb85fbec74c4}\index{instrumentGUI.cpp@{instrumentGUI.cpp}!startThread@{startThread}}
+\index{startThread@{startThread}!instrumentGUI.cpp@{instrumentGUI.cpp}}
+\doxysubsubsection{\texorpdfstring{startThread()}{startThread()}}
+{\footnotesize\ttfamily \label{instrument_g_u_i_8cpp_a97e2ac12bcf73c041e55eb85fbec74c4} 
+void start\+Thread (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Starts a thread for reading serial data. 
+
+Creates a new thread to execute the \textquotesingle{}read\+Serial\+Data\textquotesingle{} function with the provided arguments. \Hypertarget{instrument_g_u_i_8cpp_a139d80a4c8bc67191d39c65ac29ea46b}\index{instrumentGUI.cpp@{instrumentGUI.cpp}!stepDownCallback@{stepDownCallback}}
 \index{stepDownCallback@{stepDownCallback}!instrumentGUI.cpp@{instrumentGUI.cpp}}
 \doxysubsubsection{\texorpdfstring{stepDownCallback()}{stepDownCallback()}}
 {\footnotesize\ttfamily \label{instrument_g_u_i_8cpp_a139d80a4c8bc67191d39c65ac29ea46b} 
@@ -500,6 +532,23 @@ This function sends a stop mode command (0x0C) over the specified serial port.
 
 \begin{DoxyParams}{Parameters}
 {\em serial\+Port} & The file descriptor for the open serial port. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{instrument_g_u_i_8cpp_ad7c87c703138307977d89cbb242b2b63}\index{instrumentGUI.cpp@{instrumentGUI.cpp}!syncCallback@{syncCallback}}
+\index{syncCallback@{syncCallback}!instrumentGUI.cpp@{instrumentGUI.cpp}}
+\doxysubsubsection{\texorpdfstring{syncCallback()}{syncCallback()}}
+{\footnotesize\ttfamily \label{instrument_g_u_i_8cpp_ad7c87c703138307977d89cbb242b2b63} 
+void sync\+Callback (\begin{DoxyParamCaption}\item[{Fl\+\_\+\+Widget \texorpdfstring{$\ast$}{*}}]{}{}\end{DoxyParamCaption})}
+
+
+
+Callback function for synchronization. 
+
+Opens the serial port for communication and sends a timestamp to the microcontroller. Waits to receive synchronization acknowledgment from the microcontroller. Updates UI elements and activates necessary controls upon successful synchronization.
+
+
+\begin{DoxyParams}{Parameters}
+{\em widget} & Pointer to the Fl\+\_\+\+Widget triggering the callback (unused). \\
 \hline
 \end{DoxyParams}
 \Hypertarget{instrument_g_u_i_8cpp_a0635f2e51c6a9fcedcd5da08987919f1}\index{instrumentGUI.cpp@{instrumentGUI.cpp}!writeSerialData@{writeSerialData}}

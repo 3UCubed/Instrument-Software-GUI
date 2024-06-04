@@ -1,0 +1,117 @@
+\doxysection{/\+Users/jaredmorrison/\+Desktop/3\+UCubed/\+Git/\+Instrument-\/\+Software-\/\+GUI/src/interpreter.cpp File Reference}
+\hypertarget{interpreter_8cpp}{}\label{interpreter_8cpp}\index{/Users/jaredmorrison/Desktop/3UCubed/Git/Instrument-\/Software-\/GUI/src/interpreter.cpp@{/Users/jaredmorrison/Desktop/3UCubed/Git/Instrument-\/Software-\/GUI/src/interpreter.cpp}}
+{\ttfamily \#include $<$cstdio$>$}\newline
+{\ttfamily \#include $<$iostream$>$}\newline
+{\ttfamily \#include $<$vector$>$}\newline
+{\ttfamily \#include $<$fstream$>$}\newline
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+double \mbox{\hyperlink{interpreter_8cpp_aca13c59a990cb1610eee461f092e2363}{temps\+To\+Celsius}} (int val)
+\begin{DoxyCompactList}\small\item\em Convert temperature value from sensor to Celsius. \end{DoxyCompactList}\item 
+double \mbox{\hyperlink{interpreter_8cpp_ac54f46d8959a382255357c432f15dbfb}{int\+To\+Voltage}} (int value, int resolution, double ref, float mult)
+\begin{DoxyCompactList}\small\item\em Convert an integer value to voltage. \end{DoxyCompactList}\item 
+double \mbox{\hyperlink{interpreter_8cpp_a4c17aa2b0740d22c24d7d1d2daa683eb}{int\+To\+Celsius}} (int value, int resolution, int ref)
+\begin{DoxyCompactList}\small\item\em Convert an integer value to temperature in Celsius. \end{DoxyCompactList}\item 
+vector$<$ string $>$ \mbox{\hyperlink{interpreter_8cpp_a79e3cc49b138ac3b971780379a7ab346}{interpret}} (const string \&input\+Str)
+\begin{DoxyCompactList}\small\item\em Interpret data from a binary input file. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\begin{DoxyAuthor}{Author}
+Jared Morrison, Jared King 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+1.\+0.\+0-\/beta 
+\end{DoxyVersion}
+\hypertarget{logger_8cpp_DESCRIPTION}{}\doxysubsection{\texorpdfstring{DESCRIPTION}{DESCRIPTION}}\label{logger_8cpp_DESCRIPTION}
+Interprets received serial data for the GUI. 
+
+\doxysubsection{Function Documentation}
+\Hypertarget{interpreter_8cpp_a79e3cc49b138ac3b971780379a7ab346}\index{interpreter.cpp@{interpreter.cpp}!interpret@{interpret}}
+\index{interpret@{interpret}!interpreter.cpp@{interpreter.cpp}}
+\doxysubsubsection{\texorpdfstring{interpret()}{interpret()}}
+{\footnotesize\ttfamily \label{interpreter_8cpp_a79e3cc49b138ac3b971780379a7ab346} 
+vector$<$ string $>$ interpret (\begin{DoxyParamCaption}\item[{const string \&}]{input\+Str}{}\end{DoxyParamCaption})}
+
+
+
+Interpret data from a binary input file. 
+
+Reads data from a binary input file and interprets it based on synchronization bytes. Parses ERPA, PMT, and HK data packets and extracts relevant information.
+
+
+\begin{DoxyParams}{Parameters}
+{\em input\+Str} & The file path of the binary input file. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A vector of strings containing interpreted data.
+\end{DoxyReturn}
+\begin{DoxyWarning}{Warning}
+This is truly the worst way one could possibly read serial data and interpret it. I had no idea what I was doing when I first wrote this, needs to be redone correctly if there\textquotesingle{}s time. 
+\end{DoxyWarning}
+\Hypertarget{interpreter_8cpp_a4c17aa2b0740d22c24d7d1d2daa683eb}\index{interpreter.cpp@{interpreter.cpp}!intToCelsius@{intToCelsius}}
+\index{intToCelsius@{intToCelsius}!interpreter.cpp@{interpreter.cpp}}
+\doxysubsubsection{\texorpdfstring{intToCelsius()}{intToCelsius()}}
+{\footnotesize\ttfamily \label{interpreter_8cpp_a4c17aa2b0740d22c24d7d1d2daa683eb} 
+double int\+To\+Celsius (\begin{DoxyParamCaption}\item[{int}]{value}{, }\item[{int}]{resolution}{, }\item[{int}]{ref}{}\end{DoxyParamCaption})}
+
+
+
+Convert an integer value to temperature in Celsius. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em value} & The integer value to be converted. \\
+\hline
+{\em resolution} & The resolution of the value (12 or 16). \\
+\hline
+{\em ref} & The reference value. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The temperature value in Celsius. 
+\end{DoxyReturn}
+\Hypertarget{interpreter_8cpp_ac54f46d8959a382255357c432f15dbfb}\index{interpreter.cpp@{interpreter.cpp}!intToVoltage@{intToVoltage}}
+\index{intToVoltage@{intToVoltage}!interpreter.cpp@{interpreter.cpp}}
+\doxysubsubsection{\texorpdfstring{intToVoltage()}{intToVoltage()}}
+{\footnotesize\ttfamily \label{interpreter_8cpp_ac54f46d8959a382255357c432f15dbfb} 
+double int\+To\+Voltage (\begin{DoxyParamCaption}\item[{int}]{value}{, }\item[{int}]{resolution}{, }\item[{double}]{ref}{, }\item[{float}]{mult}{}\end{DoxyParamCaption})}
+
+
+
+Convert an integer value to voltage. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em value} & The integer value to be converted. \\
+\hline
+{\em resolution} & The resolution of the value (12 or 16). \\
+\hline
+{\em ref} & The reference voltage. \\
+\hline
+{\em mult} & The multiplier factor. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The voltage value. 
+\end{DoxyReturn}
+\Hypertarget{interpreter_8cpp_aca13c59a990cb1610eee461f092e2363}\index{interpreter.cpp@{interpreter.cpp}!tempsToCelsius@{tempsToCelsius}}
+\index{tempsToCelsius@{tempsToCelsius}!interpreter.cpp@{interpreter.cpp}}
+\doxysubsubsection{\texorpdfstring{tempsToCelsius()}{tempsToCelsius()}}
+{\footnotesize\ttfamily \label{interpreter_8cpp_aca13c59a990cb1610eee461f092e2363} 
+double temps\+To\+Celsius (\begin{DoxyParamCaption}\item[{int}]{val}{}\end{DoxyParamCaption})}
+
+
+
+Convert temperature value from sensor to Celsius. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em val} & The raw temperature value from the sensor. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The temperature value in Celsius. 
+\end{DoxyReturn}

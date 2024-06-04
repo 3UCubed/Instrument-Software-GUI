@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.11.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Instrument Software GUI: /Users/jaredmorrison/Desktop/3UCubed/Git/Instrument-Software-GUI/instrumentGUI.cpp File Reference</title>
+<title>Instrument Software GUI: /Users/jaredmorrison/Desktop/3UCubed/Git/Instrument-Software-GUI/src/instrumentGUI.cpp File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -81,49 +81,49 @@ $(function(){ initResizable(false); });
 </div>
 </div>
 
+<div id="nav-path" class="navpath">
+  <ul>
+<li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li>  </ul>
+</div>
 </div><!-- top -->
 <div id="doc-content">
 <div class="header">
   <div class="summary">
-<a href="#func-members">Functions</a> &#124;
-<a href="#var-members">Variables</a>  </div>
-  <div class="headertitle"><div class="title">/Users/jaredmorrison/Desktop/3UCubed/Git/Instrument-Software-GUI/instrumentGUI.cpp File Reference</div></div>
+<a href="#func-members">Functions</a>  </div>
+  <div class="headertitle"><div class="title">instrumentGUI.cpp File Reference</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><code>#include &lt;FL/Fl.H&gt;</code><br />
-<code>#include &lt;FL/Fl_Window.H&gt;</code><br />
-<code>#include &lt;FL/Fl_Value_Input.H&gt;</code><br />
-<code>#include &lt;FL/Fl_Box.H&gt;</code><br />
-<code>#include &lt;FL/Fl_Output.H&gt;</code><br />
-<code>#include &lt;FL/Fl_PNG_Image.H&gt;</code><br />
-<code>#include &lt;FL/Fl_Button.H&gt;</code><br />
-<code>#include &lt;FL/Fl_Round_Button.H&gt;</code><br />
-<code>#include &lt;FL/Fl_Value_Slider.H&gt;</code><br />
-<code>#include &lt;FL/Fl_Light_Button.H&gt;</code><br />
-<code>#include &lt;iomanip&gt;</code><br />
-<code>#include &lt;string&gt;</code><br />
-<code>#include &lt;iostream&gt;</code><br />
-<code>#include &lt;fstream&gt;</code><br />
-<code>#include &lt;termios.h&gt;</code><br />
-<code>#include &lt;fcntl.h&gt;</code><br />
-<code>#include &lt;unistd.h&gt;</code><br />
-<code>#include &lt;dirent.h&gt;</code><br />
-<code>#include &lt;thread&gt;</code><br />
-<code>#include &lt;atomic&gt;</code><br />
-<code>#include &lt;functional&gt;</code><br />
-<code>#include &lt;chrono&gt;</code><br />
-<code>#include &lt;mutex&gt;</code><br />
-<code>#include &lt;sstream&gt;</code><br />
-<code>#include &quot;interpreter/interpreter.cpp&quot;</code><br />
+<div class="textblock"><code>#include &quot;../include/instrumentGUI.h&quot;</code><br />
 </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:a0635f2e51c6a9fcedcd5da08987919f1" id="r_a0635f2e51c6a9fcedcd5da08987919f1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0635f2e51c6a9fcedcd5da08987919f1">writeSerialData</a> (const int &amp;serialPort, const unsigned char data)</td></tr>
 <tr class="memdesc:a0635f2e51c6a9fcedcd5da08987919f1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Writes a single byte of data to the specified serial port.  <br /></td></tr>
 <tr class="separator:a0635f2e51c6a9fcedcd5da08987919f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adef2b8937bb096f498c3762409be6a09" id="r_adef2b8937bb096f498c3762409be6a09"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adef2b8937bb096f498c3762409be6a09">readSerialData</a> (const int &amp;serialPort, std::atomic&lt; bool &gt; &amp;stopFlag, std::ofstream &amp;outputFile)</td></tr>
-<tr class="memdesc:adef2b8937bb096f498c3762409be6a09"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads data from the serial port and writes it to an output file.  <br /></td></tr>
-<tr class="separator:adef2b8937bb096f498c3762409be6a09"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1c4bb5db1895118839fe3761db7edbf8" id="r_a1c4bb5db1895118839fe3761db7edbf8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1c4bb5db1895118839fe3761db7edbf8">readSerialData</a> (const int &amp;serialPort, std::atomic&lt; bool &gt; &amp;flag, std::ofstream &amp;outputFile)</td></tr>
+<tr class="memdesc:a1c4bb5db1895118839fe3761db7edbf8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads data from the serial port and writes it to an output file.  <br /></td></tr>
+<tr class="separator:a1c4bb5db1895118839fe3761db7edbf8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae874f8d9d6be321611a9e53785f3f433" id="r_ae874f8d9d6be321611a9e53785f3f433"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae874f8d9d6be321611a9e53785f3f433">generateTimestamp</a> (uint8_t *buffer)</td></tr>
+<tr class="memdesc:ae874f8d9d6be321611a9e53785f3f433"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate a timestamp and store it in the provided buffer.  <br /></td></tr>
+<tr class="separator:ae874f8d9d6be321611a9e53785f3f433"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1d65889ebb441486c6b4c921c367bc60" id="r_a1d65889ebb441486c6b4c921c367bc60"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1d65889ebb441486c6b4c921c367bc60">openSerialPort</a> ()</td></tr>
+<tr class="memdesc:a1d65889ebb441486c6b4c921c367bc60"><td class="mdescLeft">&#160;</td><td class="mdescRight">Opens a serial port with specified settings.  <br /></td></tr>
+<tr class="separator:a1d65889ebb441486c6b4c921c367bc60"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a97e2ac12bcf73c041e55eb85fbec74c4" id="r_a97e2ac12bcf73c041e55eb85fbec74c4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a97e2ac12bcf73c041e55eb85fbec74c4">startThread</a> ()</td></tr>
+<tr class="memdesc:a97e2ac12bcf73c041e55eb85fbec74c4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Starts a thread for reading serial data.  <br /></td></tr>
+<tr class="separator:a97e2ac12bcf73c041e55eb85fbec74c4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4b66d5e31b5dc18b314c8a68163263bd" id="r_a4b66d5e31b5dc18b314c8a68163263bd"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4b66d5e31b5dc18b314c8a68163263bd">cleanup</a> ()</td></tr>
+<tr class="memdesc:a4b66d5e31b5dc18b314c8a68163263bd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Cleans up resources used for serial communication and threading.  <br /></td></tr>
+<tr class="separator:a4b66d5e31b5dc18b314c8a68163263bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7c50ee5d9f5c43d3900189a6bbbbb431" id="r_a7c50ee5d9f5c43d3900189a6bbbbb431"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7c50ee5d9f5c43d3900189a6bbbbb431">autoStartUpCallback</a> (Fl_Widget *)</td></tr>
+<tr class="memdesc:a7c50ee5d9f5c43d3900189a6bbbbb431"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback function for auto-startup.  <br /></td></tr>
+<tr class="separator:a7c50ee5d9f5c43d3900189a6bbbbb431"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adfb5157546d7468be65729cba16e0875" id="r_adfb5157546d7468be65729cba16e0875"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adfb5157546d7468be65729cba16e0875">autoShutDownCallback</a> (Fl_Widget *)</td></tr>
+<tr class="memdesc:adfb5157546d7468be65729cba16e0875"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback function for auto-shutdown.  <br /></td></tr>
+<tr class="separator:adfb5157546d7468be65729cba16e0875"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad7c87c703138307977d89cbb242b2b63" id="r_ad7c87c703138307977d89cbb242b2b63"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad7c87c703138307977d89cbb242b2b63">syncCallback</a> (Fl_Widget *)</td></tr>
+<tr class="memdesc:ad7c87c703138307977d89cbb242b2b63"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback function for synchronization.  <br /></td></tr>
+<tr class="separator:ad7c87c703138307977d89cbb242b2b63"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2ce61d68a4032d586f6394d0abd91e63" id="r_a2ce61d68a4032d586f6394d0abd91e63"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2ce61d68a4032d586f6394d0abd91e63">startRecordingCallback</a> (Fl_Widget *widget)</td></tr>
 <tr class="memdesc:a2ce61d68a4032d586f6394d0abd91e63"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback function to start or stop recording logs.  <br /></td></tr>
 <tr class="separator:a2ce61d68a4032d586f6394d0abd91e63"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -164,7 +164,7 @@ Functions</h2></td></tr>
 <tr class="memdesc:ace42385f1e6c7efb259e28dfa949e6d5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback function for HK ON.  <br /></td></tr>
 <tr class="separator:ace42385f1e6c7efb259e28dfa949e6d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a63cf838ecbf4e0f2f6a1a697a1424a1f" id="r_a63cf838ecbf4e0f2f6a1a697a1424a1f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a63cf838ecbf4e0f2f6a1a697a1424a1f">PB5Callback</a> (Fl_Widget *widget)</td></tr>
-<tr class="memdesc:a63cf838ecbf4e0f2f6a1a697a1424a1f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback function for PB5.  <br /></td></tr>
+<tr class="memdesc:a63cf838ecbf4e0f2f6a1a697a1424a1f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback function for PB5 state change.  <br /></td></tr>
 <tr class="separator:a63cf838ecbf4e0f2f6a1a697a1424a1f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6455a4bfafd6a72dd6539a1b046dfe5b" id="r_a6455a4bfafd6a72dd6539a1b046dfe5b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6455a4bfafd6a72dd6539a1b046dfe5b">PB6Callback</a> (Fl_Widget *widget)</td></tr>
 <tr class="memdesc:a6455a4bfafd6a72dd6539a1b046dfe5b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback function for PB6.  <br /></td></tr>
@@ -187,56 +187,69 @@ Functions</h2></td></tr>
 <tr class="memitem:a347114b3b72df762d125e7b0f4e7df8f" id="r_a347114b3b72df762d125e7b0f4e7df8f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a347114b3b72df762d125e7b0f4e7df8f">PC6Callback</a> (Fl_Widget *widget)</td></tr>
 <tr class="memdesc:a347114b3b72df762d125e7b0f4e7df8f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback function for PC6.  <br /></td></tr>
 <tr class="separator:a347114b3b72df762d125e7b0f4e7df8f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3c04138a5bfe5d72780bb7e82a18e627" id="r_a3c04138a5bfe5d72780bb7e82a18e627"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3c04138a5bfe5d72780bb7e82a18e627">main</a> (int argc, char **argv)</td></tr>
-<tr class="memdesc:a3c04138a5bfe5d72780bb7e82a18e627"><td class="mdescLeft">&#160;</td><td class="mdescRight">The main entry point of the program.  <br /></td></tr>
-<tr class="separator:a3c04138a5bfe5d72780bb7e82a18e627"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="var-members" name="var-members"></a>
-Variables</h2></td></tr>
-<tr class="memitem:a789fb9aea047d867aff9d9ff53c867e7" id="r_a789fb9aea047d867aff9d9ff53c867e7"><td class="memItemLeft" align="right" valign="top"><a id="a789fb9aea047d867aff9d9ff53c867e7" name="a789fb9aea047d867aff9d9ff53c867e7"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>PB5IsOn</b> = false</td></tr>
-<tr class="separator:a789fb9aea047d867aff9d9ff53c867e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a071e1cb0252c4e58d948e4ccc7a427b7" id="r_a071e1cb0252c4e58d948e4ccc7a427b7"><td class="memItemLeft" align="right" valign="top"><a id="a071e1cb0252c4e58d948e4ccc7a427b7" name="a071e1cb0252c4e58d948e4ccc7a427b7"></a>
-const char *&#160;</td><td class="memItemRight" valign="bottom"><b>portName</b> = &quot;/dev/cu.usbserial-FT6DXVWX&quot;</td></tr>
-<tr class="separator:a071e1cb0252c4e58d948e4ccc7a427b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4d628471e971d2d5f623c9c1162276cf" id="r_a4d628471e971d2d5f623c9c1162276cf"><td class="memItemLeft" align="right" valign="top"><a id="a4d628471e971d2d5f623c9c1162276cf" name="a4d628471e971d2d5f623c9c1162276cf"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>currentFactor</b> = 1</td></tr>
-<tr class="separator:a4d628471e971d2d5f623c9c1162276cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5a36f0bb503f386d4b82378c67d911ce" id="r_a5a36f0bb503f386d4b82378c67d911ce"><td class="memItemLeft" align="right" valign="top"><a id="a5a36f0bb503f386d4b82378c67d911ce" name="a5a36f0bb503f386d4b82378c67d911ce"></a>
-char&#160;</td><td class="memItemRight" valign="bottom"><b>currentFactorBuf</b> [8]</td></tr>
-<tr class="separator:a5a36f0bb503f386d4b82378c67d911ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa20749990357c57fbb6cc1e5b2c8a23c" id="r_aa20749990357c57fbb6cc1e5b2c8a23c"><td class="memItemLeft" align="right" valign="top"><a id="aa20749990357c57fbb6cc1e5b2c8a23c" name="aa20749990357c57fbb6cc1e5b2c8a23c"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>serialPort</b> = open(portName, O_RDWR | O_NOCTTY)</td></tr>
-<tr class="separator:aa20749990357c57fbb6cc1e5b2c8a23c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abc16e65f240ed0c8f3e876e8732c0a33" id="r_abc16e65f240ed0c8f3e876e8732c0a33"><td class="memItemLeft" align="right" valign="top"><a id="abc16e65f240ed0c8f3e876e8732c0a33" name="abc16e65f240ed0c8f3e876e8732c0a33"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>step</b> = 0</td></tr>
-<tr class="separator:abc16e65f240ed0c8f3e876e8732c0a33"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a90c49a5f1e64c0dbe065ed70beedf473" id="r_a90c49a5f1e64c0dbe065ed70beedf473"><td class="memItemLeft" align="right" valign="top"><a id="a90c49a5f1e64c0dbe065ed70beedf473" name="a90c49a5f1e64c0dbe065ed70beedf473"></a>
-string&#160;</td><td class="memItemRight" valign="bottom"><b>erpaFrame</b> [7]</td></tr>
-<tr class="separator:a90c49a5f1e64c0dbe065ed70beedf473"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0846ee7b88df0efbf3af05f39f440672" id="r_a0846ee7b88df0efbf3af05f39f440672"><td class="memItemLeft" align="right" valign="top"><a id="a0846ee7b88df0efbf3af05f39f440672" name="a0846ee7b88df0efbf3af05f39f440672"></a>
-string&#160;</td><td class="memItemRight" valign="bottom"><b>pmtFrame</b> [3]</td></tr>
-<tr class="separator:a0846ee7b88df0efbf3af05f39f440672"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a37fb6c70863c8e3adf61fb543e58232e" id="r_a37fb6c70863c8e3adf61fb543e58232e"><td class="memItemLeft" align="right" valign="top"><a id="a37fb6c70863c8e3adf61fb543e58232e" name="a37fb6c70863c8e3adf61fb543e58232e"></a>
-string&#160;</td><td class="memItemRight" valign="bottom"><b>hkFrame</b> [19]</td></tr>
-<tr class="separator:a37fb6c70863c8e3adf61fb543e58232e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaaa86cbd88875817d7896b26080d35d4" id="r_aaaa86cbd88875817d7896b26080d35d4"><td class="memItemLeft" align="right" valign="top"><a id="aaaa86cbd88875817d7896b26080d35d4" name="aaaa86cbd88875817d7896b26080d35d4"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>recording</b> = false</td></tr>
-<tr class="separator:aaaa86cbd88875817d7896b26080d35d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a825f0f653142e7dbe33eb47eba17978a" id="r_a825f0f653142e7dbe33eb47eba17978a"><td class="memItemLeft" align="right" valign="top"><a id="a825f0f653142e7dbe33eb47eba17978a" name="a825f0f653142e7dbe33eb47eba17978a"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>autoSweepStarted</b> = false</td></tr>
-<tr class="separator:a825f0f653142e7dbe33eb47eba17978a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af8e781bbfd870b100d1f57877446bef4" id="r_af8e781bbfd870b100d1f57877446bef4"><td class="memItemLeft" align="right" valign="top"><a id="af8e781bbfd870b100d1f57877446bef4" name="af8e781bbfd870b100d1f57877446bef4"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>steppingUp</b> = true</td></tr>
-<tr class="separator:af8e781bbfd870b100d1f57877446bef4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae66f6b31b5ad750f1fe042a706a4e3d4" id="r_ae66f6b31b5ad750f1fe042a706a4e3d4"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae66f6b31b5ad750f1fe042a706a4e3d4">main</a> ()</td></tr>
+<tr class="memdesc:ae66f6b31b5ad750f1fe042a706a4e3d4"><td class="mdescLeft">&#160;</td><td class="mdescRight">The main entry point of the program.  <br /></td></tr>
+<tr class="separator:ae66f6b31b5ad750f1fe042a706a4e3d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><dl class="section author"><dt>Author</dt><dd>Jared Morrison, Jared King, Shane Woods </dd></dl>
-<dl class="section version"><dt>Version</dt><dd>1.0 </dd></dl>
+<dl class="section version"><dt>Version</dt><dd>1.0.0-beta </dd></dl>
 <h1><a class="anchor" id="DESCRIPTION"></a>
 DESCRIPTION</h1>
 <p>GUI that connects to H7-Instrument-Software and shows packet data in real time </p>
 </div><h2 class="groupheader">Function Documentation</h2>
+<a id="adfb5157546d7468be65729cba16e0875" name="adfb5157546d7468be65729cba16e0875"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adfb5157546d7468be65729cba16e0875">&#9670;&#160;</a></span>autoShutDownCallback()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void autoShutDownCallback </td>
+          <td>(</td>
+          <td class="paramtype">Fl_Widget *</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Callback function for auto-shutdown. </p>
+<p>Deactivates specified pins and sets their values. Writes data to serial port for configuration.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">widget</td><td>Pointer to the Fl_Widget triggering the callback (unused). </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a7c50ee5d9f5c43d3900189a6bbbbb431" name="a7c50ee5d9f5c43d3900189a6bbbbb431"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7c50ee5d9f5c43d3900189a6bbbbb431">&#9670;&#160;</a></span>autoStartUpCallback()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void autoStartUpCallback </td>
+          <td>(</td>
+          <td class="paramtype">Fl_Widget *</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Callback function for auto-startup. </p>
+<p>Activates specified pins and sets their values. Writes data to serial port for configuration.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">widget</td><td>Pointer to the Fl_Widget triggering the callback (unused). </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a id="a7435fae06d024bbe3e0ab003a1f0af6a" name="a7435fae06d024bbe3e0ab003a1f0af6a"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a7435fae06d024bbe3e0ab003a1f0af6a">&#9670;&#160;</a></span>autoSweepCallback()</h2>
 
@@ -260,6 +273,26 @@ DESCRIPTION</h1>
   </table>
   </dd>
 </dl>
+
+</div>
+</div>
+<a id="a4b66d5e31b5dc18b314c8a68163263bd" name="a4b66d5e31b5dc18b314c8a68163263bd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4b66d5e31b5dc18b314c8a68163263bd">&#9670;&#160;</a></span>cleanup()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void cleanup </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Cleans up resources used for serial communication and threading. </p>
+<p>Stops the thread for reading serial data, closes the output file, and closes the serial port. </p>
 
 </div>
 </div>
@@ -366,6 +399,32 @@ DESCRIPTION</h1>
 
 </div>
 </div>
+<a id="ae874f8d9d6be321611a9e53785f3f433" name="ae874f8d9d6be321611a9e53785f3f433"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae874f8d9d6be321611a9e53785f3f433">&#9670;&#160;</a></span>generateTimestamp()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void generateTimestamp </td>
+          <td>(</td>
+          <td class="paramtype">uint8_t *</td>          <td class="paramname"><span class="paramname"><em>buffer</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Generate a timestamp and store it in the provided buffer. </p>
+<p>The timestamp includes year (LSB), month, day, hour, minute, second, and milliseconds.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">buffer</td><td>Pointer to the buffer where the timestamp will be stored. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a id="ace42385f1e6c7efb259e28dfa949e6d5" name="ace42385f1e6c7efb259e28dfa949e6d5"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ace42385f1e6c7efb259e28dfa949e6d5">&#9670;&#160;</a></span>HKOnCallback()</h2>
 
@@ -391,8 +450,8 @@ DESCRIPTION</h1>
 
 </div>
 </div>
-<a id="a3c04138a5bfe5d72780bb7e82a18e627" name="a3c04138a5bfe5d72780bb7e82a18e627"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3c04138a5bfe5d72780bb7e82a18e627">&#9670;&#160;</a></span>main()</h2>
+<a id="ae66f6b31b5ad750f1fe042a706a4e3d4" name="ae66f6b31b5ad750f1fe042a706a4e3d4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae66f6b31b5ad750f1fe042a706a4e3d4">&#9670;&#160;</a></span>main()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -400,25 +459,35 @@ DESCRIPTION</h1>
         <tr>
           <td class="memname">int main </td>
           <td>(</td>
-          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>argc</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
           <td></td>
-          <td class="paramtype">char **</td>          <td class="paramname"><span class="paramname"><em>argv</em></span>&#160;)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 <p>The main entry point of the program. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">argc</td><td>The number of command-line arguments. </td></tr>
-    <tr><td class="paramname">argv</td><td>An array of command-line arguments. </td></tr>
-  </table>
-  </dd>
-</dl>
 <dl class="section return"><dt>Returns</dt><dd>An integer representing the exit status of the program. </dd></dl>
+
+</div>
+</div>
+<a id="a1d65889ebb441486c6b4c921c367bc60" name="a1d65889ebb441486c6b4c921c367bc60"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1d65889ebb441486c6b4c921c367bc60">&#9670;&#160;</a></span>openSerialPort()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool openSerialPort </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Opens a serial port with specified settings. </p>
+<p>Attempts to open the serial port specified by 'portName' with read-write access and non-blocking mode. Sets baud rate to 460800, 8 data bits, no parity, and 1 stop bit.</p>
+<dl class="section return"><dt>Returns</dt><dd>true if the serial port is opened successfully, false otherwise. </dd></dl>
 
 </div>
 </div>
@@ -437,7 +506,8 @@ DESCRIPTION</h1>
       </table>
 </div><div class="memdoc">
 
-<p>Callback function for PB5. </p>
+<p>Callback function for PB5 state change. </p>
+<p>Handles the state change of PB5 button. If PB5 is turned on, it sends corresponding data to the serial port and activates related controls. If PB5 is turned off, it sends data to turn off related controls and updates internal state accordingly.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">widget</td><td>Pointer to the Fl_Widget triggering the callback. </td></tr>
@@ -673,8 +743,8 @@ DESCRIPTION</h1>
 
 </div>
 </div>
-<a id="adef2b8937bb096f498c3762409be6a09" name="adef2b8937bb096f498c3762409be6a09"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#adef2b8937bb096f498c3762409be6a09">&#9670;&#160;</a></span>readSerialData()</h2>
+<a id="a1c4bb5db1895118839fe3761db7edbf8" name="a1c4bb5db1895118839fe3761db7edbf8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1c4bb5db1895118839fe3761db7edbf8">&#9670;&#160;</a></span>readSerialData()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -687,7 +757,7 @@ DESCRIPTION</h1>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">std::atomic&lt; bool &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>stopFlag</em></span>, </td>
+          <td class="paramtype">std::atomic&lt; bool &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>flag</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -702,7 +772,7 @@ DESCRIPTION</h1>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">serialPort</td><td>The file descriptor for the open serial port. </td></tr>
-    <tr><td class="paramname">stopFlag</td><td>Atomic boolean flag indicating whether to stop reading. </td></tr>
+    <tr><td class="paramname">flag</td><td>Atomic boolean flag indicating whether to stop reading. </td></tr>
     <tr><td class="paramname">outputFile</td><td>The output file stream where the data will be written. </td></tr>
   </table>
   </dd>
@@ -758,6 +828,26 @@ DESCRIPTION</h1>
   </table>
   </dd>
 </dl>
+
+</div>
+</div>
+<a id="a97e2ac12bcf73c041e55eb85fbec74c4" name="a97e2ac12bcf73c041e55eb85fbec74c4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a97e2ac12bcf73c041e55eb85fbec74c4">&#9670;&#160;</a></span>startThread()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void startThread </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Starts a thread for reading serial data. </p>
+<p>Creates a new thread to execute the 'readSerialData' function with the provided arguments. </p>
 
 </div>
 </div>
@@ -833,6 +923,32 @@ DESCRIPTION</h1>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">serialPort</td><td>The file descriptor for the open serial port. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ad7c87c703138307977d89cbb242b2b63" name="ad7c87c703138307977d89cbb242b2b63"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad7c87c703138307977d89cbb242b2b63">&#9670;&#160;</a></span>syncCallback()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void syncCallback </td>
+          <td>(</td>
+          <td class="paramtype">Fl_Widget *</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Callback function for synchronization. </p>
+<p>Opens the serial port for communication and sends a timestamp to the microcontroller. Waits to receive synchronization acknowledgment from the microcontroller. Updates UI elements and activates necessary controls upon successful synchronization.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">widget</td><td>Pointer to the Fl_Widget triggering the callback (unused). </td></tr>
   </table>
   </dd>
 </dl>

@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['quitcallback_0',['quitCallback',['../instrument_g_u_i_8cpp.html#a2012fc9578686e55fc30c024a3ccecde',1,'instrumentGUI.cpp']]]
+  ['log_0',['Log',['../logger_8cpp.html#af31ef15863cb3c9383790dc16c3f2304',1,'logger.cpp']]],
+  ['logger_2ecpp_1',['logger.cpp',['../logger_8cpp.html',1,'']]]
 ];

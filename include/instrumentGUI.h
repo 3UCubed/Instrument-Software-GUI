@@ -1,3 +1,12 @@
+/**
+ * @file instrumentGUI.h
+ * @author Jared Morrison
+ * @version 1.0.0-beta
+ * @section DESCRIPTION
+ *
+ * GUI that connects to H7-Instrument-Software and shows packet data in real time
+ */
+
 // ******************************************************************************************************************* INCLUDES
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
@@ -42,10 +51,12 @@ const char *GUI_VERSION_NUM = "G-1.0.0-beta";
 bool recording = false;
 int currentFactor = 1;
 char currentFactorBuf[8];
+char buffer[32];
 int step = 0;
 string erpaFrame[6];
 string pmtFrame[4];
 string hkFrame[20];
+float stepVoltages[8] = {0, 0.5, 1, 1.5, 2, 2.5, 3, 3.3};
 
 const char *portName = "/dev/cu.usbserial-FT6DXVWX";
 int serialPort;

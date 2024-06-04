@@ -1,5 +1,5 @@
 /**
- * @file
+ * @file instrumentGUI.cpp
  * @author Jared Morrison, Jared King, Shane Woods
  * @version 1.0.0-beta
  * @section DESCRIPTION
@@ -35,7 +35,7 @@ void writeSerialData(const int &serialPort, const unsigned char data)
  * It stops when the stopFlag is set to true.
  *
  * @param serialPort The file descriptor for the open serial port.
- * @param stopFlag Atomic boolean flag indicating whether to stop reading.
+ * @param flag Atomic boolean flag indicating whether to stop reading.
  * @param outputFile The output file stream where the data will be written.
  */
 void readSerialData(const int &serialPort, std::atomic<bool> &flag, std::ofstream &outputFile)
@@ -70,6 +70,13 @@ void readSerialData(const int &serialPort, std::atomic<bool> &flag, std::ofstrea
     }
 }
 
+/**
+ * @brief Generate a timestamp and store it in the provided buffer.
+ *
+ * The timestamp includes year (LSB), month, day, hour, minute, second, and milliseconds.
+ *
+ * @param buffer Pointer to the buffer where the timestamp will be stored.
+ */
 void generateTimestamp(uint8_t *buffer)
 {
     auto now = std::chrono::system_clock::now();
@@ -89,6 +96,14 @@ void generateTimestamp(uint8_t *buffer)
     buffer[8] = static_cast<uint8_t>(milliseconds & 0xFF);        // LSB of milliseconds
 }
 
+/**
+ * @brief Opens a serial port with specified settings.
+ *
+ * Attempts to open the serial port specified by 'portName' with read-write access and
+ * non-blocking mode. Sets baud rate to 460800, 8 data bits, no parity, and 1 stop bit.
+ *
+ * @return true if the serial port is opened successfully, false otherwise.
+ */
 bool openSerialPort()
 {
     serialPort = open(portName, O_RDWR | O_NOCTTY); // Opening serial port with non-blocking flag
@@ -117,11 +132,21 @@ bool openSerialPort()
     return true;
 }
 
+/**
+ * @brief Starts a thread for reading serial data.
+ *
+ * Creates a new thread to execute the 'readSerialData' function with the provided arguments.
+ */
 void startThread()
 {
     readThread = std::thread(readSerialData, std::ref(serialPort), std::ref(stopFlag), std::ref(outputFile));
 }
 
+/**
+ * @brief Cleans up resources used for serial communication and threading.
+ *
+ * Stops the thread for reading serial data, closes the output file, and closes the serial port.
+ */
 void cleanup()
 {
     stopFlag = true;
@@ -130,10 +155,14 @@ void cleanup()
     close(serialPort);
 }
 
-
-
 // ******************************************************************************************************************* CALLBACKS
-
+/**
+ * @brief Callback function for auto-startup.
+ *
+ * Activates specified pins and sets their values. Writes data to serial port for configuration.
+ *
+ * @param widget Pointer to the Fl_Widget triggering the callback (unused).
+ */
 void autoStartUpCallback(Fl_Widget *)
 {
     PB6->activate();
@@ -161,7 +190,15 @@ void autoStartUpCallback(Fl_Widget *)
     writeSerialData(serialPort, 0x06); // pc9
 }
 
-void autoShutDownCallback(Fl_Widget *){
+/**
+ * @brief Callback function for auto-shutdown.
+ *
+ * Deactivates specified pins and sets their values. Writes data to serial port for configuration.
+ *
+ * @param widget Pointer to the Fl_Widget triggering the callback (unused).
+ */
+void autoShutDownCallback(Fl_Widget *)
+{
     PB6->deactivate();
     PC10->deactivate();
     PC13->deactivate();
@@ -187,6 +224,15 @@ void autoShutDownCallback(Fl_Widget *){
     writeSerialData(serialPort, 0x0A); // sdn1
 }
 
+/**
+ * @brief Callback function for synchronization.
+ *
+ * Opens the serial port for communication and sends a timestamp to the microcontroller.
+ * Waits to receive synchronization acknowledgment from the microcontroller.
+ * Updates UI elements and activates necessary controls upon successful synchronization.
+ *
+ * @param widget Pointer to the Fl_Widget triggering the callback (unused).
+ */
 void syncCallback(Fl_Widget *)
 {
     if (!openSerialPort())
@@ -510,7 +556,11 @@ void HKOnCallback(Fl_Widget *widget)
 }
 
 /**
- * @brief Callback function for PB5.
+ * @brief Callback function for PB5 state change.
+ *
+ * Handles the state change of PB5 button. If PB5 is turned on, it sends corresponding data
+ * to the serial port and activates related controls. If PB5 is turned off, it sends data to
+ * turn off related controls and updates internal state accordingly.
  *
  * @param widget Pointer to the Fl_Widget triggering the callback.
  */
@@ -716,8 +766,6 @@ void PC6Callback(Fl_Widget *widget)
 /**
  * @brief The main entry point of the program.
  *
- * @param argc The number of command-line arguments.
- * @param argv An array of command-line arguments.
  * @return An integer representing the exit status of the program.
  */
 int main()
@@ -760,7 +808,6 @@ int main()
     HK12 = new Fl_Box(xPacketOffset + 580, yPacketOffset + 325, 50, 20, "5vrefmon:");
     HK6 = new Fl_Box(xPacketOffset + 580, yPacketOffset + 345, 50, 20, "n200vmon:");
     HK7 = new Fl_Box(xPacketOffset + 580, yPacketOffset + 365, 50, 20, "n800vmon:");
-   
     syncWithInstruments = new Fl_Button(xGUIOffset + 295, yGUIOffset + 90, 110, 53, "Sync");
     autoStartUp = new Fl_Button(xGUIOffset + 295, yGUIOffset + 143, 110, 53, "Auto Init");
     autoShutDown = new Fl_Button(xGUIOffset + 295, yGUIOffset + 196, 110, 53, "Auto DeInit");
@@ -768,8 +815,6 @@ int main()
     exitStopMode = new Fl_Button(xGUIOffset + 295, yGUIOffset + 302, 110, 53, "Wake Up");
     startRecording = new Fl_Button(xGUIOffset + 295, yGUIOffset + 355, 110, 53, "RECORD @circle");
     quit = new Fl_Button(xGUIOffset + 295, yGUIOffset + 408, 110, 53, "Quit");
-
-
     stepUp = new Fl_Button(xPacketOffset + 305, yPacketOffset + 195, 180, 20, "Step Up");
     stepDown = new Fl_Button(xPacketOffset + 305, yPacketOffset + 245, 180, 20, "Step Down");
     increaseFactor = new Fl_Button(xPacketOffset + 305, yPacketOffset + 305, 180, 20, "Factor Up");
@@ -1183,10 +1228,7 @@ int main()
     HK7->labelcolor(text);
     HK7->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
 
-    // ******************************************************************************************************************* Pre-Startup Operations/Variables
-    char buffer[32];
-    float stepVoltages[8] = {0, 0.5, 1, 1.5, 2, 2.5, 3, 3.3};
-
+    // ******************************************************************************************************************* Pre-Startup Operations
     stepUp->deactivate();
     stepDown->deactivate();
     enterStopMode->deactivate();

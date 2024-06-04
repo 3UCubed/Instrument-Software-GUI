@@ -1,9 +1,25 @@
+/**
+ * @file interpreter.cpp
+ * @author Jared Morrison, Jared King
+ * @version 1.0.0-beta
+ * @section DESCRIPTION
+ *
+ * Interprets received serial data for the GUI.
+ */
+
 #include <cstdio>
 #include <iostream>
 #include <vector>
 #include <fstream>
 
 using namespace std;
+
+/**
+ * @brief Convert temperature value from sensor to Celsius.
+ *
+ * @param val The raw temperature value from the sensor.
+ * @return The temperature value in Celsius.
+ */
 double tempsToCelsius(int val)
 {
     // Convert to 2's complement, since temperature can be negative
@@ -27,6 +43,16 @@ double tempsToCelsius(int val)
 
     return convertedTemp;
 }
+
+/**
+ * @brief Convert an integer value to voltage.
+ *
+ * @param value The integer value to be converted.
+ * @param resolution The resolution of the value (12 or 16).
+ * @param ref The reference voltage.
+ * @param mult The multiplier factor.
+ * @return The voltage value.
+ */
 double intToVoltage(int value, int resolution, double ref, float mult)
 {
     double voltage;
@@ -42,6 +68,14 @@ double intToVoltage(int value, int resolution, double ref, float mult)
     return voltage;
 }
 
+/**
+ * @brief Convert an integer value to temperature in Celsius.
+ *
+ * @param value The integer value to be converted.
+ * @param resolution The resolution of the value (12 or 16).
+ * @param ref The reference value.
+ * @return The temperature value in Celsius.
+ */
 double intToCelsius(int value, int resolution, int ref)
 {
     double mVoltage;
@@ -60,6 +94,20 @@ double intToCelsius(int value, int resolution, int ref)
     return temperature;
 }
 
+/**
+ * @brief Interpret data from a binary input file.
+ *
+ * Reads data from a binary input file and interprets it based on synchronization bytes.
+ * Parses ERPA, PMT, and HK data packets and extracts relevant information.
+ *
+ * @param inputStr The file path of the binary input file.
+ * @return A vector of strings containing interpreted data.
+ *
+ * \warning
+ * This is truly the worst way one could possibly read serial data and interpret it.
+ * I had no idea what I was doing when I first wrote this, needs to be redone correctly
+ * if there's time.
+ */
 vector<string> interpret(const string &inputStr)
 {
 
