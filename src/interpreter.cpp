@@ -66,6 +66,7 @@ double intToCelsius(int value, int resolution, int ref)
 
 vector<string> interpret(const string &inputStr)
 {
+
     vector<string> strings;
     //  char strings[1000][1000];
     char result[1000];
@@ -76,7 +77,6 @@ vector<string> interpret(const string &inputStr)
         printf("ERROR OPENING FILE!");
         exit(-1);
     }
-
     char byte = 0;
     char sync[2];
     int packet = 0;

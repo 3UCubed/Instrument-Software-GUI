@@ -35,6 +35,7 @@
 #include <sstream>
 #include "interpreter.cpp"
 #include "logger.cpp"
+using namespace std;
 
 // ******************************************************************************************************************* DEFINES
 
@@ -43,18 +44,22 @@ Fl_Output *instrumentVersionPtr;
 const char *GUI_VERSION_NUM = "G-1.0.0-beta";
 bool synced = false;
 bool PB5IsOn = false;
-const char *portName = "/dev/cu.usbserial-FT6DXVWX"; // CHANGE TO YOUR PORT NAME
 int currentFactor = 1;
 char currentFactorBuf[8];
-int serialPort = open(portName, O_RDWR | O_NOCTTY); // Opening serial port
 int step = 0;
 string erpaFrame[6];
 string pmtFrame[4];
 string hkFrame[20];
-using namespace std;
 bool recording = false;
 bool autoSweepStarted = false;
 bool steppingUp = true;
+
+// global port and thread vars
+const char *portName = "/dev/cu.usbserial-FT6DXVWX";
+int serialPort;
+ofstream outputFile("mylog.0", ios::out | ios::trunc);
+std::thread readThread;
+std::atomic<bool> stopFlag(false);
 
 // ******************************************************************************************************************* HELPER FUNCTIONS
 /**
@@ -85,14 +90,14 @@ void writeSerialData(const int &serialPort, const unsigned char data)
  * @param stopFlag Atomic boolean flag indicating whether to stop reading.
  * @param outputFile The output file stream where the data will be written.
  */
-void readSerialData(const int &serialPort, std::atomic<bool> &stopFlag, std::ofstream &outputFile)
+void readSerialData(const int &serialPort, std::atomic<bool> &flag, std::ofstream &outputFile)
 {
     const int bufferSize = 64;
     char buffer[bufferSize + 1];
     int flushInterval = 1000; // Flush the file every 1000 bytes
     int bytesReadTotal = 0;
 
-    while (!stopFlag)
+    while (!flag)
     {
         ssize_t bytesRead = read(serialPort, buffer, bufferSize - 1);
         if (bytesRead > 0)
@@ -136,76 +141,122 @@ void generateTimestamp(uint8_t *buffer)
     buffer[8] = static_cast<uint8_t>(milliseconds & 0xFF);        // LSB of milliseconds
 }
 
+bool openSerialPort()
+{
+    serialPort = open(portName, O_RDWR | O_NOCTTY); // Opening serial port with non-blocking flag
+    if (serialPort == -1)
+    {
+        std::cerr << "Failed to open the serial port." << std::endl;
+        return false;
+    }
+
+    struct termios options;
+    tcgetattr(serialPort, &options);
+
+    options.c_cc[VMIN] = 0;   // Minimum number of characters for non-canonical read
+    options.c_cc[VTIME] = 0; // Timeout in deciseconds (1 second)
+
+    cfsetispeed(&options, 460800);
+    cfsetospeed(&options, 460800);
+
+    options.c_cflag &= ~PARENB; // No parity bit
+    options.c_cflag &= ~CSTOPB; // 1 stop bit
+    options.c_cflag &= ~CSIZE;  // Clear current char size mask
+    options.c_cflag |= CS8;     // 8 data bits
+
+    tcsetattr(serialPort, TCSANOW, &options); // Apply settings
+    cout << "Serial port opened successfully.\n";
+    return true;
+}
+
+void startThread()
+{
+    readThread = std::thread(readSerialData, std::ref(serialPort), std::ref(stopFlag), std::ref(outputFile));
+}
+
+void cleanup(){
+    stopFlag = true;
+    readThread.join();
+    outputFile.close();
+    close(serialPort);
+}
+
 // ******************************************************************************************************************* CALLBACKS
 
 void syncCallback(Fl_Widget *)
 {
+    if (!openSerialPort()){
+        cerr << "Sync failed on serial port.\n";
+        return;
+    }
     uint8_t rx_buffer[5];
     uint8_t tx_buffer[9];
     uint8_t key = 0x00;
     int bytesRead = 0;
-    int tries = 0;
+    int attempts = 0;
 
     // Set first byte of tx_buffer to 0xFF and fill rest with timestamp info
     tx_buffer[0] = 0xFF;
     generateTimestamp(tx_buffer);
-    cout << "Generated Timestamp:\n";
-    for (int i = 0; i < 9; i++)
-    {
-        cout << static_cast<int>(tx_buffer[i]) << endl;
-    }
+    write(serialPort, tx_buffer, 9 * sizeof(uint8_t));
 
-    // Continually send tx_buffer until we have received 0xFA (along with version #) from MCU
+    // Wait to receive 0xFA (along with version #) from MCU
     do
     {
-        write(serialPort, tx_buffer, 9 * sizeof(uint8_t));
         bytesRead = read(serialPort, rx_buffer, 5 * sizeof(uint8_t));
         if (bytesRead > 0)
         {
             key = rx_buffer[0];
         }
-        tries++;
-    } while (key != 0xFA && tries < 10);
+        attempts++;
+    } while (key != 0xFA && attempts < 30000);
 
-    if (tries >= 9)
+    if (attempts >= 29999)
     {
-        cerr << "Too many tries" << tries << endl;
+        cerr << "Sync failed on attempts, attempts taken: " << attempts << endl;
         synced = false;
         return;
     }
+    else
+    {
+        // [0]    [1]    [2]    [3]    [4]
+        // 0xFA     1      0      0      2   = I-1.0.0-beta
+        cout << "ATTEMPTS: " << attempts << endl;
+        string versionNum = "I-";
+        versionNum += to_string(rx_buffer[1]) + "." + to_string(rx_buffer[2]) + "." + to_string(rx_buffer[3]);
+        switch (rx_buffer[4])
+        {
+        case 0:
+        {
+            // No alpha or beta
+            break;
+        }
+        case 1:
+        {
+            versionNum += "-alpha";
+            break;
+        }
+        case 2:
+        {
+            versionNum += "-beta";
+            break;
+        }
+        default:
+        {
+            break;
+        }
+        }
+        cout << versionNum << endl;
+        instrumentVersionPtr->value(versionNum.c_str());
+        synced = true;
+        startThread();
+        return;
+    }
 
-    // [0]    [1]    [2]    [3]    [4]
-    // 0xFA     1      0      0      2   = I-1.0.0-beta
-    cout << "ACK Received\n";
-    cout << "Received Version #:\n";
-    string versionNum = "I-";
-    versionNum += to_string(rx_buffer[1]) + "." + to_string(rx_buffer[2]) + "." + to_string(rx_buffer[3]);
-    
-    switch (rx_buffer[4])
-    {
-    case 0:
-    {
-        // No alpha or beta
-        break;
-    }
-    case 1:
-    {
-        versionNum += "-alpha";
-        break;
-    }
-    case 2:
-    {
-        versionNum += "-beta";
-        break;
-    }
-    default:
-    {
-        break;
-    }
-    }
-    cout << versionNum << endl;
-    instrumentVersionPtr->value(versionNum.c_str());
-    synced = true;
+    // Should never get here, but just to be safe:
+    synced = false;
+    cerr << "Sync failed, cause unknown.\n";
+    return;
 }
 
 /**
@@ -241,6 +292,7 @@ void startRecordingCallback(Fl_Widget *widget)
  */
 void quitCallback(Fl_Widget *)
 {
+    cleanup();
     exit(0);
 }
 
@@ -1106,33 +1158,6 @@ int main(int argc, char **argv)
     HK7->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
 
     // ******************************************************************************************************************* Thread Setup
-    std::atomic<bool> stopFlag(false);
-    std::ofstream outputFile("mylog.0", std::ios::out | std::ios::trunc);
-    int serialPort = open(portName, O_RDWR | O_NOCTTY | O_NONBLOCK); // Opening serial port with non-blocking flag
-    if (serialPort == -1)
-    {
-        std::cerr << "Failed to open the serial port." << std::endl;
-        exit(1);
-    }
-
-    struct termios options;
-    tcgetattr(serialPort, &options);
-
-    options.c_cc[VMIN] = 0;   // Minimum number of characters for non-canonical read
-    options.c_cc[VTIME] = 10; // Timeout in deciseconds (1 second)
-
-    cfsetispeed(&options, 460800);
-    cfsetospeed(&options, 460800);
-
-    options.c_cflag &= ~PARENB; // No parity bit
-    options.c_cflag &= ~CSTOPB; // 1 stop bit
-    options.c_cflag &= ~CSIZE;  // Clear current char size mask
-    options.c_cflag |= CS8;     // 8 data bits
-
-    tcsetattr(serialPort, TCSANOW, &options); // Apply settings
-    std::thread readingThread([&serialPort, &stopFlag, &outputFile]
-                              { return readSerialData(serialPort, std::ref(stopFlag), std::ref(outputFile)); });
-
     // ******************************************************************************************************************* Pre-Startup Operations/Variables
     char buffer[32];
     float stepVoltages[8] = {0, 0.5, 1, 1.5, 2, 2.5, 3, 3.3};
@@ -1623,13 +1648,5 @@ int main(int argc, char **argv)
         window->redraw(); // Refreshing main window with new data every loop
         Fl::check();
     }
-
-    // ------------------------ Cleanup ------------------------
-    stopFlag = true;
-    readingThread.join();
-    outputFile << '\0';
-    outputFile.flush();
-    outputFile.close();
-    close(serialPort);
     return Fl::run();
 }
