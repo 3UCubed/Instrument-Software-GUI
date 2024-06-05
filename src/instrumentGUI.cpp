@@ -679,14 +679,14 @@ void PC10Callback(Fl_Widget *widget)
     int currValue = ((Fl_Round_Button *)widget)->value();
     if (currValue == 1)
     {
-        writeSerialData(serialPort, 0x02);
-        Controls.c_5v = true;
+        writeSerialData(serialPort, 0x04);
+        Controls.c_3v3 = true;
         writeToLog(Controls);
     }
     else
     {
-        writeSerialData(serialPort, 0x15);
-        Controls.c_5v = false;
+        writeSerialData(serialPort, 0x17);
+        Controls.c_3v3 = false;
         writeToLog(Controls);
     }
 }
@@ -723,14 +723,14 @@ void PC7Callback(Fl_Widget *widget)
     int currValue = ((Fl_Round_Button *)widget)->value();
     if (currValue == 1)
     {
-        writeSerialData(serialPort, 0x04);
-        Controls.c_3v3 = true;
+        writeSerialData(serialPort, 0x02);
+        Controls.c_5v = true;
         writeToLog(Controls);
     }
     else
     {
-        writeSerialData(serialPort, 0x17);
-        Controls.c_3v3 = false;
+        writeSerialData(serialPort, 0x15);
+        Controls.c_5v = false;
         writeToLog(Controls);
     }
 }
@@ -861,8 +861,8 @@ int main()
     ERPAOn = new Fl_Round_Button(xPacketOffset + 450, yPacketOffset - 18, 20, 20);
     HKOn = new Fl_Round_Button(xPacketOffset + 725, yPacketOffset - 18, 20, 20);
     PB5 = new Fl_Round_Button(xControlOffset + 20, yControlOffset + 80, 100, 50, "sys_on PB5");
-    PC7 = new Fl_Round_Button(xControlOffset + 20, yControlOffset + 130, 100, 50, "3v3_en PC7");
-    PC10 = new Fl_Round_Button(xControlOffset + 20, yControlOffset + 180, 100, 50, "5v_en PC10");
+    PC7 = new Fl_Round_Button(xControlOffset + 20, yControlOffset + 130, 100, 50, "5v_en PC7");
+    PC10 = new Fl_Round_Button(xControlOffset + 20, yControlOffset + 180, 100, 50, "3v3_en PC10");
     PC6 = new Fl_Round_Button(xControlOffset + 20, yControlOffset + 230, 100, 50, "n3v3_en PC6");
     PC8 = new Fl_Round_Button(xControlOffset + 20, yControlOffset + 280, 100, 50, "n5v_en PC8");
     PC9 = new Fl_Round_Button(xControlOffset + 20, yControlOffset + 330, 100, 50, "15v_en PC9");
