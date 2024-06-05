@@ -11,6 +11,43 @@
 
 // ******************************************************************************************************************* HELPER FUNCTIONS
 /**
+ * @brief Finds the first serial port device matching the specified prefix in /dev.
+ *
+ * Searches the /dev directory for a serial port device that starts with the given prefix.
+ * Returns the path of the first matching device found.
+ *
+ * @return const char* The path to the serial port device, or nullptr if not found.
+ *         The caller is responsible for managing the memory of the returned string.
+ */
+const char* findSerialPort() {
+    const char* devPath = "/dev/";
+    const char* prefix = "cu.usbserial-"; // Your prefix here
+    DIR* dir = opendir(devPath);
+    if (dir == nullptr) {
+        std::cerr << "Error opening directory" << std::endl;
+        return nullptr;
+    }
+
+    dirent* entry;
+    const char* portName = nullptr;
+
+    while ((entry = readdir(dir)) != nullptr) {
+        const char* filename = entry->d_name;
+        if (strstr(filename, prefix) != nullptr) {
+            // Use strncpy to copy the path to a buffer
+            char buffer[1024]; // Adjust the buffer size as needed
+            snprintf(buffer, sizeof(buffer), "%s%s", devPath, filename);
+            portName = buffer;
+            cout << "Using port: " << portName << endl;
+            break; // Use the first matching serial port found
+        }
+    }
+
+    closedir(dir);
+    return portName;
+}
+
+/**
  * @brief Writes a single byte of data to the specified serial port.
  *
  * This function sends the provided data byte to the given serial port and logs an error if the write operation fails.
@@ -106,6 +143,7 @@ void generateTimestamp(uint8_t *buffer)
  */
 bool openSerialPort()
 {
+    portName = findSerialPort();
     serialPort = open(portName, O_RDWR | O_NOCTTY); // Opening serial port with non-blocking flag
     if (serialPort == -1)
     {

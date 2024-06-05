@@ -58,7 +58,7 @@ string pmtFrame[4];
 string hkFrame[20];
 float stepVoltages[8] = {0, 0.5, 1, 1.5, 2, 2.5, 3, 3.3};
 
-const char *portName = "/dev/cu.usbserial-FT6DXVWX";
+const char *portName = "";
 int serialPort;
 ofstream outputFile("mylog.0", ios::out | ios::trunc);
 std::thread readThread;
