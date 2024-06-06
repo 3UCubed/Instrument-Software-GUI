@@ -219,13 +219,7 @@ void autoStartUpCallback(Fl_Widget *)
     PC8->value(1);
     PC9->value(1);
 
-    writeSerialData(serialPort, 0x0B); // sdn1
-    writeSerialData(serialPort, 0x00); // pb5
-    writeSerialData(serialPort, 0x04); // pc7
-    writeSerialData(serialPort, 0x02); // pc10
-    writeSerialData(serialPort, 0x07); // pc6
-    writeSerialData(serialPort, 0x05); // pc8
-    writeSerialData(serialPort, 0x06); // pc9
+    writeSerialData(serialPort, 0xE0);
 }
 
 /**
@@ -253,13 +247,7 @@ void autoShutDownCallback(Fl_Widget *)
     PC8->value(0);
     PC9->value(0);
 
-    writeSerialData(serialPort, 0x19); // pc9
-    writeSerialData(serialPort, 0x18); // pc8
-    writeSerialData(serialPort, 0x1A); // pc6
-    writeSerialData(serialPort, 0x15); // pc10
-    writeSerialData(serialPort, 0x17); // pc7
-    writeSerialData(serialPort, 0x13); // pb5
-    writeSerialData(serialPort, 0x0A); // sdn1
+    writeSerialData(serialPort, 0xD0);
 }
 
 /**
@@ -401,19 +389,19 @@ void quitCallback(Fl_Widget *)
 /**
  * @brief Sends a stop mode command over the serial port.
  *
- * This function sends a stop mode command (0x0C) over the specified serial port.
+ * This function sends a stop mode command (0x0F) over the specified serial port.
  *
  * @param serialPort The file descriptor for the open serial port.
  */
 void stopModeCallback(Fl_Widget *)
 {
-    writeSerialData(serialPort, 0x0C);
+    writeSerialData(serialPort, 0x0F);
 }
 
 /**
  * @brief Sends exit stop mode commands over the serial port.
  *
- * This function sends exit stop mode commands (0x5B) over the specified serial port.
+ * This function sends exit stop mode commands (0x1F) over the specified serial port.
  *
  * @param serialPort The file descriptor for the open serial port.
  */
@@ -421,7 +409,7 @@ void exitStopModeCallback(Fl_Widget *)
 {
     for (int i = 0; i < 12; i++)
     {
-        writeSerialData(serialPort, 0x5B);
+        writeSerialData(serialPort, 0x1F);
     }
 }
 
@@ -435,7 +423,7 @@ void exitStopModeCallback(Fl_Widget *)
  */
 void stepUpCallback(Fl_Widget *)
 {
-    writeSerialData(serialPort, 0x1B);
+    writeSerialData(serialPort, 0x1D);
     if (step < 7)
     {
         step++;
@@ -452,7 +440,7 @@ void stepUpCallback(Fl_Widget *)
  */
 void stepDownCallback(Fl_Widget *)
 {
-    writeSerialData(serialPort, 0x1C);
+    writeSerialData(serialPort, 0x0D);
     if (step > 0)
     {
         step--;
@@ -469,7 +457,7 @@ void stepDownCallback(Fl_Widget *)
  */
 void factorUpCallback(Fl_Widget *)
 {
-    writeSerialData(serialPort, 0x24);
+    writeSerialData(serialPort, 0x1E);
     if (currentFactor < 32)
     {
         currentFactor *= 2;
@@ -486,7 +474,7 @@ void factorUpCallback(Fl_Widget *)
  */
 void factorDownCallback(Fl_Widget *)
 {
-    writeSerialData(serialPort, 0x25);
+    writeSerialData(serialPort, 0x0E);
     if (currentFactor > 1)
     {
         currentFactor /= 2;
@@ -502,7 +490,13 @@ void factorDownCallback(Fl_Widget *)
  */
 void autoSweepCallback(Fl_Widget *)
 {
-    writeSerialData(serialPort, 0x1D);
+    int autoSweeping = autoSweep->value();
+    if (autoSweeping){
+        writeSerialData(serialPort, 0x19);
+    }
+    else{
+        writeSerialData(serialPort, 0x09);
+    }
 }
 
 /**
@@ -512,16 +506,16 @@ void autoSweepCallback(Fl_Widget *)
  */
 void SDN1Callback(Fl_Widget *widget)
 {
-    int currValue = ((Fl_Light_Button *)widget)->value();
-    if (currValue == 1)
+    int sdn1On = SDN1->value();
+    if (sdn1On)
     {
-        writeSerialData(serialPort, 0x0B);
+        writeSerialData(serialPort, 0x10);
         Controls.c_sdn1 = true;
         writeToLog(Controls);
     }
     else
     {
-        writeSerialData(serialPort, 0x0A);
+        writeSerialData(serialPort, 0x00);
         Controls.c_sdn1 = false;
         writeToLog(Controls);
     }
@@ -534,16 +528,16 @@ void SDN1Callback(Fl_Widget *widget)
  */
 void PMTOnCallback(Fl_Widget *widget)
 {
-    int currValue = ((Fl_Round_Button *)widget)->value();
-    if (currValue == 1)
+    int pmtOn = PMTOn->value();
+    if (pmtOn)
     {
-        writeSerialData(serialPort, 0x0D);
+        writeSerialData(serialPort, 0x1B);
         Controls.c_pmtOn = true;
         writeToLog(Controls);
     }
     else
     {
-        writeSerialData(serialPort, 0x10);
+        writeSerialData(serialPort, 0x0B);
         Controls.c_pmtOn = false;
         writeToLog(Controls);
     }
@@ -556,16 +550,16 @@ void PMTOnCallback(Fl_Widget *widget)
  */
 void ERPAOnCallback(Fl_Widget *widget)
 {
-    int currValue = ((Fl_Round_Button *)widget)->value();
-    if (currValue == 1)
+    int erpaOn = ERPAOn->value();
+    if (erpaOn)
     {
-        writeSerialData(serialPort, 0x0E);
+        writeSerialData(serialPort, 0x1A);
         Controls.c_erpaOn = true;
         writeToLog(Controls);
     }
     else
     {
-        writeSerialData(serialPort, 0x11);
+        writeSerialData(serialPort, 0x0A);
         Controls.c_erpaOn = false;
         writeToLog(Controls);
     }
@@ -578,16 +572,16 @@ void ERPAOnCallback(Fl_Widget *widget)
  */
 void HKOnCallback(Fl_Widget *widget)
 {
-    int currValue = ((Fl_Round_Button *)widget)->value();
-    if (currValue == 1)
+    int hkOn = HKOn->value();
+    if (hkOn)
     {
-        writeSerialData(serialPort, 0x0F);
+        writeSerialData(serialPort, 0x1C);
         Controls.c_hkOn = true;
         writeToLog(Controls);
     }
     else
     {
-        writeSerialData(serialPort, 0x12);
+        writeSerialData(serialPort, 0x0C);
         Controls.c_hkOn = false;
         writeToLog(Controls);
     }
@@ -604,10 +598,10 @@ void HKOnCallback(Fl_Widget *widget)
  */
 void PB5Callback(Fl_Widget *widget)
 {
-    bool PB5IsOn = ((Fl_Round_Button *)widget)->value();
-    if (PB5IsOn)
+    int pb5On = PB5->value();
+    if (pb5On)
     {
-        writeSerialData(serialPort, 0x00);
+        writeSerialData(serialPort, 0x11);
         Controls.c_sysOn = true;
         writeToLog(Controls);
         PB6->activate();
@@ -620,14 +614,7 @@ void PB5Callback(Fl_Widget *widget)
     }
     else
     {
-        writeSerialData(serialPort, 0x13);
-        writeSerialData(serialPort, 0x14);
-        writeSerialData(serialPort, 0x15);
-        writeSerialData(serialPort, 0x16);
-        writeSerialData(serialPort, 0x17);
-        writeSerialData(serialPort, 0x18);
-        writeSerialData(serialPort, 0x19);
-        writeSerialData(serialPort, 0x1A);
+        writeSerialData(serialPort, 0x01);
         Controls.c_sysOn = false;
         writeToLog(Controls);
         PB6->deactivate();
@@ -654,16 +641,16 @@ void PB5Callback(Fl_Widget *widget)
  */
 void PB6Callback(Fl_Widget *widget)
 {
-    int currValue = ((Fl_Round_Button *)widget)->value();
-    if (currValue == 1)
+    int pb6On = PB6->value();
+    if (pb6On)
     {
-        writeSerialData(serialPort, 0x01);
+        writeSerialData(serialPort, 0x18);
         Controls.c_800v = true;
         writeToLog(Controls);
     }
     else
     {
-        writeSerialData(serialPort, 0x14);
+        writeSerialData(serialPort, 0x08);
         Controls.c_800v = false;
         writeToLog(Controls);
     }
@@ -676,16 +663,16 @@ void PB6Callback(Fl_Widget *widget)
  */
 void PC10Callback(Fl_Widget *widget)
 {
-    int currValue = ((Fl_Round_Button *)widget)->value();
-    if (currValue == 1)
+    int pc10On = PC10->value();
+    if (pc10On)
     {
-        writeSerialData(serialPort, 0x04);
+        writeSerialData(serialPort, 0x12);
         Controls.c_3v3 = true;
         writeToLog(Controls);
     }
     else
     {
-        writeSerialData(serialPort, 0x17);
+        writeSerialData(serialPort, 0x02);
         Controls.c_3v3 = false;
         writeToLog(Controls);
     }
@@ -698,16 +685,16 @@ void PC10Callback(Fl_Widget *widget)
  */
 void PC13Callback(Fl_Widget *widget)
 {
-    int currValue = ((Fl_Round_Button *)widget)->value();
-    if (currValue == 1)
+    int pc13On = PC13->value();
+    if (pc13On)
     {
-        writeSerialData(serialPort, 0x03);
+        writeSerialData(serialPort, 0x17);
         Controls.c_n150v = true;
         writeToLog(Controls);
     }
     else
     {
-        writeSerialData(serialPort, 0x16);
+        writeSerialData(serialPort, 0x07);
         Controls.c_n150v = false;
         writeToLog(Controls);
     }
@@ -720,16 +707,16 @@ void PC13Callback(Fl_Widget *widget)
  */
 void PC7Callback(Fl_Widget *widget)
 {
-    int currValue = ((Fl_Round_Button *)widget)->value();
-    if (currValue == 1)
+    int pc7On = PC7->value();
+    if (pc7On)
     {
-        writeSerialData(serialPort, 0x02);
+        writeSerialData(serialPort, 0x13);
         Controls.c_5v = true;
         writeToLog(Controls);
     }
     else
     {
-        writeSerialData(serialPort, 0x15);
+        writeSerialData(serialPort, 0x03);
         Controls.c_5v = false;
         writeToLog(Controls);
     }
@@ -742,16 +729,16 @@ void PC7Callback(Fl_Widget *widget)
  */
 void PC8Callback(Fl_Widget *widget)
 {
-    int currValue = ((Fl_Round_Button *)widget)->value();
-    if (currValue == 1)
+    int pc8On = PC8->value();
+    if (pc8On)
     {
-        writeSerialData(serialPort, 0x05);
+        writeSerialData(serialPort, 0x15);
         Controls.c_n5v = true;
         writeToLog(Controls);
     }
     else
     {
-        writeSerialData(serialPort, 0x18);
+        writeSerialData(serialPort, 0x05);
         Controls.c_n5v = false;
         writeToLog(Controls);
     }
@@ -764,16 +751,16 @@ void PC8Callback(Fl_Widget *widget)
  */
 void PC9Callback(Fl_Widget *widget)
 {
-    int currValue = ((Fl_Round_Button *)widget)->value();
-    if (currValue == 1)
+    int pc9On = PC9->value();
+    if (pc9On)
     {
-        writeSerialData(serialPort, 0x06);
+        writeSerialData(serialPort, 0x16);
         Controls.c_15v = true;
         writeToLog(Controls);
     }
     else
     {
-        writeSerialData(serialPort, 0x19);
+        writeSerialData(serialPort, 0x06);
         Controls.c_15v = false;
         writeToLog(Controls);
     }
@@ -786,16 +773,16 @@ void PC9Callback(Fl_Widget *widget)
  */
 void PC6Callback(Fl_Widget *widget)
 {
-    int currValue = ((Fl_Round_Button *)widget)->value();
-    if (currValue == 1)
+    int pc6On = PC6->value();
+    if (pc6On)
     {
-        writeSerialData(serialPort, 0x07);
+        writeSerialData(serialPort, 0x14);
         Controls.c_n3v3 = true;
         writeToLog(Controls);
     }
     else
     {
-        writeSerialData(serialPort, 0x1A);
+        writeSerialData(serialPort, 0x04);
         Controls.c_n3v3 = false;
         writeToLog(Controls);
     }
