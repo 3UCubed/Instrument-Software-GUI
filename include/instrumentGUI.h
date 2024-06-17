@@ -7,6 +7,10 @@
  * GUI that connects to H7-Instrument-Software and shows packet data in real time
  */
 
+#define PMT_PACKET_SIZE 14
+#define ERPA_PACKET_SIZE 18
+#define HK_PACKET_SIZE 46
+
 // ******************************************************************************************************************* INCLUDES
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
@@ -33,12 +37,20 @@
 #include <chrono>
 #include <mutex>
 #include <sstream>
-#include "../src/interpreter.cpp"
-#include "../src/logger.cpp"
-
+#include "../include/doubleBuffer.h"
+#include "../include/logger.h"
 using namespace std;
 
+enum Packet_t{
+    ERPA,
+    PMT,
+    HK,
+    UNDEFINED
+};
+
 // ******************************************************************************************************************* GLOBALS
+Logger logger;
+DoubleBuffer storage;
 const int windowWidth = 1175;
 const int windowHeight = 600;
 const int xPacketOffset = 380;
@@ -60,7 +72,6 @@ float stepVoltages[8] = {0, 0.5, 1, 1.5, 2, 2.5, 3, 3.3};
 
 const char *portName = "";
 int serialPort;
-ofstream outputFile("mylog.0", ios::out | ios::trunc);
 std::thread readThread;
 std::atomic<bool> stopFlag(false);
 
@@ -108,7 +119,6 @@ Fl_Button *enterStopMode;
 Fl_Button *exitStopMode;
 Fl_Button *increaseFactor;
 Fl_Button *decreaseFactor;
-Fl_Button *startRecording;
 Fl_Round_Button *PMTOn;
 Fl_Round_Button *ERPAOn;
 Fl_Round_Button *HKOn;

@@ -5,11 +5,11 @@ FLTK_CXXFLAGS = `fltk-config --cxxflags`
 FLTK_LDFLAGS = `fltk-config --ldflags`
 
 # Source files
-SRCS = src/instrumentGUI.cpp
+SRCS = src/instrumentGUI.cpp src/doubleBuffer.cpp src/logger.cpp
 
 # Object files
 BUILD_DIR = build
-OBJS = $(addprefix $(BUILD_DIR)/, $(SRCS:.cpp=.o))
+OBJS = $(SRCS:src/%.cpp=$(BUILD_DIR)/%.o)
 
 # Output executable
 TARGET = instrumentGUI
@@ -27,7 +27,7 @@ $(TARGET): $(OBJS)
 	$(CXX) $(CXXFLAGS) $(OBJS) $(FLTK_LDFLAGS) -o $(TARGET)
 
 # Compile source files
-$(BUILD_DIR)/%.o: %.cpp
+$(BUILD_DIR)/%.o: src/%.cpp
 	@mkdir -p $(dir $@)
 	$(CXX) $(CXXFLAGS) $(FLTK_CXXFLAGS) -c $< -o $@
 
