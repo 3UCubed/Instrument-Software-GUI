@@ -205,6 +205,43 @@ Packet_t determinePacketType(char MSB, char LSB)
     return UNDEFINED;
 }
 
+double intToVoltage(int value, int resolution, int ref, float mult) {
+    double voltage;
+    if (resolution == 12) {
+        voltage = (double) (value * ref) / 4095 * mult;
+    }
+
+    if (resolution == 16) {
+        voltage = (double) (value * ref) / 65535 * mult;
+    }
+    return voltage;
+}
+
+double tempsToCelsius(int val) {
+    char convertedChar[16];
+    double convertedTemp;
+
+    // Convert to 2's complement, since temperature can be negative
+    if (val > 0x7FF) {
+        val |= 0xF000;
+    }
+
+    // Convert to float temperature value (Celsius)
+    float temp_c = val * 0.0625;
+
+    // Convert temperature to decimal value
+    temp_c *= 100;
+
+    sprintf(convertedChar, "%u.%u",
+            ((unsigned int) temp_c / 100),
+            ((unsigned int) temp_c % 100));
+
+    convertedTemp = std::stod(convertedChar);
+
+    return convertedTemp;
+
+}
+
 // ******************************************************************************************************************* CALLBACKS
 /**
  * @brief Callback function for auto-startup.
@@ -1256,10 +1293,9 @@ int main()
                 index += 2;
                 snprintf(res, 50, "%04d", value);
                 PMTseq->value(res);
-
-                value = ((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF);
+                value = intToVoltage(((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF), 16, 5, 1.0);
                 index += 2;
-                snprintf(res, 50, "%08.7d", value);
+                snprintf(res, 50, "%08.7f", value);
                 PMTadc->value(res);
 
                 snprintf(res, 50, "%02d", bytes[index++]); // year
@@ -1288,19 +1324,19 @@ int main()
                 snprintf(res, 50, "%04d", value);
                 ERPAseq->value(res);
 
-                value = ((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF);
+                value = intToVoltage(((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF), 12, 3.3, 1.0);
                 index += 2;
-                snprintf(res, 50, "%06.5d", value);
+                snprintf(res, 50, "%06.5f", value);
                 ERPAswp->value(res);
 
-                value = ((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF);
+                value = intToVoltage(((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF), 12, 3.3, 1.0);
                 index += 2;
-                snprintf(res, 50, "%06.5d", value);
+                snprintf(res, 50, "%06.5f", value);
                 ERPAtemp1->value(res);
 
-                value = ((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF);
+                value = intToVoltage(((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF), 16, 5, 1.0);
                 index += 2;
-                snprintf(res, 50, "%08.7d", value);
+                snprintf(res, 50, "%08.7f", value);
                 ERPAadc->value(res);
 
                 snprintf(res, 50, "%02d", bytes[index++]); // year
@@ -1329,87 +1365,87 @@ int main()
                 snprintf(res, 50, "%04d", value);
                 HKseq->value(res);
 
-                value = ((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF);
+                value = intToVoltage(((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF), 12, 3.3, 1.0);
                 index += 2;
                 snprintf(res, 50, "%06.5f", value);
                 HKvsense->value(res);
 
-                value = ((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF);
+                value = intToVoltage(((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF), 12, 3.3, 1.0);
                 index += 2;
                 snprintf(res, 50, "%06.5f", value);
                 HKvrefint->value(res);
 
-                value = ((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF);
+                value = tempsToCelsius(((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF));
                 index += 2;
                 snprintf(res, 50, "%06.5f", value);
                 HKtemp1->value(res);
 
-                value = ((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF);
+                value = tempsToCelsius(((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF));
                 index += 2;
                 snprintf(res, 50, "%06.5f", value);
                 HKtemp2->value(res);
 
-                value = ((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF);
+                value = tempsToCelsius(((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF));
                 index += 2;
                 snprintf(res, 50, "%06.5f", value);
                 HKtemp3->value(res);
 
-                value = ((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF);
+                value = tempsToCelsius(((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF));
                 index += 2;
                 snprintf(res, 50, "%06.5f", value);
                 HKtemp4->value(res);
 
-                value = ((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF);
+                value = intToVoltage(((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF), 12, 3.3, 1.0);
                 index += 2;
                 snprintf(res, 50, "%06.5f", value);
                 HKbusvmon->value(res);
 
-                value = ((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF);
+                value = intToVoltage(((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF), 12, 3.3, 1.0);
                 index += 2;
                 snprintf(res, 50, "%06.5f", value);
                 HKbusimon->value(res);
 
-                value = ((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF);
+                value = intToVoltage(((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF), 12, 3.3, 1.0);
                 index += 2;
                 snprintf(res, 50, "%06.5f", value);
                 HK2v5mon->value(res);
 
-                value = ((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF);
+                value = intToVoltage(((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF), 12, 3.3, 1.0);
                 index += 2;
                 snprintf(res, 50, "%06.5f", value);
                 HK3v3mon->value(res);
 
-                value = ((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF);
+                value = intToVoltage(((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF), 12, 3.3, 1.0);
                 index += 2;
                 snprintf(res, 50, "%06.5f", value);
                 HK5vmon->value(res);
 
-                value = ((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF);
+                value = intToVoltage(((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF), 12, 3.3, 1.0);
                 index += 2;
                 snprintf(res, 50, "%06.5f", value);
                 HKn3v3mon->value(res);
 
-                value = ((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF);
+                value = intToVoltage(((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF), 12, 3.3, 1.0);
                 index += 2;
                 snprintf(res, 50, "%06.5f", value);
                 HKn5vmon->value(res);
 
-                value = ((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF);
+                value = intToVoltage(((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF), 12, 3.3, 1.0);
                 index += 2;
                 snprintf(res, 50, "%06.5f", value);
                 HK15vmon->value(res);
 
-                value = ((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF);
+                value = intToVoltage(((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF), 12, 3.3, 1.0);
                 index += 2;
                 snprintf(res, 50, "%06.5f", value);
                 HK5vrefmon->value(res);
 
-                value = ((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF);
+                value = intToVoltage(((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF), 12, 3.3, 1.0);
                 index += 2;
                 snprintf(res, 50, "%06.5f", value);
                 HKn150vmon->value(res);
 
-                value = ((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF);
+                value = intToVoltage(((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF), 12, 3.3, 1.0);
                 index += 2;
                 snprintf(res, 50, "%06.5f", value);
                 HKn800vmon->value(res);
