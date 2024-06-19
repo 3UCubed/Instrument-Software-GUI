@@ -78,19 +78,21 @@ void writeSerialData(const int &serialPort, const unsigned char data)
  * @param flag Atomic boolean flag indicating whether to stop reading.
  * @param outputFile The output file stream where the data will be written.
  */
-void readSerialData(const int &serialPort, std::atomic<bool> &flag)
+void readSerialData(const int &serialPort, std::atomic<bool> &flag, std::atomic<bool> &record)
 {
     const int bufferSize = 1024;
     char buffer[bufferSize];
-    logger.createRawLog();
+    
     while (!flag)
     {
         ssize_t bytesRead = read(serialPort, buffer, bufferSize);
         if (bytesRead > 0)
         {
             cout << bytesRead << endl;
+            if (record){
+                logger.copyToRawLog(buffer, bytesRead);
+            }
             storage.copyToStorage(buffer, bytesRead);
-            logger.copyToLog(buffer, bytesRead);
         }
         else if (bytesRead == -1)
         {
@@ -169,7 +171,7 @@ bool openSerialPort()
  */
 void startThread()
 {
-    readThread = thread(readSerialData, std::ref(serialPort), std::ref(stopFlag));
+    readThread = thread(readSerialData, std::ref(serialPort), std::ref(stopFlag), std::ref(recording));
 }
 
 /**
@@ -181,7 +183,7 @@ void cleanup()
 {
     stopFlag = true;
     readThread.join();
-    logger.closeLog();
+    logger.closeRawLog();
     close(serialPort);
 }
 
@@ -381,6 +383,7 @@ void syncCallback(Fl_Widget *)
         exitStopMode->activate();
         increaseFactor->activate();
         decreaseFactor->activate();
+        startRecording->activate();
         PMTOn->activate();
         ERPAOn->activate();
         HKOn->activate();
@@ -502,6 +505,21 @@ void factorDownCallback(Fl_Widget *)
     if (currentFactor > 1)
     {
         currentFactor /= 2;
+    }
+}
+
+void startRecordingCallback(Fl_Widget *widget)
+{
+    if (startRecording->value()){
+        startRecording->label("RECORDING @square");
+        recording = true;
+        logger.createRawLog();
+    }
+    else{
+        startRecording->label("RECORD @circle");
+        recording = false;
+        logger.closeRawLog();
+        logger.parseRawLog();  // TODO
     }
 }
 
@@ -816,6 +834,7 @@ int main()
     autoShutDown = new Fl_Button(xGUIOffset + 295, yGUIOffset + 196, 110, 53, "Auto DeInit");
     enterStopMode = new Fl_Button(xGUIOffset + 295, yGUIOffset + 249, 110, 53, "Sleep");
     exitStopMode = new Fl_Button(xGUIOffset + 295, yGUIOffset + 302, 110, 53, "Wake Up");
+    startRecording = new Fl_Button(xGUIOffset + 295, yGUIOffset + 355, 110, 53, "RECORD @circle");
     quit = new Fl_Button(xGUIOffset + 295, yGUIOffset + 408, 110, 53, "Quit");
     stepUp = new Fl_Button(xPacketOffset + 305, yPacketOffset + 195, 180, 20, "Step Up");
     stepDown = new Fl_Button(xPacketOffset + 305, yPacketOffset + 245, 180, 20, "Step Down");
@@ -892,6 +911,8 @@ int main()
     group6->labelcolor(text);
     group6->labelfont(FL_BOLD);
     group6->align(FL_ALIGN_TOP);
+    startRecording->labelcolor(FL_RED);
+    startRecording->callback(startRecordingCallback);
     enterStopMode->callback(stopModeCallback);
     exitStopMode->callback(exitStopModeCallback);
     autoStartUp->callback(autoStartUpCallback);

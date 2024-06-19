@@ -84,7 +84,8 @@
     "span": "cpp",
     "memory_resource": "cpp",
     "cinttypes": "cpp",
-    "text_encoding": "cpp"
+    "text_encoding": "cpp",
+    "filesystem": "cpp"
   },
   "cmake.sourceDirectory": "/Users/shanewoods/cubesat/workspace/Instrument-Software-GUI/fltk-1.3.8/test"
 }
