@@ -1277,6 +1277,10 @@ int main()
     window->show();
     Fl::check();
 
+    // TO BE REMOVED
+    Logger guiLogger;
+    guiLogger.createRawLog();
+
     // ******************************************************************************************************************* Event Loop
     while (1)
     {
@@ -1302,6 +1306,13 @@ int main()
             {
             case PMT:
             {
+
+                // TO BE REMOVED
+                for (int i = 0; i < PMT_PACKET_SIZE; i++){
+                    guiLogger.copyToRawLog(bytes + index + i, 1);
+                }
+
+
                 char res[50];
                 int value;
 
@@ -1333,6 +1344,15 @@ int main()
             }
             case ERPA:
             {
+
+                
+                // TO BE REMOVED
+                for (int i = 0; i < ERPA_PACKET_SIZE; i++){
+                    guiLogger.copyToRawLog(bytes + index + i, 1);
+                }
+
+
+
                 char res[50];
                 int value;
                 value = ((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF);
@@ -1374,6 +1394,13 @@ int main()
             }
             case HK:
             {
+
+                // TO BE REMOVED
+                for (int i = 0; i < HK_PACKET_SIZE; i++){
+                    guiLogger.copyToRawLog(bytes + index + i, 1);
+                }
+                
+
                 char res[50];
                 int value;
                 value = ((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF);
