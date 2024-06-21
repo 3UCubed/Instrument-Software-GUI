@@ -7,7 +7,7 @@
  * GUI that connects to H7-Instrument-Software and shows packet data in real time
  */
 
-//#define GUI_LOG
+#define GUI_LOG
 #include "../include/instrumentGUI.h"
 
 // ******************************************************************************************************************* HELPER FUNCTIONS
@@ -548,7 +548,6 @@ void autoSweepCallback(Fl_Widget *)
     if (autoSweeping)
     {
         writeSerialData(serialPort, 0x19);
-        cout << "AUTOSWEEP ON";
     }
     else
     {
@@ -1311,7 +1310,7 @@ int main()
 
         bytesRead = storage.getNextBytes(bytes);
 
-        while (index + 48 < bytesRead)
+        while (index < bytesRead)
         {
             packetType = determinePacketType(bytes[index], bytes[index + 1]);
 
@@ -1356,7 +1355,6 @@ int main()
             case ERPA:
             {
 
-// TO BE REMOVED
 #ifdef GUI_LOG
                 guiLogger.copyToRawLog(bytes + index, ERPA_PACKET_SIZE);
 #endif

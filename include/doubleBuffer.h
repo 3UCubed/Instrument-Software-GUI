@@ -9,7 +9,7 @@ public:
     DoubleBuffer();
     void copyToStorage(char *buffer, int size);
     int getNextBytes(char *bytes);
-    volatile int MIN_STORAGE_SIZE = 100;
+    volatile int MIN_STORAGE_SIZE = 128;
 private:
     struct Storage
     {

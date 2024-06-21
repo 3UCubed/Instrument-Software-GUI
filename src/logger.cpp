@@ -12,8 +12,6 @@
 Logger::Logger(){};
 Logger::~Logger(){};
 
-
-
 // ******************************************************************************************************************* PUBLIC FUNCTIONS
 bool Logger::createRawLog(std::string id)
 {
@@ -52,7 +50,7 @@ void Logger::parseRawLog(std::string id)
     char *buffer = nullptr;
     Packet_t packetType;
     bytesRead = slurp(currentLogTitle, buffer); // Read entire file into char buffer
-    createPacketLogs(id);                  // Create separate .csv for each packet type
+    createPacketLogs(id);                       // Create separate .csv for each packet type
 
     while (i < bytesRead)
     {
@@ -71,19 +69,19 @@ void Logger::parseRawLog(std::string id)
             snprintf(res, 50, "%04d", value);
             erpa.seq = res;
 
-            value = intToVoltage(((buffer[i] & 0xFF) << 8) | (buffer[i + 1] & 0xFF), 12, 3.3, 1.0);
+            value = (((buffer[i] & 0xFF) << 8) | (buffer[i + 1] & 0xFF));
             i += 2;
-            snprintf(res, 50, "%06.5f", value);
+            snprintf(res, 50, "%06.5f", intToVoltage(value, 12, 3.3, 1.0));
             erpa.swp = res;
 
-            value = intToVoltage(((buffer[i] & 0xFF) << 8) | (buffer[i + 1] & 0xFF), 12, 3.3, 1.0);
+            value = (((buffer[i] & 0xFF) << 8) | (buffer[i + 1] & 0xFF));
             i += 2;
-            snprintf(res, 50, "%06.5f", value);
+            snprintf(res, 50, "%06.5f", intToVoltage(value, 12, 3.3, 1.0));
             erpa.temp1 = res;
 
-            value = intToVoltage(((buffer[i] & 0xFF) << 8) | (buffer[i + 1] & 0xFF), 16, 5, 1.0);
+            value = (((buffer[i] & 0xFF) << 8) | (buffer[i + 1] & 0xFF), 16, 5, 1.0);
             i += 2;
-            snprintf(res, 50, "%08.7f", value);
+            snprintf(res, 50, "%08.7f", intToVoltage(value, 16, 5, 1.0));
             erpa.adc = res;
 
             snprintf(res, 50, "%02d", buffer[i++]); // year
@@ -124,9 +122,9 @@ void Logger::parseRawLog(std::string id)
             snprintf(res, 50, "%04d", value);
             pmt.seq = res;
 
-            value = intToVoltage(((buffer[i] & 0xFF) << 8) | (buffer[i + 1] & 0xFF), 16, 5, 1.0);
+            value = (((buffer[i] & 0xFF) << 8) | (buffer[i + 1] & 0xFF), 16, 5, 1.0);
             i += 2;
-            snprintf(res, 50, "%08.7f", value);
+            snprintf(res, 50, "%08.7f", intToVoltage(value, 16, 5, 1.0));
             pmt.adc = res;
 
             snprintf(res, 50, "%02d", buffer[i++]); // year
@@ -166,89 +164,89 @@ void Logger::parseRawLog(std::string id)
             snprintf(res, 50, "%04d", value);
             hk.seq = res;
 
-            value = intToVoltage(((buffer[i] & 0xFF) << 8) | (buffer[i + 1] & 0xFF), 12, 3.3, 1.0);
+            value = (((buffer[i] & 0xFF) << 8) | (buffer[i + 1] & 0xFF));
             i += 2;
-            snprintf(res, 50, "%06.5f", value);
+            snprintf(res, 50, "%06.5f", intToVoltage(value, 12, 3.3, 1.0));
             hk.vsense = res;
 
-            value = intToVoltage(((buffer[i] & 0xFF) << 8) | (buffer[i + 1] & 0xFF), 12, 3.3, 1.0);
+            value = (((buffer[i] & 0xFF) << 8) | (buffer[i + 1] & 0xFF));
             i += 2;
-            snprintf(res, 50, "%06.5f", value);
+            snprintf(res, 50, "%06.5f", intToVoltage(value, 12, 3.3, 1.0));
             hk.vrefint = res;
 
-            value = tempsToCelsius(((buffer[i] & 0xFF) << 8) | (buffer[i + 1] & 0xFF));
+            value = (((buffer[i] & 0xFF) << 8) | (buffer[i + 1] & 0xFF));
             i += 2;
-            snprintf(res, 50, "%06.5f", value);
+            snprintf(res, 50, "%06.5f", tempsToCelsius(value));
             hk.temp1 = res;
 
-            value = tempsToCelsius(((buffer[i] & 0xFF) << 8) | (buffer[i + 1] & 0xFF));
+            value = (((buffer[i] & 0xFF) << 8) | (buffer[i + 1] & 0xFF));
             i += 2;
-            snprintf(res, 50, "%06.5f", value);
+            snprintf(res, 50, "%06.5f", tempsToCelsius(value));
             hk.temp2 = res;
 
-            value = tempsToCelsius(((buffer[i] & 0xFF) << 8) | (buffer[i + 1] & 0xFF));
+            value = (((buffer[i] & 0xFF) << 8) | (buffer[i + 1] & 0xFF));
             i += 2;
-            snprintf(res, 50, "%06.5f", value);
+            snprintf(res, 50, "%06.5f", tempsToCelsius(value));
             hk.temp3 = res;
 
-            value = tempsToCelsius(((buffer[i] & 0xFF) << 8) | (buffer[i + 1] & 0xFF));
+            value = (((buffer[i] & 0xFF) << 8) | (buffer[i + 1] & 0xFF));
             i += 2;
-            snprintf(res, 50, "%06.5f", value);
+            snprintf(res, 50, "%06.5f", tempsToCelsius(value));
             hk.temp4 = res;
 
-            value = intToVoltage(((buffer[i] & 0xFF) << 8) | (buffer[i + 1] & 0xFF), 12, 3.3, 1.0);
+            value = (((buffer[i] & 0xFF) << 8) | (buffer[i + 1] & 0xFF));
             i += 2;
-            snprintf(res, 50, "%06.5f", value);
+            snprintf(res, 50, "%06.5f", intToVoltage(value, 12, 3.3, 1.0));
             hk.busvmon = res;
 
-            value = intToVoltage(((buffer[i] & 0xFF) << 8) | (buffer[i + 1] & 0xFF), 12, 3.3, 1.0);
+            value = (((buffer[i] & 0xFF) << 8) | (buffer[i + 1] & 0xFF));
             i += 2;
-            snprintf(res, 50, "%06.5f", value);
+            snprintf(res, 50, "%06.5f", intToVoltage(value, 12, 3.3, 1.0));
             hk.busimon = res;
 
-            value = intToVoltage(((buffer[i] & 0xFF) << 8) | (buffer[i + 1] & 0xFF), 12, 3.3, 1.0);
+            value = (((buffer[i] & 0xFF) << 8) | (buffer[i + 1] & 0xFF));
             i += 2;
-            snprintf(res, 50, "%06.5f", value);
+            snprintf(res, 50, "%06.5f", intToVoltage(value, 12, 3.3, 1.0));
             hk.mon2v5 = res;
 
-            value = intToVoltage(((buffer[i] & 0xFF) << 8) | (buffer[i + 1] & 0xFF), 12, 3.3, 1.0);
+            value = (((buffer[i] & 0xFF) << 8) | (buffer[i + 1] & 0xFF));
             i += 2;
-            snprintf(res, 50, "%06.5f", value);
+            snprintf(res, 50, "%06.5f", intToVoltage(value, 12, 3.3, 1.0));
             hk.mon3v3 = res;
 
-            value = intToVoltage(((buffer[i] & 0xFF) << 8) | (buffer[i + 1] & 0xFF), 12, 3.3, 1.0);
+            value = (((buffer[i] & 0xFF) << 8) | (buffer[i + 1] & 0xFF));
             i += 2;
-            snprintf(res, 50, "%06.5f", value);
+            snprintf(res, 50, "%06.5f", intToVoltage(value, 12, 3.3, 1.0));
             hk.mon5v = res;
 
-            value = intToVoltage(((buffer[i] & 0xFF) << 8) | (buffer[i + 1] & 0xFF), 12, 3.3, 1.0);
+            value = (((buffer[i] & 0xFF) << 8) | (buffer[i + 1] & 0xFF));
             i += 2;
-            snprintf(res, 50, "%06.5f", value);
+            snprintf(res, 50, "%06.5f", intToVoltage(value, 12, 3.3, 1.0));
             hk.monn3v3 = res;
 
-            value = intToVoltage(((buffer[i] & 0xFF) << 8) | (buffer[i + 1] & 0xFF), 12, 3.3, 1.0);
+            value = (((buffer[i] & 0xFF) << 8) | (buffer[i + 1] & 0xFF));
             i += 2;
-            snprintf(res, 50, "%06.5f", value);
+            snprintf(res, 50, "%06.5f", intToVoltage(value, 12, 3.3, 1.0));
             hk.monn5v = res;
 
-            value = intToVoltage(((buffer[i] & 0xFF) << 8) | (buffer[i + 1] & 0xFF), 12, 3.3, 1.0);
+            value = (((buffer[i] & 0xFF) << 8) | (buffer[i + 1] & 0xFF));
             i += 2;
-            snprintf(res, 50, "%06.5f", value);
+            snprintf(res, 50, "%06.5f", intToVoltage(value, 12, 3.3, 1.0));
             hk.mon15v = res;
 
-            value = intToVoltage(((buffer[i] & 0xFF) << 8) | (buffer[i + 1] & 0xFF), 12, 3.3, 1.0);
+            value = (((buffer[i] & 0xFF) << 8) | (buffer[i + 1] & 0xFF));
             i += 2;
-            snprintf(res, 50, "%06.5f", value);
+            snprintf(res, 50, "%06.5f", intToVoltage(value, 12, 3.3, 1.0));
             hk.mon5vref = res;
 
-            value = intToVoltage(((buffer[i] & 0xFF) << 8) | (buffer[i + 1] & 0xFF), 12, 3.3, 1.0);
+            value = (((buffer[i] & 0xFF) << 8) | (buffer[i + 1] & 0xFF));
             i += 2;
-            snprintf(res, 50, "%06.5f", value);
+            snprintf(res, 50, "%06.5f", intToVoltage(value, 12, 3.3, 1.0));
             hk.monn200v = res;
 
-            value = intToVoltage(((buffer[i] & 0xFF) << 8) | (buffer[i + 1] & 0xFF), 12, 3.3, 1.0);
+            value = (((buffer[i] & 0xFF) << 8) | (buffer[i + 1] & 0xFF));
             i += 2;
-            snprintf(res, 50, "%06.5f", value);
+            snprintf(res, 50, "%06.5f", intToVoltage(value, 12, 3.3, 1.0));
             hk.monn800v = res;
 
             snprintf(res, 50, "%02d", buffer[i++]); // year
@@ -422,12 +420,10 @@ double Logger::tempsToCelsius(int val)
     return convertedTemp;
 }
 
-void Logger::closePacketLogs(){
+void Logger::closePacketLogs()
+{
     erpaStream.close();
     pmtStream.close();
     hkStream.close();
     controlsStream.close();
 }
-
-
-
