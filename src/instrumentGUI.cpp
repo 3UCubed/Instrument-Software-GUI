@@ -82,14 +82,15 @@ void readSerialData(const int &serialPort, std::atomic<bool> &flag, std::atomic<
 {
     const int bufferSize = 1024;
     char buffer[bufferSize];
-    
+
     while (!flag)
     {
         ssize_t bytesRead = read(serialPort, buffer, bufferSize);
         if (bytesRead > 0)
         {
             cout << bytesRead << endl;
-            if (record){
+            if (record)
+            {
                 logger.copyToRawLog(buffer, bytesRead);
             }
             storage.copyToStorage(buffer, bytesRead);
@@ -207,24 +208,29 @@ Packet_t determinePacketType(char MSB, char LSB)
     return UNDEFINED;
 }
 
-double intToVoltage(int value, int resolution, int ref, float mult) {
+double intToVoltage(int value, int resolution, int ref, float mult)
+{
     double voltage;
-    if (resolution == 12) {
-        voltage = (double) (value * ref) / 4095 * mult;
+    if (resolution == 12)
+    {
+        voltage = (double)(value * ref) / 4095 * mult;
     }
 
-    if (resolution == 16) {
-        voltage = (double) (value * ref) / 65535 * mult;
+    if (resolution == 16)
+    {
+        voltage = (double)(value * ref) / 65535 * mult;
     }
     return voltage;
 }
 
-double tempsToCelsius(int val) {
+double tempsToCelsius(int val)
+{
     char convertedChar[16];
     double convertedTemp;
 
     // Convert to 2's complement, since temperature can be negative
-    if (val > 0x7FF) {
+    if (val > 0x7FF)
+    {
         val |= 0xF000;
     }
 
@@ -235,13 +241,12 @@ double tempsToCelsius(int val) {
     temp_c *= 100;
 
     sprintf(convertedChar, "%u.%u",
-            ((unsigned int) temp_c / 100),
-            ((unsigned int) temp_c % 100));
+            ((unsigned int)temp_c / 100),
+            ((unsigned int)temp_c % 100));
 
     convertedTemp = std::stod(convertedChar);
 
     return convertedTemp;
-
 }
 
 // ******************************************************************************************************************* CALLBACKS
@@ -508,18 +513,20 @@ void factorDownCallback(Fl_Widget *)
     }
 }
 
-void startRecordingCallback(Fl_Widget *widget)
+void startRecordingCallback(Fl_Widget *)
 {
-    if (startRecording->value()){
+    if (!recording)
+    {
         startRecording->label("RECORDING @square");
         recording = true;
         logger.createRawLog();
     }
-    else{
+    else
+    {
         startRecording->label("RECORD @circle");
         recording = false;
         logger.closeRawLog();
-        logger.parseRawLog();  // TODO
+        logger.parseRawLog(); // TODO
     }
 }
 
@@ -536,6 +543,7 @@ void autoSweepCallback(Fl_Widget *)
     if (autoSweeping)
     {
         writeSerialData(serialPort, 0x19);
+        cout << "AUTOSWEEP ON";
     }
     else
     {
@@ -1277,9 +1285,9 @@ int main()
     window->show();
     Fl::check();
 
-    // TO BE REMOVED
-    Logger guiLogger;
-    guiLogger.createRawLog();
+    // // TO BE REMOVED
+    // Logger guiLogger;
+    // guiLogger.createRawLog();
 
     // ******************************************************************************************************************* Event Loop
     while (1)
@@ -1307,11 +1315,10 @@ int main()
             case PMT:
             {
 
-                // TO BE REMOVED
-                for (int i = 0; i < PMT_PACKET_SIZE; i++){
-                    guiLogger.copyToRawLog(bytes + index + i, 1);
-                }
-
+                // // TO BE REMOVED
+                // for (int i = 0; i < PMT_PACKET_SIZE; i++){
+                //     guiLogger.copyToRawLog(bytes + index + i, 1);
+                // }
 
                 char res[50];
                 int value;
@@ -1325,9 +1332,10 @@ int main()
                 index += 2;
                 snprintf(res, 50, "%04d", value);
                 PMTseq->value(res);
-                value = intToVoltage(((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF), 16, 5, 1.0);
+                
+                value = (((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF), 16, 5, 1.0);
                 index += 2;
-                snprintf(res, 50, "%08.7f", value);
+                snprintf(res, 50, "%08.7f", intToVoltage(value, 16, 5, 1.0));
                 PMTadc->value(res);
 
                 snprintf(res, 50, "%02d", bytes[index++]); // year
@@ -1345,13 +1353,10 @@ int main()
             case ERPA:
             {
 
-                
-                // TO BE REMOVED
-                for (int i = 0; i < ERPA_PACKET_SIZE; i++){
-                    guiLogger.copyToRawLog(bytes + index + i, 1);
-                }
-
-
+                // // TO BE REMOVED
+                // for (int i = 0; i < ERPA_PACKET_SIZE; i++){
+                //     guiLogger.copyToRawLog(bytes + index + i, 1);
+                // }
 
                 char res[50];
                 int value;
@@ -1365,19 +1370,19 @@ int main()
                 snprintf(res, 50, "%04d", value);
                 ERPAseq->value(res);
 
-                value = intToVoltage(((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF), 12, 3.3, 1.0);
+                value = (((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF));
                 index += 2;
-                snprintf(res, 50, "%06.5f", value);
+                snprintf(res, 50, "%06.5f", intToVoltage(value, 12, 3.3, 1.0));
                 ERPAswp->value(res);
 
-                value = intToVoltage(((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF), 12, 3.3, 1.0);
+                value = (((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF));
                 index += 2;
-                snprintf(res, 50, "%06.5f", value);
+                snprintf(res, 50, "%06.5f", intToVoltage(value, 12, 3.3, 1.0));
                 ERPAtemp1->value(res);
 
-                value = intToVoltage(((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF), 16, 5, 1.0);
+                value = (((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF), 16, 5, 1.0);
                 index += 2;
-                snprintf(res, 50, "%08.7f", value);
+                snprintf(res, 50, "%08.7f", intToVoltage(value, 16, 5, 1.0));
                 ERPAadc->value(res);
 
                 snprintf(res, 50, "%02d", bytes[index++]); // year
@@ -1395,11 +1400,10 @@ int main()
             case HK:
             {
 
-                // TO BE REMOVED
-                for (int i = 0; i < HK_PACKET_SIZE; i++){
-                    guiLogger.copyToRawLog(bytes + index + i, 1);
-                }
-                
+                // // TO BE REMOVED
+                // for (int i = 0; i < HK_PACKET_SIZE; i++){
+                //     guiLogger.copyToRawLog(bytes + index + i, 1);
+                // }
 
                 char res[50];
                 int value;
@@ -1413,89 +1417,90 @@ int main()
                 snprintf(res, 50, "%04d", value);
                 HKseq->value(res);
 
-                value = intToVoltage(((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF), 12, 3.3, 1.0);
+                value = (((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF));
                 index += 2;
-                snprintf(res, 50, "%06.5f", value);
+                snprintf(res, 50, "%06.5f", intToVoltage(value, 12, 3.3, 1.0));
                 HKvsense->value(res);
 
-                value = intToVoltage(((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF), 12, 3.3, 1.0);
+                value = (((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF));
                 index += 2;
-                snprintf(res, 50, "%06.5f", value);
+                snprintf(res, 50, "%06.5f", intToVoltage(value, 12, 3.3, 1.0));
                 HKvrefint->value(res);
 
-                value = tempsToCelsius(((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF));
+                
+                value = (((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF));
                 index += 2;
-                snprintf(res, 50, "%06.5f", value);
+                snprintf(res, 50, "%06.5f", tempsToCelsius(value));
                 HKtemp1->value(res);
 
-                value = tempsToCelsius(((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF));
+                value = (((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF));
                 index += 2;
-                snprintf(res, 50, "%06.5f", value);
+                snprintf(res, 50, "%06.5f", tempsToCelsius(value));
                 HKtemp2->value(res);
 
-                value = tempsToCelsius(((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF));
+                value = (((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF));
                 index += 2;
-                snprintf(res, 50, "%06.5f", value);
+                snprintf(res, 50, "%06.5f", tempsToCelsius(value));
                 HKtemp3->value(res);
 
-                value = tempsToCelsius(((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF));
+                value = (((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF));
                 index += 2;
-                snprintf(res, 50, "%06.5f", value);
+                snprintf(res, 50, "%06.5f", tempsToCelsius(value));
                 HKtemp4->value(res);
 
-                value = intToVoltage(((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF), 12, 3.3, 1.0);
+                value = (((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF));
                 index += 2;
-                snprintf(res, 50, "%06.5f", value);
+                snprintf(res, 50, "%06.5f", intToVoltage(value, 12, 3.3, 1.0));
                 HKbusvmon->value(res);
 
-                value = intToVoltage(((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF), 12, 3.3, 1.0);
+                value = (((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF));
                 index += 2;
-                snprintf(res, 50, "%06.5f", value);
+                snprintf(res, 50, "%06.5f", intToVoltage(value, 12, 3.3, 1.0));
                 HKbusimon->value(res);
 
-                value = intToVoltage(((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF), 12, 3.3, 1.0);
+                value = (((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF));
                 index += 2;
-                snprintf(res, 50, "%06.5f", value);
+                snprintf(res, 50, "%06.5f", intToVoltage(value, 12, 3.3, 1.0));
                 HK2v5mon->value(res);
 
-                value = intToVoltage(((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF), 12, 3.3, 1.0);
+                value = (((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF));
                 index += 2;
-                snprintf(res, 50, "%06.5f", value);
+                snprintf(res, 50, "%06.5f", intToVoltage(value, 12, 3.3, 1.0));
                 HK3v3mon->value(res);
 
-                value = intToVoltage(((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF), 12, 3.3, 1.0);
+                value = (((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF));
                 index += 2;
-                snprintf(res, 50, "%06.5f", value);
+                snprintf(res, 50, "%06.5f", intToVoltage(value, 12, 3.3, 1.0));
                 HK5vmon->value(res);
 
-                value = intToVoltage(((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF), 12, 3.3, 1.0);
+                value = (((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF));
                 index += 2;
-                snprintf(res, 50, "%06.5f", value);
+                snprintf(res, 50, "%06.5f", intToVoltage(value, 12, 3.3, 1.0));
                 HKn3v3mon->value(res);
 
-                value = intToVoltage(((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF), 12, 3.3, 1.0);
+                value = (((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF));
                 index += 2;
-                snprintf(res, 50, "%06.5f", value);
+                snprintf(res, 50, "%06.5f", intToVoltage(value, 12, 3.3, 1.0));
                 HKn5vmon->value(res);
 
-                value = intToVoltage(((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF), 12, 3.3, 1.0);
+                value = (((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF));
                 index += 2;
-                snprintf(res, 50, "%06.5f", value);
+                snprintf(res, 50, "%06.5f", intToVoltage(value, 12, 3.3, 1.0));
                 HK15vmon->value(res);
 
-                value = intToVoltage(((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF), 12, 3.3, 1.0);
+                value = (((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF));
                 index += 2;
-                snprintf(res, 50, "%06.5f", value);
+                snprintf(res, 50, "%06.5f", intToVoltage(value, 12, 3.3, 1.0));
                 HK5vrefmon->value(res);
 
-                value = intToVoltage(((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF), 12, 3.3, 1.0);
+                value = (((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF));
                 index += 2;
-                snprintf(res, 50, "%06.5f", value);
+                snprintf(res, 50, "%06.5f", intToVoltage(value, 12, 3.3, 1.0));
                 HKn150vmon->value(res);
 
-                value = intToVoltage(((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF), 12, 3.3, 1.0);
+                value = (((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF));
                 index += 2;
-                snprintf(res, 50, "%06.5f", value);
+                snprintf(res, 50, "%06.5f", intToVoltage(value, 12, 3.3, 1.0));
                 HKn800vmon->value(res);
 
                 snprintf(res, 50, "%02d", bytes[index++]); // year
@@ -1518,7 +1523,6 @@ int main()
             }
         }
 
-        
         window->redraw(); // Refreshing main window with new data every loop
         Fl::check();
     }
