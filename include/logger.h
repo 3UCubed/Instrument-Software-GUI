@@ -32,10 +32,10 @@ class Logger
 public:
     Logger();
     ~Logger();
-    bool createRawLog();
+    bool createRawLog(std::string id);
     void copyToRawLog(char *bytes, int size);
     void closeRawLog();
-    void parseRawLog();
+    void parseRawLog(std::string id);
 
 private:
     enum Packet_t
@@ -106,14 +106,14 @@ private:
         std::string millisecond;
     };
 
-    std::string createLogTitle(std::string dir);
+    std::string createLogTitle(std::string dir, std::string id);
     std::string currentLogTitle = "";
     std::ofstream rawDataStream;
     std::ofstream erpaStream;
     std::ofstream pmtStream;
     std::ofstream hkStream;
     std::ofstream controlsStream;
-    void createPacketLogs();
+    void createPacketLogs(std::string id);
     int slurp(std::string path, char *&buffer);
     Packet_t determinePacketType(char MSB, char LSB);
     double intToVoltage(int value, int resolution, int ref, float mult);

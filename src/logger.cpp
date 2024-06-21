@@ -15,9 +15,10 @@ Logger::~Logger(){};
 
 
 // ******************************************************************************************************************* PUBLIC FUNCTIONS
-bool Logger::createRawLog()
+bool Logger::createRawLog(std::string id)
 {
-    std::string fileName = createLogTitle("RAW");
+    std::string fileName = createLogTitle("RAW", id);
+    fileName += ".bin";
     rawDataStream.open(fileName, std::ios::app);
 
     if (!rawDataStream)
@@ -32,7 +33,7 @@ void Logger::copyToRawLog(char *bytes, int size)
 {
     for (int i = 0; i < size; i++)
     {
-        rawDataStream << bytes[i];
+        rawDataStream << *(bytes + i);
     }
 }
 
@@ -41,7 +42,7 @@ void Logger::closeRawLog()
     rawDataStream.close();
 }
 
-void Logger::parseRawLog()
+void Logger::parseRawLog(std::string id)
 {
     ERPA_PKT erpa;
     PMT_PKT pmt;
@@ -51,7 +52,7 @@ void Logger::parseRawLog()
     char *buffer = nullptr;
     Packet_t packetType;
     bytesRead = slurp(currentLogTitle, buffer); // Read entire file into char buffer
-    createPacketLogs();                  // Create separate .csv for each packet type
+    createPacketLogs(id);                  // Create separate .csv for each packet type
 
     while (i < bytesRead)
     {
@@ -284,7 +285,7 @@ void Logger::parseRawLog()
 }
 
 // ******************************************************************************************************************* PRIVATE FUNCTIONS
-std::string Logger::createLogTitle(std::string dir)
+std::string Logger::createLogTitle(std::string dir, std::string id)
 {
     std::string newLogName = "";
     auto t = std::time(nullptr);
@@ -292,27 +293,31 @@ std::string Logger::createLogTitle(std::string dir)
     std::ostringstream oss;
     oss << std::put_time(&tm, "%Y-%m-%d %H-%M-%S");
     std::string dateTime = oss.str();
-    newLogName = "logs/" + dir + "/" + dir + "_" + dateTime + ".csv";
+    newLogName = "logs/" + dir + "/" + id + dir + "_" + dateTime;
     return newLogName;
 }
 
-void Logger::createPacketLogs()
+void Logger::createPacketLogs(std::string id)
 {
     std::string newLogName;
 
-    newLogName = createLogTitle("ERPA");
+    newLogName = createLogTitle("ERPA", id);
+    newLogName += ".csv";
     erpaStream.open(newLogName, std::ios::app);
     erpaStream << ERPA_HEADER << "\n";
 
-    newLogName = createLogTitle("PMT");
+    newLogName = createLogTitle("PMT", id);
+    newLogName += ".csv";
     pmtStream.open(newLogName, std::ios::app);
     pmtStream << PMT_HEADER << "\n";
 
-    newLogName = createLogTitle("HK");
+    newLogName = createLogTitle("HK", id);
+    newLogName += ".csv";
     hkStream.open(newLogName, std::ios::app);
     hkStream << HK_HEADER << "\n";
 
-    newLogName = createLogTitle("CONTROLS");
+    newLogName = createLogTitle("CONTROLS", id);
+    newLogName += ".csv";
     controlsStream.open(newLogName, std::ios::app);
     controlsStream << CONTROLS_HEADER << "\n";
 }

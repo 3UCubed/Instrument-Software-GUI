@@ -50,6 +50,7 @@ enum Packet_t{
 
 // ******************************************************************************************************************* GLOBALS
 Logger logger;
+Logger guiLogger;
 DoubleBuffer storage;
 const int windowWidth = 1175;
 const int windowHeight = 600;

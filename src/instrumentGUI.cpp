@@ -7,7 +7,9 @@
  * GUI that connects to H7-Instrument-Software and shows packet data in real time
  */
 
+//#define GUI_LOG
 #include "../include/instrumentGUI.h"
+
 // ******************************************************************************************************************* HELPER FUNCTIONS
 /**
  * @brief Finds the first serial port device matching the specified prefix in /dev.
@@ -88,7 +90,6 @@ void readSerialData(const int &serialPort, std::atomic<bool> &flag, std::atomic<
         ssize_t bytesRead = read(serialPort, buffer, bufferSize);
         if (bytesRead > 0)
         {
-            cout << bytesRead << endl;
             if (record)
             {
                 logger.copyToRawLog(buffer, bytesRead);
@@ -184,6 +185,10 @@ void cleanup()
 {
     stopFlag = true;
     readThread.join();
+#ifdef GUI_LOG
+    guiLogger.closeRawLog();
+    guiLogger.parseRawLog("shownToGUI");
+#endif
     logger.closeRawLog();
     close(serialPort);
 }
@@ -519,14 +524,14 @@ void startRecordingCallback(Fl_Widget *)
     {
         startRecording->label("RECORDING @square");
         recording = true;
-        logger.createRawLog();
+        logger.createRawLog("recordingData");
     }
     else
     {
         startRecording->label("RECORD @circle");
         recording = false;
         logger.closeRawLog();
-        logger.parseRawLog(); // TODO
+        logger.parseRawLog("recordingData");
     }
 }
 
@@ -1285,9 +1290,9 @@ int main()
     window->show();
     Fl::check();
 
-    // // TO BE REMOVED
-    // Logger guiLogger;
-    // guiLogger.createRawLog();
+#ifdef GUI_LOG
+    guiLogger.createRawLog("shownToGUI");
+#endif
 
     // ******************************************************************************************************************* Event Loop
     while (1)
@@ -1315,24 +1320,22 @@ int main()
             case PMT:
             {
 
-                // // TO BE REMOVED
-                // for (int i = 0; i < PMT_PACKET_SIZE; i++){
-                //     guiLogger.copyToRawLog(bytes + index + i, 1);
-                // }
-
                 char res[50];
                 int value;
-
+#ifdef GUI_LOG
+                guiLogger.copyToRawLog(bytes + index, PMT_PACKET_SIZE);
+#endif
                 value = ((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF);
                 index += 2;
                 snprintf(res, 50, "0x%X", value);
                 PMTsync->value(res);
 
                 value = ((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF);
+                cout << (int)value << endl;
                 index += 2;
                 snprintf(res, 50, "%04d", value);
                 PMTseq->value(res);
-                
+
                 value = (((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF), 16, 5, 1.0);
                 index += 2;
                 snprintf(res, 50, "%08.7f", intToVoltage(value, 16, 5, 1.0));
@@ -1353,11 +1356,10 @@ int main()
             case ERPA:
             {
 
-                // // TO BE REMOVED
-                // for (int i = 0; i < ERPA_PACKET_SIZE; i++){
-                //     guiLogger.copyToRawLog(bytes + index + i, 1);
-                // }
-
+// TO BE REMOVED
+#ifdef GUI_LOG
+                guiLogger.copyToRawLog(bytes + index, ERPA_PACKET_SIZE);
+#endif
                 char res[50];
                 int value;
                 value = ((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF);
@@ -1399,12 +1401,9 @@ int main()
             }
             case HK:
             {
-
-                // // TO BE REMOVED
-                // for (int i = 0; i < HK_PACKET_SIZE; i++){
-                //     guiLogger.copyToRawLog(bytes + index + i, 1);
-                // }
-
+#ifdef GUI_LOG
+                guiLogger.copyToRawLog(bytes + index, HK_PACKET_SIZE);
+#endif
                 char res[50];
                 int value;
                 value = ((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF);
@@ -1427,7 +1426,6 @@ int main()
                 snprintf(res, 50, "%06.5f", intToVoltage(value, 12, 3.3, 1.0));
                 HKvrefint->value(res);
 
-                
                 value = (((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF));
                 index += 2;
                 snprintf(res, 50, "%06.5f", tempsToCelsius(value));

@@ -17,6 +17,9 @@ TARGET = instrumentGUI
 # Clean
 CLEAN = clean
 
+# Clear Logs
+CLEARLOGS = clearlogs
+
 # All
 ALL = all
 
@@ -34,3 +37,8 @@ $(BUILD_DIR)/%.o: src/%.cpp
 # Clean target
 $(CLEAN):
 	rm -rf $(BUILD_DIR) $(TARGET)
+
+# Remove all logs
+$(CLEARLOGS):
+	rm -rf logs/PMT/* logs/ERPA/* logs/HK/* logs/CONTROLS/* logs/RAW/*
+
