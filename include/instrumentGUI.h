@@ -7,6 +7,8 @@
  * GUI that connects to H7-Instrument-Software and shows packet data in real time
  */
 
+#define BAUD 460800
+
 #define PMT_PACKET_SIZE 14
 #define ERPA_PACKET_SIZE 18
 #define HK_PACKET_SIZE 46

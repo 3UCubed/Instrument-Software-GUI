@@ -1,3 +1,12 @@
+/**
+ * @file doubleBuffer.h
+ * @author Jared Morrison
+ * @version 1.0.0-beta
+ * @section DESCRIPTION
+ *
+ * Double buffer used for storing read data from serial port and displaying packet data to GUI
+ */
+
 #ifndef DOUBLE_BUFFER_H
 #define DOUBLE_BUFFER_H
 

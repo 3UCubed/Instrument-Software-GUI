@@ -47,7 +47,6 @@ const char *findSerialPort()
             break; // Use the first matching serial port found
         }
     }
-
     closedir(dir);
     return portName;
 }
@@ -71,14 +70,14 @@ void writeSerialData(const int &serialPort, const unsigned char data)
 }
 
 /**
- * @brief Reads data from the serial port and writes it to an output file.
- *
- * This function continuously reads data from the specified serial port and writes it to the specified output file.
- * It stops when the stopFlag is set to true.
- *
- * @param serialPort The file descriptor for the open serial port.
- * @param flag Atomic boolean flag indicating whether to stop reading.
- * @param outputFile The output file stream where the data will be written.
+ * @brief Reads data from a serial port.
+ * 
+ * Continuously reads data from the specified serial port until the flag is set.
+ * If the record flag is set, the data is also copied to a raw log.
+ * 
+ * @param serialPort Reference to the serial port.
+ * @param flag Atomic boolean to control the reading loop.
+ * @param record Atomic boolean to control recording the data.
  */
 void readSerialData(const int &serialPort, std::atomic<bool> &flag, std::atomic<bool> &record)
 {
@@ -153,8 +152,8 @@ bool openSerialPort()
     options.c_cc[VMIN] = 0;  // Minimum number of characters for non-canonical read
     options.c_cc[VTIME] = 0; // Timeout in deciseconds (1 second)
 
-    cfsetispeed(&options, 460800);
-    cfsetospeed(&options, 460800);
+    cfsetispeed(&options, BAUD);
+    cfsetospeed(&options, BAUD);
 
     options.c_cflag &= ~PARENB; // No parity bit
     options.c_cflag &= ~CSTOPB; // 1 stop bit
@@ -177,9 +176,11 @@ void startThread()
 }
 
 /**
- * @brief Cleans up resources used for serial communication and threading.
- *
- * Stops the thread for reading serial data, closes the output file, and closes the serial port.
+ * @brief Cleans up resources and stops the read thread.
+ * 
+ * Sets the stop flag, waits for the read thread to finish, closes log files, 
+ * and closes the serial port. If GUI logging is enabled, it also processes the 
+ * raw log for the GUI.
  */
 void cleanup()
 {
@@ -193,6 +194,15 @@ void cleanup()
     close(serialPort);
 }
 
+/**
+ * @brief Determines the type of packet based on the given MSB and LSB.
+ * 
+ * Compares the MSB and LSB with predefined values to identify the packet type.
+ * 
+ * @param MSB Most significant byte of the packet.
+ * @param LSB Least significant byte of the packet.
+ * @return The type of the packet as a Packet_t enum.
+ */
 Packet_t determinePacketType(char MSB, char LSB)
 {
     if (((MSB & 0xFF) == 0xAA) && ((LSB & 0xFF) == 0xAA))
@@ -213,6 +223,18 @@ Packet_t determinePacketType(char MSB, char LSB)
     return UNDEFINED;
 }
 
+/**
+ * @brief Converts an integer value to a voltage.
+ * 
+ * Converts a given integer value to its corresponding voltage based on the 
+ * specified resolution, reference voltage, and multiplier.
+ * 
+ * @param value The integer value to convert.
+ * @param resolution The resolution of the ADC (e.g., 12 or 16 bits).
+ * @param ref The reference voltage.
+ * @param mult The multiplier to apply to the resulting voltage.
+ * @return The calculated voltage.
+ */
 double intToVoltage(int value, int resolution, double ref, float mult)
 {
     double voltage;
@@ -228,6 +250,15 @@ double intToVoltage(int value, int resolution, double ref, float mult)
     return voltage;
 }
 
+/**
+ * @brief Converts a raw temperature sensor value to Celsius.
+ * 
+ * Converts a raw 12-bit temperature sensor value, accounting for potential 
+ * negative temperatures using 2's complement, to a Celsius temperature value.
+ * 
+ * @param val The raw temperature sensor value.
+ * @return The temperature in Celsius.
+ */
 double tempsToCelsius(int val)
 {
     char convertedChar[16];
@@ -411,11 +442,11 @@ void syncCallback(Fl_Widget *)
 }
 
 /**
- * @brief Callback function to quit the application.
- *
- * This function closes the controls log stream and terminates the application.
- *
- * @param widget Unused parameter for the FLTK widget triggering this callback.
+ * @brief Callback function to handle the quit action.
+ * 
+ * Cleans up resources by calling the cleanup function and exits the application.
+ * 
+ * @param widget The widget that triggered the callback.
  */
 void quitCallback(Fl_Widget *)
 {
@@ -518,6 +549,15 @@ void factorDownCallback(Fl_Widget *)
     }
 }
 
+/**
+ * @brief Callback function to handle the start and stop of recording.
+ * 
+ * Toggles the recording state. If recording is not active, starts recording 
+ * and updates the button label to indicate recording status. If recording is 
+ * active, stops recording, updates the button label, and processes the recorded log.
+ * 
+ * @param widget The widget that triggered the callback.
+ */
 void startRecordingCallback(Fl_Widget *)
 {
     if (!recording)
