@@ -7,7 +7,7 @@
  * GUI that connects to H7-Instrument-Software and shows packet data in real time
  */
 
-#define GUI_LOG
+//#define GUI_LOG
 #include "../include/instrumentGUI.h"
 
 // ******************************************************************************************************************* HELPER FUNCTIONS
@@ -1310,7 +1310,7 @@ int main()
 
         bytesRead = storage.getNextBytes(bytes);
 
-        while (index < bytesRead)
+        while (index + HK_PACKET_SIZE < bytesRead)
         {
             packetType = determinePacketType(bytes[index], bytes[index + 1]);
 
