@@ -79,7 +79,7 @@ void Logger::parseRawLog(std::string id)
             snprintf(res, 50, "%06.5f", intToVoltage(value, 12, 3.3, 1.0));
             erpa.temp1 = res;
 
-            value = (((buffer[i] & 0xFF) << 8) | (buffer[i + 1] & 0xFF), 16, 5, 1.0);
+            value = (((buffer[i] & 0xFF) << 8) | (buffer[i + 1] & 0xFF));
             i += 2;
             snprintf(res, 50, "%08.7f", intToVoltage(value, 16, 5, 1.0));
             erpa.adc = res;
@@ -122,7 +122,7 @@ void Logger::parseRawLog(std::string id)
             snprintf(res, 50, "%04d", value);
             pmt.seq = res;
 
-            value = (((buffer[i] & 0xFF) << 8) | (buffer[i + 1] & 0xFF), 16, 5, 1.0);
+            value = (((buffer[i] & 0xFF) << 8) | (buffer[i + 1] & 0xFF));
             i += 2;
             snprintf(res, 50, "%08.7f", intToVoltage(value, 16, 5, 1.0));
             pmt.adc = res;
@@ -379,7 +379,7 @@ Logger::Packet_t Logger::determinePacketType(char MSB, char LSB)
     return UNDEFINED;
 }
 
-double Logger::intToVoltage(int value, int resolution, int ref, float mult)
+double Logger::intToVoltage(int value, int resolution, double ref, float mult)
 {
     double voltage;
     if (resolution == 12)
@@ -411,7 +411,7 @@ double Logger::tempsToCelsius(int val)
     // Convert temperature to decimal value
     temp_c *= 100;
 
-    sprintf(convertedChar, "%u.%u",
+    snprintf(convertedChar, 16, "%u.%u",
             ((unsigned int)temp_c / 100),
             ((unsigned int)temp_c % 100));
 

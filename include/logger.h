@@ -116,7 +116,7 @@ private:
     void createPacketLogs(std::string id);
     int slurp(std::string path, char *&buffer);
     Packet_t determinePacketType(char MSB, char LSB);
-    double intToVoltage(int value, int resolution, int ref, float mult);
+    double intToVoltage(int value, int resolution, double ref, float mult);
     double tempsToCelsius(int val);
     void closePacketLogs();
 

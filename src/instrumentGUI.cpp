@@ -7,7 +7,7 @@
  * GUI that connects to H7-Instrument-Software and shows packet data in real time
  */
 
-//#define GUI_LOG
+// #define GUI_LOG
 #include "../include/instrumentGUI.h"
 
 // ******************************************************************************************************************* HELPER FUNCTIONS
@@ -213,7 +213,7 @@ Packet_t determinePacketType(char MSB, char LSB)
     return UNDEFINED;
 }
 
-double intToVoltage(int value, int resolution, int ref, float mult)
+double intToVoltage(int value, int resolution, double ref, float mult)
 {
     double voltage;
     if (resolution == 12)
@@ -245,7 +245,7 @@ double tempsToCelsius(int val)
     // Convert temperature to decimal value
     temp_c *= 100;
 
-    sprintf(convertedChar, "%u.%u",
+    snprintf(convertedChar, 16, "%u.%u",
             ((unsigned int)temp_c / 100),
             ((unsigned int)temp_c % 100));
 
@@ -1310,7 +1310,7 @@ int main()
 
         bytesRead = storage.getNextBytes(bytes);
 
-        while (index + HK_PACKET_SIZE < bytesRead)
+        while (index < bytesRead)
         {
             packetType = determinePacketType(bytes[index], bytes[index + 1]);
 
@@ -1318,24 +1318,28 @@ int main()
             {
             case PMT:
             {
+                if (index + PMT_PACKET_SIZE >= bytesRead)
+                {
+                    index = bytesRead;
+                    break;
+                }
 
-                char res[50];
-                int value;
 #ifdef GUI_LOG
                 guiLogger.copyToRawLog(bytes + index, PMT_PACKET_SIZE);
 #endif
+                char res[50];
+                int value;
                 value = ((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF);
                 index += 2;
                 snprintf(res, 50, "0x%X", value);
                 PMTsync->value(res);
 
                 value = ((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF);
-                cout << (int)value << endl;
                 index += 2;
                 snprintf(res, 50, "%04d", value);
                 PMTseq->value(res);
 
-                value = (((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF), 16, 5, 1.0);
+                value = (((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF));
                 index += 2;
                 snprintf(res, 50, "%08.7f", intToVoltage(value, 16, 5, 1.0));
                 PMTadc->value(res);
@@ -1354,6 +1358,11 @@ int main()
             }
             case ERPA:
             {
+                if (index + ERPA_PACKET_SIZE >= bytesRead)
+                {
+                    index = bytesRead;
+                    break;
+                }
 
 #ifdef GUI_LOG
                 guiLogger.copyToRawLog(bytes + index, ERPA_PACKET_SIZE);
@@ -1380,7 +1389,7 @@ int main()
                 snprintf(res, 50, "%06.5f", intToVoltage(value, 12, 3.3, 1.0));
                 ERPAtemp1->value(res);
 
-                value = (((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF), 16, 5, 1.0);
+                value = (((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF));
                 index += 2;
                 snprintf(res, 50, "%08.7f", intToVoltage(value, 16, 5, 1.0));
                 ERPAadc->value(res);
@@ -1399,6 +1408,13 @@ int main()
             }
             case HK:
             {
+
+                if (index + HK_PACKET_SIZE >= bytesRead)
+                {
+                    index = bytesRead;
+                    break;
+                }
+
 #ifdef GUI_LOG
                 guiLogger.copyToRawLog(bytes + index, HK_PACKET_SIZE);
 #endif
