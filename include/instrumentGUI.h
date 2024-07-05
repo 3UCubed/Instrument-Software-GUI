@@ -9,10 +9,6 @@
 
 #define BAUD 460800
 
-#define PMT_PACKET_SIZE 14
-#define ERPA_PACKET_SIZE 18
-#define HK_PACKET_SIZE 46
-
 // ******************************************************************************************************************* INCLUDES
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>

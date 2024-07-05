@@ -88,7 +88,7 @@ void Logger::parseRawLog(std::string id)
         if (packetType == ERPA && i < bytesRead - ERPA_PACKET_SIZE)
         {
             char res[50];
-            int value;
+            uint32_t value;
             value = ((buffer[i] & 0xFF) << 8) | (buffer[i + 1] & 0xFF);
             i += 2;
             snprintf(res, 50, "0x%X", value);
@@ -126,9 +126,12 @@ void Logger::parseRawLog(std::string id)
             erpa.minute = res;
             snprintf(res, 50, "%02d", buffer[i++]); // second
             erpa.second = res;
-            value = ((buffer[i] & 0xFF) << 8) | (buffer[i + 1] & 0xFF);
-            i += 2;
-            snprintf(res, 50, "%003d", value); // millisecond
+            value = ((buffer[i] & 0xFF) << 24) | ((buffer[i+1] & 0xFF) << 16) | ((buffer[i+2] & 0xFF) << 8) | (buffer[i+3] & 0xFF);
+            value &= 0xFFFFF;
+            value %= 1000000;
+            //std::cout << value << std::endl;
+            i += 4;
+            snprintf(res, 50, "%06d", value); // millisecond
             erpa.millisecond = res;
 
             std::string formattedData = "";
@@ -140,7 +143,7 @@ void Logger::parseRawLog(std::string id)
         else if (packetType == PMT && i < bytesRead - PMT_PACKET_SIZE)
         {
             char res[50];
-            int value;
+            uint32_t value;
 
             value = ((buffer[i] & 0xFF) << 8) | (buffer[i + 1] & 0xFF);
             i += 2;
@@ -170,9 +173,10 @@ void Logger::parseRawLog(std::string id)
             snprintf(res, 50, "%02d", buffer[i++]); // second
             pmt.second = res;
 
-            value = ((buffer[i] & 0xFF) << 8) | (buffer[i + 1] & 0xFF);
-            i += 2;
-            snprintf(res, 50, "%003d", value); // millisecond
+            value = ((buffer[i] & 0xFF) << 24) | ((buffer[i+1] & 0xFF) << 16) | ((buffer[i+2] & 0xFF) << 8) | (buffer[i+3] & 0xFF);
+            value &= 0xFFFFF;
+            value %= 1000000;            i += 4;
+            snprintf(res, 50, "%06d", value); // millisecond
             pmt.millisecond = res;
             std::string formattedData = "";
             formattedData += pmt.year + "-" + pmt.month + "-" + pmt.day + ", ";                                    // Date
@@ -183,7 +187,7 @@ void Logger::parseRawLog(std::string id)
         else if (packetType == HK && i < bytesRead - HK_PACKET_SIZE)
         {
             char res[50];
-            int value;
+            uint32_t value;
             value = ((buffer[i] & 0xFF) << 8) | (buffer[i + 1] & 0xFF);
             i += 2;
             snprintf(res, 50, "0x%X", value);
@@ -292,9 +296,10 @@ void Logger::parseRawLog(std::string id)
             snprintf(res, 50, "%02d", buffer[i++]); // second
             hk.second = res;
 
-            value = ((buffer[i] & 0xFF) << 8) | (buffer[i + 1] & 0xFF);
-            i += 2;
-            snprintf(res, 50, "%003d", value); // millisecond
+            value = ((buffer[i] & 0xFF) << 24) | ((buffer[i+1] & 0xFF) << 16) | ((buffer[i+2] & 0xFF) << 8) | (buffer[i+3] & 0xFF);
+            value &= 0xFFFFF;
+            value %= 1000000;            i += 4;
+            snprintf(res, 50, "%06d", value); // millisecond
             hk.millisecond = res;
 
             std::string formattedData = "";

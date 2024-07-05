@@ -15,9 +15,9 @@
 #define HK_HEADER "date, time, sync, seq, vsense, vrefint, temp1, temp2, temp3, temp4, busvmon, busimon, 2v5mon, 3v3mon, 5vmon, n3v3mon, n5vmon, 15vmon, 5vrefmon, n200vmon, n800vmon"
 #define CONTROLS_HEADER "date, time, PMT, ERPA, HK, SDN1, SYS_ON, 3v3, 5v, n3v3, n5v, 15v, n150v, 800v"
 
-#define PMT_PACKET_SIZE 14
-#define ERPA_PACKET_SIZE 18
-#define HK_PACKET_SIZE 46
+#define PMT_PACKET_SIZE 16
+#define ERPA_PACKET_SIZE 20
+#define HK_PACKET_SIZE 48
 
 #include <iomanip>
 #include <string>
