@@ -1,7 +1,7 @@
 /**
  * @file logger.cpp
  * @author Jared Morrison
- * @version 1.0.0-beta
+ * @version 2.0.0-alpha
  * @section DESCRIPTION
  *
  * Logs packet and control data when recording is turned on
@@ -175,7 +175,8 @@ void Logger::parseRawLog(std::string id)
 
             value = ((buffer[i] & 0xFF) << 24) | ((buffer[i+1] & 0xFF) << 16) | ((buffer[i+2] & 0xFF) << 8) | (buffer[i+3] & 0xFF);
             value &= 0xFFFFF;
-            value %= 1000000;            i += 4;
+            value %= 1000000;            
+            i += 4;
             snprintf(res, 50, "%06d", value); // millisecond
             pmt.millisecond = res;
             std::string formattedData = "";
@@ -298,7 +299,8 @@ void Logger::parseRawLog(std::string id)
 
             value = ((buffer[i] & 0xFF) << 24) | ((buffer[i+1] & 0xFF) << 16) | ((buffer[i+2] & 0xFF) << 8) | (buffer[i+3] & 0xFF);
             value &= 0xFFFFF;
-            value %= 1000000;            i += 4;
+            value %= 1000000;      
+            i += 4;
             snprintf(res, 50, "%06d", value); // millisecond
             hk.millisecond = res;
 

@@ -1,7 +1,7 @@
 /**
  * @file logger.h
  * @author Jared Morrison
- * @version 1.0.0-beta
+ * @version 2.0.0-alpha
  * @section DESCRIPTION
  *
  * Logs packet and control data when recording is turned on

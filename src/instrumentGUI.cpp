@@ -1,7 +1,7 @@
 /**
  * @file instrumentGUI.cpp
  * @author Jared Morrison, Jared King, Shane Woods
- * @version 1.0.0-beta
+ * @version 2.0.0-alpha
  * @section DESCRIPTION
  *
  * GUI that connects to H7-Instrument-Software and shows packet data in real time

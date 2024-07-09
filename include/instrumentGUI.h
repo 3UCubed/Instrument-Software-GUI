@@ -1,7 +1,7 @@
 /**
  * @file instrumentGUI.h
  * @author Jared Morrison
- * @version 1.0.0-beta
+ * @version 2.0.0-alpha
  * @section DESCRIPTION
  *
  * GUI that connects to H7-Instrument-Software and shows packet data in real time
@@ -58,7 +58,7 @@ const int xControlOffset = 0;
 const int yControlOffset = 0;
 const int xGUIOffset = -120;
 const int yGUIOffset = 0;
-const char *GUI_VERSION_NUM = "G-1.0.0-beta";
+const char *GUI_VERSION_NUM = "G-2.0.0-alpha";
 int currentFactor = 1;
 char currentFactorBuf[8];
 char buffer[32];
