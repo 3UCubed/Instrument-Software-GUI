@@ -220,6 +220,11 @@ Packet_t determinePacketType(char MSB, char LSB)
         return HK;
     }
 
+    if (((MSB & 0xFF) == 0xDD) && ((LSB & 0xFF) == 0xDD))
+    {
+        return ERROR_PACKET;
+    }
+
     return UNDEFINED;
 }
 
@@ -939,6 +944,7 @@ int main()
     guiVersion = new Fl_Output(5, 575, 100, 20);
     instrumentVersion = new Fl_Output(110, 575, 100, 20);
     dateTime = new Fl_Output(215, 575, 200, 20);
+    errorCodeOutput = new Fl_Output(550, 575, 100, 20);
 
     // Main window styling
     window->color(darkBackground);
@@ -957,6 +963,12 @@ int main()
     instrumentVersion->textcolor(output);
     instrumentVersion->labelsize(2);
     instrumentVersion->value("I-x.y.z-n");
+    
+    errorCodeOutput->color(darkBackground);
+    errorCodeOutput->box(FL_FLAT_BOX);
+    errorCodeOutput->textcolor(output);
+    errorCodeOutput->labelsize(2);
+    errorCodeOutput->value("ERROR: NULL");
 
     // GUI group styling
     group6->color(box);
@@ -1357,6 +1369,69 @@ int main()
 
             switch (packetType)
             {
+            case ERROR_PACKET:
+            {
+                index += 2;                     // Skipping sync word
+                uint8_t tag = bytes[index];
+                string errorName;
+                index++;
+
+                switch (tag){
+                    case 0:{
+                        errorName = "RAIL_BUSVMON";
+                        break;
+                    }
+                    case 1:{
+                        errorName = "RAIL_BUSIMON";
+                        break;
+                    }
+                    case 2:{
+                        errorName = "RAIL_2v5";
+                        break;
+                    }
+                    case 3:{
+                        errorName = "RAIL_3v3";
+                        break;
+                    }
+                    case 4:{
+                        errorName = "RAIL_5v";
+                        break;
+                    }
+                    case 5:{
+                        errorName = "RAIL_n3v3";
+                        break;
+                    }
+                    case 6:{
+                        errorName = "RAIL_n5v";
+                        break;
+                    }
+                    case 7:{
+                        errorName = "RAIL_15v";
+                        break;
+                    }
+                    case 8:{
+                        errorName = "RAIL_5vref";
+                        break;
+                    }
+                    case 9:{
+                        errorName = "RAIL_n200v";
+                        break;
+                    }
+                    case 10:{
+                        errorName = "RAIL_n800v";
+                        break;
+                    }
+                    default:{
+                        errorName = "UNKNOWN";
+                        break;
+                    }
+                }
+
+
+
+                errorCodeOutput->value(errorName.c_str());
+                break;
+            }
             case PMT:
             {
                 if (index + PMT_PACKET_SIZE >= bytesRead)
