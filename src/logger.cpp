@@ -8,7 +8,6 @@
  */
 
 #include "../include/logger.h"
-
 Logger::Logger(){};
 Logger::~Logger(){};
 
@@ -129,7 +128,6 @@ void Logger::parseRawLog(std::string id)
             value = ((buffer[i] & 0xFF) << 24) | ((buffer[i+1] & 0xFF) << 16) | ((buffer[i+2] & 0xFF) << 8) | (buffer[i+3] & 0xFF);
             value &= 0xFFFFF;
             value %= 1000000;
-            //std::cout << value << std::endl;
             i += 4;
             snprintf(res, 50, "%06d", value); // millisecond
             erpa.millisecond = res;

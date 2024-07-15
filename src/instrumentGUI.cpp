@@ -1345,7 +1345,7 @@ int main()
 #ifdef GUI_LOG
     guiLogger.createRawLog("shownToGUI");
 #endif
-
+    int count = 0;
     // ******************************************************************************************************************* Event Loop
     while (1)
     {
@@ -1362,7 +1362,6 @@ int main()
         Packet_t packetType;
 
         bytesRead = storage.getNextBytes(bytes);
-
         while (index < bytesRead)
         {
             packetType = determinePacketType(bytes[index], bytes[index + 1]);
@@ -1426,6 +1425,7 @@ int main()
                         break;
                     }
                 }
+                cout << count++ << ": " << errorName << endl;
 
 
 
@@ -1467,9 +1467,11 @@ int main()
                 snprintf(res, 50, "%02d", bytes[index++]); // minute
                 snprintf(res, 50, "%02d", bytes[index++]); // second
 
-                value = ((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF);
-                index += 2;
-                snprintf(res, 50, "%003d", value); // millisecond
+                value = ((buffer[index] & 0xFF) << 24) | ((buffer[index+1] & 0xFF) << 16) | ((buffer[index+2] & 0xFF) << 8) | (buffer[index+3] & 0xFF);
+                value &= 0xFFFFF;
+                value %= 1000000;
+                index += 4;
+                snprintf(res, 50, "%06d", value); // millisecond
                 break;
             }
             case ERPA:
@@ -1494,7 +1496,7 @@ int main()
                 index += 2;
                 snprintf(res, 50, "%04d", value);
                 ERPAseq->value(res);
-
+                 
                 value = (((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF));
                 index += 2;
                 snprintf(res, 50, "%06.5f", intToVoltage(value, 12, 3.3, 1.0));
@@ -1517,9 +1519,11 @@ int main()
                 snprintf(res, 50, "%02d", bytes[index++]); // minute
                 snprintf(res, 50, "%02d", bytes[index++]); // second
 
-                value = ((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF);
-                index += 2;
-                snprintf(res, 50, "%003d", value); // millisecond
+                value = ((buffer[index] & 0xFF) << 24) | ((buffer[index+1] & 0xFF) << 16) | ((buffer[index+2] & 0xFF) << 8) | (buffer[index+3] & 0xFF);
+                value &= 0xFFFFF;
+                value %= 1000000;
+                index += 4;
+                snprintf(res, 50, "%06d", value); // millisecond
                 break;
             }
             case HK:
@@ -1638,9 +1642,11 @@ int main()
                 snprintf(res, 50, "%02d", bytes[index++]); // minute
                 snprintf(res, 50, "%02d", bytes[index++]); // second
 
-                value = ((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF);
-                index += 2;
-                snprintf(res, 50, "%003d", value); // millisecond
+                value = ((buffer[index] & 0xFF) << 24) | ((buffer[index+1] & 0xFF) << 16) | ((buffer[index+2] & 0xFF) << 8) | (buffer[index+3] & 0xFF);
+                value &= 0xFFFFF;
+                value %= 1000000;
+                index += 4;
+                snprintf(res, 50, "%06d", value); // millisecond
                 break;
             }
             default:
