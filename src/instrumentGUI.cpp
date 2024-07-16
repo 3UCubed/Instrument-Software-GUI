@@ -1345,7 +1345,6 @@ int main()
 #ifdef GUI_LOG
     guiLogger.createRawLog("shownToGUI");
 #endif
-    int count = 0;
     // ******************************************************************************************************************* Event Loop
     while (1)
     {
@@ -1425,9 +1424,6 @@ int main()
                         break;
                     }
                 }
-                cout << count++ << ": " << errorName << endl;
-
-
 
                 errorCodeOutput->value(errorName.c_str());
                 break;
@@ -1460,18 +1456,9 @@ int main()
                 snprintf(res, 50, "%08.7f", intToVoltage(value, 16, 5, 1.0));
                 PMTadc->value(res);
 
-                snprintf(res, 50, "%02d", bytes[index++]); // year
-                snprintf(res, 50, "%02d", bytes[index++]); // month
-                snprintf(res, 50, "%02d", bytes[index++]); // day
-                snprintf(res, 50, "%02d", bytes[index++]); // hour
-                snprintf(res, 50, "%02d", bytes[index++]); // minute
-                snprintf(res, 50, "%02d", bytes[index++]); // second
-
-                value = ((buffer[index] & 0xFF) << 24) | ((buffer[index+1] & 0xFF) << 16) | ((buffer[index+2] & 0xFF) << 8) | (buffer[index+3] & 0xFF);
-                value &= 0xFFFFF;
-                value %= 1000000;
+                value = ((bytes[index] & 0xFF) << 24) | ((bytes[index+1] & 0xFF) << 16) | ((bytes[index+2] & 0xFF) << 8) | (bytes[index+3] & 0xFF);
                 index += 4;
-                snprintf(res, 50, "%06d", value); // millisecond
+                snprintf(res, 50, "%06d", value);
                 break;
             }
             case ERPA:
@@ -1486,7 +1473,7 @@ int main()
                 guiLogger.copyToRawLog(bytes + index, ERPA_PACKET_SIZE);
 #endif
                 char res[50];
-                int value;
+                uint32_t value;
                 value = ((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF);
                 index += 2;
                 snprintf(res, 50, "0x%X", value);
@@ -1496,7 +1483,7 @@ int main()
                 index += 2;
                 snprintf(res, 50, "%04d", value);
                 ERPAseq->value(res);
-                 
+
                 value = (((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF));
                 index += 2;
                 snprintf(res, 50, "%06.5f", intToVoltage(value, 12, 3.3, 1.0));
@@ -1512,18 +1499,9 @@ int main()
                 snprintf(res, 50, "%08.7f", intToVoltage(value, 16, 5, 1.0));
                 ERPAadc->value(res);
 
-                snprintf(res, 50, "%02d", bytes[index++]); // year
-                snprintf(res, 50, "%02d", bytes[index++]); // month
-                snprintf(res, 50, "%02d", bytes[index++]); // day
-                snprintf(res, 50, "%02d", bytes[index++]); // hour
-                snprintf(res, 50, "%02d", bytes[index++]); // minute
-                snprintf(res, 50, "%02d", bytes[index++]); // second
-
-                value = ((buffer[index] & 0xFF) << 24) | ((buffer[index+1] & 0xFF) << 16) | ((buffer[index+2] & 0xFF) << 8) | (buffer[index+3] & 0xFF);
-                value &= 0xFFFFF;
-                value %= 1000000;
+                value = ((bytes[index] & 0xFF) << 24) | ((bytes[index+1] & 0xFF) << 16) | ((bytes[index+2] & 0xFF) << 8) | (bytes[index+3] & 0xFF);
                 index += 4;
-                snprintf(res, 50, "%06d", value); // millisecond
+                snprintf(res, 50, "%06d", value);
                 break;
             }
             case HK:
@@ -1642,7 +1620,7 @@ int main()
                 snprintf(res, 50, "%02d", bytes[index++]); // minute
                 snprintf(res, 50, "%02d", bytes[index++]); // second
 
-                value = ((buffer[index] & 0xFF) << 24) | ((buffer[index+1] & 0xFF) << 16) | ((buffer[index+2] & 0xFF) << 8) | (buffer[index+3] & 0xFF);
+                value = ((bytes[index] & 0xFF) << 24) | ((bytes[index+1] & 0xFF) << 16) | ((bytes[index+2] & 0xFF) << 8) | (bytes[index+3] & 0xFF);
                 value &= 0xFFFFF;
                 value %= 1000000;
                 index += 4;

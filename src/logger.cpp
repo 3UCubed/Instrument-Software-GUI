@@ -113,29 +113,13 @@ void Logger::parseRawLog(std::string id)
             snprintf(res, 50, "%08.7f", intToVoltage(value, 16, 5, 1.0));
             erpa.adc = res;
 
-            snprintf(res, 50, "%02d", buffer[i++]); // year
-            erpa.year = res;
-            snprintf(res, 50, "%02d", buffer[i++]); // month
-            erpa.month = res;
-            snprintf(res, 50, "%02d", buffer[i++]); // day
-            erpa.day = res;
-            snprintf(res, 50, "%02d", buffer[i++]); // hour
-            erpa.hour = res;
-            snprintf(res, 50, "%02d", buffer[i++]); // minute
-            erpa.minute = res;
-            snprintf(res, 50, "%02d", buffer[i++]); // second
-            erpa.second = res;
             value = ((buffer[i] & 0xFF) << 24) | ((buffer[i+1] & 0xFF) << 16) | ((buffer[i+2] & 0xFF) << 8) | (buffer[i+3] & 0xFF);
-            value &= 0xFFFFF;
-            value %= 1000000;
             i += 4;
-            snprintf(res, 50, "%06d", value); // millisecond
-            erpa.millisecond = res;
+            snprintf(res, 50, "%06d", value);
+            erpa.uptime = res;
 
             std::string formattedData = "";
-            formattedData += erpa.year + "-" + erpa.month + "-" + erpa.day + ", ";                                       // Date
-            formattedData += "T" + erpa.hour + ":" + erpa.minute + ":" + erpa.second + "." + erpa.millisecond + "Z, ";   // Time
-            formattedData += erpa.sync + ", " + erpa.seq + ", " + erpa.swp + ", " + erpa.temp1 + ", " + erpa.adc + "\n"; // Packet data
+            formattedData = erpa.uptime + ", " + erpa.sync + ", " + erpa.seq + ", " + erpa.swp + ", " + erpa.temp1 + ", " + erpa.adc + "\n"; // Packet data
             erpaStream << formattedData;
         }
         else if (packetType == PMT && i < bytesRead - PMT_PACKET_SIZE)
@@ -158,29 +142,13 @@ void Logger::parseRawLog(std::string id)
             snprintf(res, 50, "%08.7f", intToVoltage(value, 16, 5, 1.0));
             pmt.adc = res;
 
-            snprintf(res, 50, "%02d", buffer[i++]); // year
-            pmt.year = res;
-            snprintf(res, 50, "%02d", buffer[i++]); // month
-            pmt.month = res;
-            snprintf(res, 50, "%02d", buffer[i++]); // day
-            pmt.day = res;
-            snprintf(res, 50, "%02d", buffer[i++]); // hour
-            pmt.hour = res;
-            snprintf(res, 50, "%02d", buffer[i++]); // minute
-            pmt.minute = res;
-            snprintf(res, 50, "%02d", buffer[i++]); // second
-            pmt.second = res;
-
-            value = ((buffer[i] & 0xFF) << 24) | ((buffer[i+1] & 0xFF) << 16) | ((buffer[i+2] & 0xFF) << 8) | (buffer[i+3] & 0xFF);
-            value &= 0xFFFFF;
-            value %= 1000000;            
+            value = ((buffer[i] & 0xFF) << 24) | ((buffer[i+1] & 0xFF) << 16) | ((buffer[i+2] & 0xFF) << 8) | (buffer[i+3] & 0xFF);       
             i += 4;
             snprintf(res, 50, "%06d", value); // millisecond
-            pmt.millisecond = res;
+            pmt.uptime = res;
+
             std::string formattedData = "";
-            formattedData += pmt.year + "-" + pmt.month + "-" + pmt.day + ", ";                                    // Date
-            formattedData += "T" + pmt.hour + ":" + pmt.minute + ":" + pmt.second + "." + pmt.millisecond + "Z, "; // Time
-            formattedData += pmt.sync + ", " + pmt.seq + ", " + pmt.adc + "\n";
+            formattedData = pmt.uptime + ", " +  pmt.sync + ", " + pmt.seq + ", " + pmt.adc + "\n";
             pmtStream << formattedData;
         }
         else if (packetType == HK && i < bytesRead - HK_PACKET_SIZE)
@@ -300,11 +268,11 @@ void Logger::parseRawLog(std::string id)
             value %= 1000000;      
             i += 4;
             snprintf(res, 50, "%06d", value); // millisecond
-            hk.millisecond = res;
+            hk.microsecond = res;
 
             std::string formattedData = "";
             formattedData += hk.year + "-" + hk.month + "-" + hk.day + ", ";                                   // Date
-            formattedData += "T" + hk.hour + ":" + hk.minute + ":" + hk.second + "." + hk.millisecond + "Z, "; // Time
+            formattedData += "T" + hk.hour + ":" + hk.minute + ":" + hk.second + "." + hk.microsecond + "Z, "; // Time
             formattedData += hk.sync + ", " + hk.seq + ", " + hk.vsense + ", " + hk.vrefint + ", " + hk.temp1 + ", " + hk.temp2 + ", " + hk.temp3 + ", " + hk.temp4 + ", ";
             formattedData += hk.busvmon + ", " + hk.busimon + ", " + hk.mon2v5 + ", " + hk.mon3v3 + ", " + hk.mon5v + ", " + hk.monn3v3 + ", " + hk.monn5v + ", " + hk.mon15v + ", " + hk.mon5vref + ", " + hk.monn200v + ", " + hk.monn800v + "\n";
             hkStream << formattedData;
