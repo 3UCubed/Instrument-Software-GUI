@@ -32,18 +32,20 @@ const char *findSerialPort()
     }
 
     dirent *entry;
-    const char *portName = nullptr;
+    char *portName = nullptr;
 
     while ((entry = readdir(dir)) != nullptr)
     {
         const char *filename = entry->d_name;
         if (strstr(filename, prefix) != nullptr)
         {
-            // Use strncpy to copy the path to a buffer
-            char buffer[1024]; // Adjust the buffer size as needed
-            snprintf(buffer, sizeof(buffer), "%s%s", devPath, filename);
-            portName = buffer;
-            cout << "Using port: " << portName << endl;
+            size_t pathLength = strlen(devPath) + strlen(filename) + 1;
+            portName = (char *)malloc(pathLength);
+            if (portName != nullptr)
+            {
+                snprintf(portName, pathLength, "%s%s", devPath, filename);
+                std::cout << "Using port: " << portName << std::endl;
+            }
             break; // Use the first matching serial port found
         }
     }
@@ -71,10 +73,10 @@ void writeSerialData(const int &serialPort, const unsigned char data)
 
 /**
  * @brief Reads data from a serial port.
- * 
+ *
  * Continuously reads data from the specified serial port until the flag is set.
  * If the record flag is set, the data is also copied to a raw log.
- * 
+ *
  * @param serialPort Reference to the serial port.
  * @param flag Atomic boolean to control the reading loop.
  * @param record Atomic boolean to control recording the data.
@@ -140,12 +142,12 @@ bool openSerialPort()
 {
     portName = findSerialPort();
     serialPort = open(portName, O_RDWR | O_NOCTTY); // Opening serial port with non-blocking flag
-    if (serialPort == -1)
+
+    if (serialPort < 0)
     {
         std::cerr << "Failed to open the serial port." << std::endl;
         return false;
     }
-
     struct termios options;
     tcgetattr(serialPort, &options);
 
@@ -161,6 +163,9 @@ bool openSerialPort()
     options.c_cflag |= CS8;     // 8 data bits
 
     tcsetattr(serialPort, TCSANOW, &options); // Apply settings
+
+    usleep(100000); // Delay of 100 milliseconds
+
     cout << "Serial port opened successfully.\n";
     return true;
 }
@@ -177,9 +182,9 @@ void startThread()
 
 /**
  * @brief Cleans up resources and stops the read thread.
- * 
- * Sets the stop flag, waits for the read thread to finish, closes log files, 
- * and closes the serial port. If GUI logging is enabled, it also processes the 
+ *
+ * Sets the stop flag, waits for the read thread to finish, closes log files,
+ * and closes the serial port. If GUI logging is enabled, it also processes the
  * raw log for the GUI.
  */
 void cleanup()
@@ -196,9 +201,9 @@ void cleanup()
 
 /**
  * @brief Determines the type of packet based on the given MSB and LSB.
- * 
+ *
  * Compares the MSB and LSB with predefined values to identify the packet type.
- * 
+ *
  * @param MSB Most significant byte of the packet.
  * @param LSB Least significant byte of the packet.
  * @return The type of the packet as a Packet_t enum.
@@ -230,10 +235,10 @@ Packet_t determinePacketType(char MSB, char LSB)
 
 /**
  * @brief Converts an integer value to a voltage.
- * 
- * Converts a given integer value to its corresponding voltage based on the 
+ *
+ * Converts a given integer value to its corresponding voltage based on the
  * specified resolution, reference voltage, and multiplier.
- * 
+ *
  * @param value The integer value to convert.
  * @param resolution The resolution of the ADC (e.g., 12 or 16 bits).
  * @param ref The reference voltage.
@@ -257,10 +262,10 @@ double intToVoltage(int value, int resolution, double ref, float mult)
 
 /**
  * @brief Converts a raw temperature sensor value to Celsius.
- * 
- * Converts a raw 12-bit temperature sensor value, accounting for potential 
+ *
+ * Converts a raw 12-bit temperature sensor value, accounting for potential
  * negative temperatures using 2's complement, to a Celsius temperature value.
- * 
+ *
  * @param val The raw temperature sensor value.
  * @return The temperature in Celsius.
  */
@@ -282,8 +287,8 @@ double tempsToCelsius(int val)
     temp_c *= 100;
 
     snprintf(convertedChar, 16, "%u.%u",
-            ((unsigned int)temp_c / 100),
-            ((unsigned int)temp_c % 100));
+             ((unsigned int)temp_c / 100),
+             ((unsigned int)temp_c % 100));
 
     convertedTemp = std::stod(convertedChar);
 
@@ -346,7 +351,34 @@ void autoShutDownCallback(Fl_Widget *)
 
     writeSerialData(serialPort, 0xD0);
 }
+bool waitForResponse()
+{
+    fd_set read_fds;
+    struct timeval timeout;
 
+    FD_ZERO(&read_fds);
+    FD_SET(serialPort, &read_fds);
+
+    timeout.tv_sec = 5; // wait for 1 second
+    timeout.tv_usec = 0;
+
+    int selectResult = select(serialPort + 1, &read_fds, NULL, NULL, &timeout);
+
+    if (selectResult == -1)
+    {
+        std::cerr << "Error during select.\n";
+        return false;
+    }
+    else if (selectResult == 0)
+    {
+        std::cerr << "Timeout waiting for response.\n";
+        return false;
+    }
+    else
+    {
+        return true;
+    }
+}
 /**
  * @brief Callback function for synchronization.
  *
@@ -358,99 +390,66 @@ void autoShutDownCallback(Fl_Widget *)
  */
 void syncCallback(Fl_Widget *)
 {
+
+    // 1) Open serial port
+    // 2) Send sync command (0xAF)
+    // 3) Wait for ACK (0xFF) from iMCU
+    // 4) Send timestamp to iMCU
     if (!openSerialPort())
     {
         cerr << "Sync failed on serial port.\n";
         return;
     }
+
     uint8_t rx_buffer[5];
     uint8_t tx_buffer[9];
-    uint8_t key = 0x00;
     int bytesRead = 0;
-    int attempts = 0;
 
-    // Set first byte of tx_buffer to 0xFF and fill rest with timestamp info
-    tx_buffer[0] = 0xFF;
-    generateTimestamp(tx_buffer);
-    write(serialPort, tx_buffer, 9 * sizeof(uint8_t));
+    tx_buffer[0] = 0xAF;
+    write(serialPort, tx_buffer, 1 * sizeof(uint8_t));
 
-    // Wait to receive 0xFA (along with version #) from MCU
-    do
+    if (waitForResponse())
     {
-        bytesRead = read(serialPort, rx_buffer, 5 * sizeof(uint8_t));
-        if (bytesRead > 0)
+        rx_buffer[0] = 0x11;
+        bytesRead = read(serialPort, rx_buffer, sizeof(uint8_t));
+        if (bytesRead > 0 && rx_buffer[0] == 0xFF)
         {
-            key = rx_buffer[0];
-        }
-        attempts++;
-    } while (key != 0xFA && attempts < 30000);
+            std::cout << "Initial ACK received from iMCU.\n";
 
-    if (attempts >= 29999)
-    {
-        cerr << "Sync failed on attempts, attempts taken: " << attempts << endl;
-        return;
-    }
-    else
-    {
-        // [0]    [1]    [2]    [3]    [4]
-        // 0xFA     1      0      0      2   = I-1.0.0-beta
-        cout << "ATTEMPTS: " << attempts << endl;
-        string versionNum = "I-";
-        versionNum += to_string(rx_buffer[1]) + "." + to_string(rx_buffer[2]) + "." + to_string(rx_buffer[3]);
-        switch (rx_buffer[4])
-        {
-        case 0:
-        {
-            // No alpha or beta
-            break;
+            tx_buffer[0] = 0xFF;
+            generateTimestamp(tx_buffer);
+
+            write(serialPort, tx_buffer, 9 * sizeof(uint8_t));
+            if (waitForResponse())
+            {
+                bytesRead = read(serialPort, rx_buffer, sizeof(uint8_t));
+                if (bytesRead > 0 && rx_buffer[0] == 0xFF)
+                {
+                    std::cout << "Final ACK received from MCU.\n";
+                }
+                else
+                {
+                    std::cerr << "Failed to receive final valid ACK.\n";
+                }
+            }
         }
-        case 1:
+        else
         {
-            versionNum += "-alpha";
-            break;
+            std::cerr << "Failed to receive initial valid ACK.\n";
         }
-        case 2:
-        {
-            versionNum += "-beta";
-            break;
-        }
-        default:
-        {
-            break;
-        }
-        }
-        cout << versionNum << endl;
-        instrumentVersion->value(versionNum.c_str());
-        startThread();
-        syncWithInstruments->deactivate();
-        stepUp->activate();
-        stepDown->activate();
-        enterStopMode->activate();
-        exitStopMode->activate();
-        increaseFactor->activate();
-        decreaseFactor->activate();
-        startRecording->activate();
-        PMTOn->activate();
-        ERPAOn->activate();
-        HKOn->activate();
-        PB5->activate();
-        SDN1->activate();
-        autoSweep->activate();
-        autoStartUp->activate();
-        autoShutDown->activate();
-        return;
     }
 
-    // Should never get here, but just to be safe:
-    cerr << "Sync failed, cause unknown.\n";
+    startThread();
+    
+
     return;
 }
 
 /**
  * @brief Callback function to handle the quit action.
- * 
+ *
  * Cleans up resources by calling the cleanup function and exits the application.
- * 
+ *
  * @param widget The widget that triggered the callback.
  */
 void quitCallback(Fl_Widget *)
@@ -557,11 +556,11 @@ void factorDownCallback(Fl_Widget *)
 
 /**
  * @brief Callback function to handle the start and stop of recording.
- * 
- * Toggles the recording state. If recording is not active, starts recording 
- * and updates the button label to indicate recording status. If recording is 
+ *
+ * Toggles the recording state. If recording is not active, starts recording
+ * and updates the button label to indicate recording status. If recording is
  * active, stops recording, updates the button label, and processes the recorded log.
- * 
+ *
  * @param widget The widget that triggered the callback.
  */
 void startRecordingCallback(Fl_Widget *)
@@ -963,7 +962,7 @@ int main()
     instrumentVersion->textcolor(output);
     instrumentVersion->labelsize(2);
     instrumentVersion->value("I-x.y.z-n");
-    
+
     errorCodeOutput->color(darkBackground);
     errorCodeOutput->box(FL_FLAT_BOX);
     errorCodeOutput->textcolor(output);
@@ -1315,27 +1314,7 @@ int main()
     HK7->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
 
     // ******************************************************************************************************************* Pre-Startup Operations
-    stepUp->deactivate();
-    stepDown->deactivate();
-    enterStopMode->deactivate();
-    exitStopMode->deactivate();
-    increaseFactor->deactivate();
-    decreaseFactor->deactivate();
-    PMTOn->deactivate();
-    ERPAOn->deactivate();
-    HKOn->deactivate();
-    PB5->deactivate();
-    PC7->deactivate();
-    PC10->deactivate();
-    PC6->deactivate();
-    PC8->deactivate();
-    PC9->deactivate();
-    PC13->deactivate();
-    PB6->deactivate();
-    SDN1->deactivate();
-    autoSweep->deactivate();
-    autoStartUp->deactivate();
-    autoShutDown->deactivate();
+
     ERPAOn->value(0);
     HKOn->value(0);
 
@@ -1364,65 +1343,78 @@ int main()
         while (index < bytesRead)
         {
             packetType = determinePacketType(bytes[index], bytes[index + 1]);
-
+            cout << hex << static_cast<int>(bytes[index]) << endl;
             switch (packetType)
             {
             case ERROR_PACKET:
             {
-                index += 2;                     // Skipping sync word
+                index += 2; // Skipping sync word
                 uint8_t tag = bytes[index];
                 string errorName;
                 index++;
 
-                switch (tag){
-                    case 0:{
-                        errorName = "RAIL_BUSVMON";
-                        break;
-                    }
-                    case 1:{
-                        errorName = "RAIL_BUSIMON";
-                        break;
-                    }
-                    case 2:{
-                        errorName = "RAIL_2v5";
-                        break;
-                    }
-                    case 3:{
-                        errorName = "RAIL_3v3";
-                        break;
-                    }
-                    case 4:{
-                        errorName = "RAIL_5v";
-                        break;
-                    }
-                    case 5:{
-                        errorName = "RAIL_n3v3";
-                        break;
-                    }
-                    case 6:{
-                        errorName = "RAIL_n5v";
-                        break;
-                    }
-                    case 7:{
-                        errorName = "RAIL_15v";
-                        break;
-                    }
-                    case 8:{
-                        errorName = "RAIL_5vref";
-                        break;
-                    }
-                    case 9:{
-                        errorName = "RAIL_n200v";
-                        break;
-                    }
-                    case 10:{
-                        errorName = "RAIL_n800v";
-                        break;
-                    }
-                    default:{
-                        errorName = "UNKNOWN";
-                        break;
-                    }
+                switch (tag)
+                {
+                case 0:
+                {
+                    errorName = "RAIL_BUSVMON";
+                    break;
+                }
+                case 1:
+                {
+                    errorName = "RAIL_BUSIMON";
+                    break;
+                }
+                case 2:
+                {
+                    errorName = "RAIL_2v5";
+                    break;
+                }
+                case 3:
+                {
+                    errorName = "RAIL_3v3";
+                    break;
+                }
+                case 4:
+                {
+                    errorName = "RAIL_5v";
+                    break;
+                }
+                case 5:
+                {
+                    errorName = "RAIL_n3v3";
+                    break;
+                }
+                case 6:
+                {
+                    errorName = "RAIL_n5v";
+                    break;
+                }
+                case 7:
+                {
+                    errorName = "RAIL_15v";
+                    break;
+                }
+                case 8:
+                {
+                    errorName = "RAIL_5vref";
+                    break;
+                }
+                case 9:
+                {
+                    errorName = "RAIL_n200v";
+                    break;
+                }
+                case 10:
+                {
+                    errorName = "RAIL_n800v";
+                    break;
+                }
+                default:
+                {
+                    errorName = "UNKNOWN";
+                    break;
+                }
                 }
 
                 errorCodeOutput->value(errorName.c_str());
@@ -1456,7 +1448,7 @@ int main()
                 snprintf(res, 50, "%08.7f", intToVoltage(value, 16, 5, 1.0));
                 PMTadc->value(res);
 
-                value = ((bytes[index] & 0xFF) << 24) | ((bytes[index+1] & 0xFF) << 16) | ((bytes[index+2] & 0xFF) << 8) | (bytes[index+3] & 0xFF);
+                value = ((bytes[index] & 0xFF) << 24) | ((bytes[index + 1] & 0xFF) << 16) | ((bytes[index + 2] & 0xFF) << 8) | (bytes[index + 3] & 0xFF);
                 index += 4;
                 snprintf(res, 50, "%06d", value);
                 break;
@@ -1499,7 +1491,7 @@ int main()
                 snprintf(res, 50, "%08.7f", intToVoltage(value, 16, 5, 1.0));
                 ERPAadc->value(res);
 
-                value = ((bytes[index] & 0xFF) << 24) | ((bytes[index+1] & 0xFF) << 16) | ((bytes[index+2] & 0xFF) << 8) | (bytes[index+3] & 0xFF);
+                value = ((bytes[index] & 0xFF) << 24) | ((bytes[index + 1] & 0xFF) << 16) | ((bytes[index + 2] & 0xFF) << 8) | (bytes[index + 3] & 0xFF);
                 index += 4;
                 snprintf(res, 50, "%06d", value);
                 break;
@@ -1620,7 +1612,7 @@ int main()
                 snprintf(res, 50, "%02d", bytes[index++]); // minute
                 snprintf(res, 50, "%02d", bytes[index++]); // second
 
-                value = ((bytes[index] & 0xFF) << 24) | ((bytes[index+1] & 0xFF) << 16) | ((bytes[index+2] & 0xFF) << 8) | (bytes[index+3] & 0xFF);
+                value = ((bytes[index] & 0xFF) << 24) | ((bytes[index + 1] & 0xFF) << 16) | ((bytes[index + 2] & 0xFF) << 8) | (bytes[index + 3] & 0xFF);
                 value &= 0xFFFFF;
                 value %= 1000000;
                 index += 4;
