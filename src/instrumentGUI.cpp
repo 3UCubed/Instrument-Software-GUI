@@ -440,7 +440,23 @@ void syncCallback(Fl_Widget *)
     }
 
     startThread();
-    
+
+    syncWithInstruments->deactivate();
+    stepUp->activate();
+    stepDown->activate();
+    enterStopMode->activate();
+    exitStopMode->activate();
+    increaseFactor->activate();
+    decreaseFactor->activate();
+    startRecording->activate();
+    PMTOn->activate();
+    ERPAOn->activate();
+    HKOn->activate();
+    PB5->activate();
+    SDN1->activate();
+    autoSweep->activate();
+    autoStartUp->activate();
+    autoShutDown->activate();
 
     return;
 }
@@ -1314,7 +1330,27 @@ int main()
     HK7->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
 
     // ******************************************************************************************************************* Pre-Startup Operations
-
+    stepUp->deactivate();
+    stepDown->deactivate();
+    enterStopMode->deactivate();
+    exitStopMode->deactivate();
+    increaseFactor->deactivate();
+    decreaseFactor->deactivate();
+    PMTOn->deactivate();
+    ERPAOn->deactivate();
+    HKOn->deactivate();
+    PB5->deactivate();
+    PC7->deactivate();
+    PC10->deactivate();
+    PC6->deactivate();
+    PC8->deactivate();
+    PC9->deactivate();
+    PC13->deactivate();
+    PB6->deactivate();
+    SDN1->deactivate();
+    autoSweep->deactivate();
+    autoStartUp->deactivate();
+    autoShutDown->deactivate();
     ERPAOn->value(0);
     HKOn->value(0);
 
