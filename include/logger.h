@@ -10,13 +10,13 @@
 #ifndef LOGGER_H
 #define LOGGER_H
 
-#define ERPA_HEADER "uptime, sync, seq, SWPMON, temp1, adc"
+#define ERPA_HEADER "uptime, sync, seq, step, SWPMON, temp1, adc"
 #define PMT_HEADER "uptime, sync, seq, adc"
 #define HK_HEADER "date, time, sync, seq, vsense, vrefint, temp1, temp2, temp3, temp4, busvmon, busimon, 2v5mon, 3v3mon, 5vmon, n3v3mon, n5vmon, 15vmon, 5vrefmon, n200vmon, n800vmon"
 #define CONTROLS_HEADER "date, time, PMT, ERPA, HK, SDN1, SYS_ON, 3v3, 5v, n3v3, n5v, 15v, n150v, 800v"
 
 #define PMT_PACKET_SIZE 10
-#define ERPA_PACKET_SIZE 14
+#define ERPA_PACKET_SIZE 15
 #define HK_PACKET_SIZE 48
 
 #include <iomanip>
@@ -50,6 +50,7 @@ private:
     {
         std::string sync;
         std::string seq;
+        std::string step;
         std::string swp;
         std::string temp1;
         std::string adc;

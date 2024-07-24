@@ -1476,6 +1476,8 @@ int main()
                 snprintf(res, 50, "%04d", value);
                 ERPAseq->value(res);
 
+                index++; // GUI doesn't need to do anything with the step sent from the iMCU, only useful for obc and science people (not me)
+
                 value = (((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF));
                 index += 2;
                 snprintf(res, 50, "%06.5f", intToVoltage(value, 12, 3.3, 1.0));

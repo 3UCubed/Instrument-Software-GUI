@@ -98,6 +98,11 @@ void Logger::parseRawLog(std::string id)
             snprintf(res, 50, "%04d", value);
             erpa.seq = res;
 
+            value = buffer[i];
+            snprintf(res, 50, "%04d", value);
+            erpa.step = res;
+            i++;
+
             value = (((buffer[i] & 0xFF) << 8) | (buffer[i + 1] & 0xFF));
             i += 2;
             snprintf(res, 50, "%06.5f", intToVoltage(value, 12, 3.3, 1.0));
@@ -119,7 +124,7 @@ void Logger::parseRawLog(std::string id)
             erpa.uptime = res;
 
             std::string formattedData = "";
-            formattedData = erpa.uptime + ", " + erpa.sync + ", " + erpa.seq + ", " + erpa.swp + ", " + erpa.temp1 + ", " + erpa.adc + "\n"; // Packet data
+            formattedData = erpa.uptime + ", " + erpa.sync + ", " + erpa.seq + ", " + erpa.step + ", " + erpa.swp + ", " + erpa.temp1 + ", " + erpa.adc + "\n"; // Packet data
             erpaStream << formattedData;
         }
         else if (packetType == PMT && i < bytesRead - PMT_PACKET_SIZE)
