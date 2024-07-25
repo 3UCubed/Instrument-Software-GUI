@@ -120,6 +120,7 @@ Fl_Button *exitStopMode;
 Fl_Button *increaseFactor;
 Fl_Button *decreaseFactor;
 Fl_Button *startRecording;
+Fl_Button *enterFlightMode;
 Fl_Round_Button *PMTOn;
 Fl_Round_Button *ERPAOn;
 Fl_Round_Button *HKOn;
