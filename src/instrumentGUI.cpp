@@ -259,7 +259,13 @@ double intToVoltage(int value, int resolution, double ref, float mult)
     }
     return voltage;
 }
+float calculateTemperature(float tmpVoltage) {
 
+    // Calculate temperature
+    float temperature = 25.0f + (tmpVoltage - 1.9f) / -0.0045f;
+
+    return temperature;
+}
 /**
  * @brief Converts a raw temperature sensor value to Celsius.
  *
@@ -1356,7 +1362,7 @@ int main()
 
     window->show();
     Fl::check();
-
+    int errorCount = 0;
 #ifdef GUI_LOG
     guiLogger.createRawLog("shownToGUI");
 #endif
@@ -1379,7 +1385,7 @@ int main()
         while (index < bytesRead)
         {
             packetType = determinePacketType(bytes[index], bytes[index + 1]);
-            cout << hex << static_cast<int>(bytes[index]) << endl;
+            //cout << hex << static_cast<int>(bytes[index]) << endl;
             switch (packetType)
             {
             case ERROR_PACKET:
@@ -1452,7 +1458,8 @@ int main()
                     break;
                 }
                 }
-
+                cout << errorCount << " ERROR ON " << errorName << endl;
+                errorCount++;
                 errorCodeOutput->value(errorName.c_str());
                 break;
             }
@@ -1521,7 +1528,7 @@ int main()
 
                 value = (((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF));
                 index += 2;
-                snprintf(res, 50, "%06.5f", intToVoltage(value, 12, 3.3, 1.0));
+                snprintf(res, 50, "%06.5f", calculateTemperature(intToVoltage(value, 12, 3.3, 1.0)));
                 ERPAtemp1->value(res);
 
                 value = (((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF));
