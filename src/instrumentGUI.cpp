@@ -882,16 +882,15 @@ int main()
     Fl_Color box = fl_rgb_color(46, 47, 56);
     Fl_Color output = fl_rgb_color(60, 116, 239);
     window = new Fl_Window(windowWidth, windowHeight, "IS Packet Interpreter");
-    group6 = new Fl_Box(xGUIOffset + 285, yGUIOffset + 75, 130, 400, "GUI");
-    group4 = new Fl_Box(xControlOffset + 15, yControlOffset + 75, 130, 400, "CONTROLS");
-    group2 = new Fl_Box(xPacketOffset + 295, yPacketOffset, 200, 400, "ERPA PACKET");
-    group1 = new Fl_Box(xPacketOffset + 15, yPacketOffset, 200, 400, "PMT PACKET");
-    group3 = new Fl_Box(xPacketOffset + 575, yPacketOffset, 200, 400, "HK PACKET");
+    group6 = new Fl_Box(xGUIOffset + 285, yGUIOffset + 75, 130, 410, "GUI");
+    group4 = new Fl_Box(xControlOffset + 15, yControlOffset + 75, 130, 410, "CONTROLS");
+    group2 = new Fl_Box(xPacketOffset + 295, yPacketOffset, 200, 410, "ERPA PACKET");
+    group1 = new Fl_Box(xPacketOffset + 15, yPacketOffset, 200, 410, "PMT PACKET");
+    group3 = new Fl_Box(xPacketOffset + 575, yPacketOffset, 200, 410, "HK PACKET");
     ERPA1 = new Fl_Box(xPacketOffset + 300, yPacketOffset + 5, 50, 20, "SYNC:");
     ERPA2 = new Fl_Box(xPacketOffset + 300, yPacketOffset + 25, 50, 20, "SEQ:");
     ERPA4 = new Fl_Box(xPacketOffset + 300, yPacketOffset + 45, 50, 20, "SWP MON:");
-    ERPA5 = new Fl_Box(xPacketOffset + 300, yPacketOffset + 65, 50, 20, "TEMP1:");
-    ERPA3 = new Fl_Box(xPacketOffset + 300, yPacketOffset + 85, 50, 20, "ADC:");
+    ERPA3 = new Fl_Box(xPacketOffset + 300, yPacketOffset + 65, 50, 20, "ADC:");
     PMT1 = new Fl_Box(xPacketOffset + 18, yPacketOffset + 5, 50, 20, "SYNC:");
     PMT2 = new Fl_Box(xPacketOffset + 18, yPacketOffset + 25, 50, 20, "SEQ:");
     PMT3 = new Fl_Box(xPacketOffset + 18, yPacketOffset + 45, 50, 20, "ADC:");
@@ -899,10 +898,10 @@ int main()
     HK2 = new Fl_Box(xPacketOffset + 580, yPacketOffset + 25, 50, 20, "SEQ:");
     HK14 = new Fl_Box(xPacketOffset + 580, yPacketOffset + 45, 50, 20, "vsense:");
     HK15 = new Fl_Box(xPacketOffset + 580, yPacketOffset + 65, 50, 20, "vrefint:");
-    tempLabel1 = new Fl_Box(xPacketOffset + 580, yPacketOffset + 85, 50, 20, "TMP1:");
-    tempLabel2 = new Fl_Box(xPacketOffset + 580, yPacketOffset + 105, 50, 20, "TMP2:");
-    tempLabel3 = new Fl_Box(xPacketOffset + 580, yPacketOffset + 125, 50, 20, "TMP3:");
-    tempLabel4 = new Fl_Box(xPacketOffset + 580, yPacketOffset + 145, 50, 20, "TMP4:");
+    tempLabel1 = new Fl_Box(xPacketOffset + 580, yPacketOffset + 85, 50, 20, "TEMP1:");
+    tempLabel2 = new Fl_Box(xPacketOffset + 580, yPacketOffset + 105, 50, 20, "TEMP2:");
+    tempLabel3 = new Fl_Box(xPacketOffset + 580, yPacketOffset + 125, 50, 20, "TEMP3:");
+    tempLabel4 = new Fl_Box(xPacketOffset + 580, yPacketOffset + 145, 50, 20, "TEMP4:");
     HK3 = new Fl_Box(xPacketOffset + 580, yPacketOffset + 165, 50, 20, "BUSvmon:");
     HK4 = new Fl_Box(xPacketOffset + 580, yPacketOffset + 185, 50, 20, "BUSimon:");
     HK8 = new Fl_Box(xPacketOffset + 580, yPacketOffset + 205, 50, 20, "2v5mon:");
@@ -914,6 +913,7 @@ int main()
     HK12 = new Fl_Box(xPacketOffset + 580, yPacketOffset + 325, 50, 20, "5vrefmon:");
     HK6 = new Fl_Box(xPacketOffset + 580, yPacketOffset + 345, 50, 20, "n200vmon:");
     HK7 = new Fl_Box(xPacketOffset + 580, yPacketOffset + 365, 50, 20, "n800vmon:");
+    HK16 = new Fl_Box(xPacketOffset + 580, yPacketOffset + 385, 50, 20, "TMP1:");
     syncWithInstruments = new Fl_Button(xGUIOffset + 295, yGUIOffset + 90, 110, 46, "Sync");
     autoStartUp = new Fl_Button(xGUIOffset + 295, yGUIOffset + 136, 110, 46, "Auto Init");
     autoShutDown = new Fl_Button(xGUIOffset + 295, yGUIOffset + 182, 110, 46, "Auto DeInit");
@@ -921,7 +921,7 @@ int main()
     exitStopMode = new Fl_Button(xGUIOffset + 295, yGUIOffset + 274, 110, 46, "Wake Up");
     startRecording = new Fl_Button(xGUIOffset + 295, yGUIOffset + 320, 110, 46, "RECORD @circle");
     enterFlightMode = new Fl_Button(xGUIOffset + 295, yGUIOffset + 366, 110, 46, "Flight Mode");
-    quit = new Fl_Button(xGUIOffset + 295, yGUIOffset + 412, 110, 46, "Quit");
+    quit = new Fl_Button(xGUIOffset + 295, yGUIOffset + 412, 110, 65, "Quit");
     stepUp = new Fl_Button(xPacketOffset + 305, yPacketOffset + 195, 180, 20, "Step Up");
     stepDown = new Fl_Button(xPacketOffset + 305, yPacketOffset + 245, 180, 20, "Step Down");
     increaseFactor = new Fl_Button(xPacketOffset + 305, yPacketOffset + 305, 180, 20, "Factor Up");
@@ -943,8 +943,7 @@ int main()
     ERPAsync = new Fl_Output(xPacketOffset + 417, yPacketOffset + 5, 60, 20);
     ERPAseq = new Fl_Output(xPacketOffset + 417, yPacketOffset + 25, 60, 20);
     ERPAswp = new Fl_Output(xPacketOffset + 417, yPacketOffset + 45, 60, 20);
-    ERPAtemp1 = new Fl_Output(xPacketOffset + 417, yPacketOffset + 65, 60, 20);
-    ERPAadc = new Fl_Output(xPacketOffset + 417, yPacketOffset + 85, 60, 20);
+    ERPAadc = new Fl_Output(xPacketOffset + 417, yPacketOffset + 65, 60, 20);
     PMTsync = new Fl_Output(xPacketOffset + 135, yPacketOffset + 5, 60, 20);
     PMTseq = new Fl_Output(xPacketOffset + 135, yPacketOffset + 25, 60, 20);
     PMTadc = new Fl_Output(xPacketOffset + 135, yPacketOffset + 45, 60, 20);
@@ -967,6 +966,8 @@ int main()
     HK5vrefmon = new Fl_Output(xPacketOffset + 682, yPacketOffset + 325, 60, 20);
     HKn150vmon = new Fl_Output(xPacketOffset + 682, yPacketOffset + 345, 60, 20);
     HKn800vmon = new Fl_Output(xPacketOffset + 682, yPacketOffset + 365, 60, 20);
+    HKtmp1 = new Fl_Output(xPacketOffset + 682, yPacketOffset + 385, 60, 20);
+
     SDN1 = new Fl_Light_Button(xPacketOffset + 305, yPacketOffset + 105, 150, 35, "  SDN1 High");
     autoSweep = new Fl_Light_Button(xPacketOffset + 305, yPacketOffset + 155, 150, 35, "  Auto Sweep");
     guiVersion = new Fl_Output(5, 575, 100, 20);
@@ -1121,15 +1122,15 @@ int main()
     ERPA4->labelfont();
     ERPA4->labelcolor(text);
     ERPA4->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
-    ERPAtemp1->color(box);
-    ERPAtemp1->value(0);
-    ERPAtemp1->box(FL_FLAT_BOX);
-    ERPAtemp1->textcolor(output);
-    ERPA5->box(FL_FLAT_BOX);
-    ERPA5->color(box);
-    ERPA5->labelfont();
-    ERPA5->labelcolor(text);
-    ERPA5->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+    HKtmp1->color(box);
+    HKtmp1->value(0);
+    HKtmp1->box(FL_FLAT_BOX);
+    HKtmp1->textcolor(output);
+    HK16->box(FL_FLAT_BOX);
+    HK16->color(box);
+    HK16->labelfont();
+    HK16->labelcolor(text);
+    HK16->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
     ERPAadc->color(box);
     ERPAadc->value(0);
     ERPAadc->box(FL_FLAT_BOX);
@@ -1539,7 +1540,7 @@ int main()
                 value = (((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF));
                 index += 2;
                 snprintf(res, 50, "%06.5f", calculateTemperature(intToVoltage(value, 12, 3.3, 1.0)));
-                ERPAtemp1->value(res);
+                HKtmp1->value(res);
 
                 value = (((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF));
                 index += 2;
