@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['factordowncallback_0',['factorDownCallback',['../instrument_g_u_i_8cpp.html#ab2a4b4e0d3a81c806ca9a87e9fc8c4a5',1,'instrumentGUI.cpp']]],
-  ['factorupcallback_1',['factorUpCallback',['../instrument_g_u_i_8cpp.html#a69e4144a316e7cdb5a3f332237621e54',1,'instrumentGUI.cpp']]]
+  ['erpaoncallback_0',['ERPAOnCallback',['../instrument_g_u_i_8cpp.html#a031dede413f279469589f9db187c56ec',1,'instrumentGUI.cpp']]],
+  ['exitstopmodecallback_1',['exitStopModeCallback',['../instrument_g_u_i_8cpp.html#ae55419737075b0e7ffc3aca07943cf40',1,'instrumentGUI.cpp']]]
 ];

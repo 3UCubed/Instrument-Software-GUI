@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['openserialport_0',['openSerialPort',['../instrument_g_u_i_8cpp.html#a1d65889ebb441486c6b4c921c367bc60',1,'instrumentGUI.cpp']]]
+  ['main_0',['main',['../instrument_g_u_i_8cpp.html#ae66f6b31b5ad750f1fe042a706a4e3d4',1,'instrumentGUI.cpp']]]
 ];

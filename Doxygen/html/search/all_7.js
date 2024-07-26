@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['log_0',['Log',['../logger_8cpp.html#af31ef15863cb3c9383790dc16c3f2304',1,'logger.cpp']]],
-  ['logger_2ecpp_1',['logger.cpp',['../logger_8cpp.html',1,'']]]
+  ['instrumentgui_2ecpp_0',['instrumentGUI.cpp',['../instrument_g_u_i_8cpp.html',1,'']]],
+  ['inttovoltage_1',['intToVoltage',['../instrument_g_u_i_8cpp.html#a8ddf5be6644edb229d2599135dd98d86',1,'instrumentGUI.cpp']]]
 ];

@@ -1,13 +1,15 @@
-\doxysection{/\+Users/jaredmorrison/\+Desktop/3\+UCubed/\+Git/\+Instrument-\/\+Software-\/\+GUI/src/instrument\+GUI.cpp File Reference}
-\hypertarget{instrument_g_u_i_8cpp}{}\label{instrument_g_u_i_8cpp}\index{/Users/jaredmorrison/Desktop/3UCubed/Git/Instrument-\/Software-\/GUI/src/instrumentGUI.cpp@{/Users/jaredmorrison/Desktop/3UCubed/Git/Instrument-\/Software-\/GUI/src/instrumentGUI.cpp}}
+\doxysection{/\+Users/jaredmorrison/\+Desktop/3\+UCubed/3\+UGit/\+Instrument-\/\+Software-\/\+GUI/src/instrument\+GUI.cpp File Reference}
+\hypertarget{instrument_g_u_i_8cpp}{}\label{instrument_g_u_i_8cpp}\index{/Users/jaredmorrison/Desktop/3UCubed/3UGit/Instrument-\/Software-\/GUI/src/instrumentGUI.cpp@{/Users/jaredmorrison/Desktop/3UCubed/3UGit/Instrument-\/Software-\/GUI/src/instrumentGUI.cpp}}
 {\ttfamily \#include "{}../include/instrument\+GUI.\+h"{}}\newline
 \doxysubsubsection*{Functions}
 \begin{DoxyCompactItemize}
 \item 
+const char \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{instrument_g_u_i_8cpp_a08b1134536af43152874fd57934012c5}{find\+Serial\+Port}} ()
+\begin{DoxyCompactList}\small\item\em Finds the first serial port device matching the specified prefix in /dev. \end{DoxyCompactList}\item 
 void \mbox{\hyperlink{instrument_g_u_i_8cpp_a0635f2e51c6a9fcedcd5da08987919f1}{write\+Serial\+Data}} (const int \&serial\+Port, const unsigned char data)
 \begin{DoxyCompactList}\small\item\em Writes a single byte of data to the specified serial port. \end{DoxyCompactList}\item 
-void \mbox{\hyperlink{instrument_g_u_i_8cpp_a1c4bb5db1895118839fe3761db7edbf8}{read\+Serial\+Data}} (const int \&serial\+Port, std\+::atomic$<$ bool $>$ \&flag, std\+::ofstream \&output\+File)
-\begin{DoxyCompactList}\small\item\em Reads data from the serial port and writes it to an output file. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{instrument_g_u_i_8cpp_abfa6d51d0bebbe70c8030d20f55ef8e6}{read\+Serial\+Data}} (const int \&serial\+Port, std\+::atomic$<$ bool $>$ \&flag, std\+::atomic$<$ bool $>$ \&record)
+\begin{DoxyCompactList}\small\item\em Reads data from a serial port. \end{DoxyCompactList}\item 
 void \mbox{\hyperlink{instrument_g_u_i_8cpp_ae874f8d9d6be321611a9e53785f3f433}{generate\+Timestamp}} (uint8\+\_\+t \texorpdfstring{$\ast$}{*}buffer)
 \begin{DoxyCompactList}\small\item\em Generate a timestamp and store it in the provided buffer. \end{DoxyCompactList}\item 
 bool \mbox{\hyperlink{instrument_g_u_i_8cpp_a1d65889ebb441486c6b4c921c367bc60}{open\+Serial\+Port}} ()
@@ -15,17 +17,27 @@ bool \mbox{\hyperlink{instrument_g_u_i_8cpp_a1d65889ebb441486c6b4c921c367bc60}{o
 void \mbox{\hyperlink{instrument_g_u_i_8cpp_a97e2ac12bcf73c041e55eb85fbec74c4}{start\+Thread}} ()
 \begin{DoxyCompactList}\small\item\em Starts a thread for reading serial data. \end{DoxyCompactList}\item 
 void \mbox{\hyperlink{instrument_g_u_i_8cpp_a4b66d5e31b5dc18b314c8a68163263bd}{cleanup}} ()
-\begin{DoxyCompactList}\small\item\em Cleans up resources used for serial communication and threading. \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em Cleans up resources and stops the read thread. \end{DoxyCompactList}\item 
+Packet\+\_\+t \mbox{\hyperlink{instrument_g_u_i_8cpp_a8a164795ae10d89d11d5d9aace5430e3}{determine\+Packet\+Type}} (char MSB, char LSB)
+\begin{DoxyCompactList}\small\item\em Determines the type of packet based on the given MSB and LSB. \end{DoxyCompactList}\item 
+double \mbox{\hyperlink{instrument_g_u_i_8cpp_a8ddf5be6644edb229d2599135dd98d86}{int\+To\+Voltage}} (int value, int resolution, double ref, float mult)
+\begin{DoxyCompactList}\small\item\em Converts an integer value to a voltage. \end{DoxyCompactList}\item 
+\Hypertarget{instrument_g_u_i_8cpp_a9b4dd7c9c28ff3be96b4ed4c223ca820}\label{instrument_g_u_i_8cpp_a9b4dd7c9c28ff3be96b4ed4c223ca820} 
+float {\bfseries calculate\+Temperature} (float tmp\+Voltage)
+\begin{DoxyCompactList}\small\item\em Calculate temperature for ADHV4702 given voltage. \end{DoxyCompactList}\item 
+double \mbox{\hyperlink{instrument_g_u_i_8cpp_acb8e8cfd836afb86278b3b06e7493397}{temps\+To\+Celsius}} (int val)
+\begin{DoxyCompactList}\small\item\em Converts a raw temperature sensor value to Celsius. \end{DoxyCompactList}\item 
 void \mbox{\hyperlink{instrument_g_u_i_8cpp_a7c50ee5d9f5c43d3900189a6bbbbb431}{auto\+Start\+Up\+Callback}} (Fl\+\_\+\+Widget \texorpdfstring{$\ast$}{*})
 \begin{DoxyCompactList}\small\item\em Callback function for auto-\/startup. \end{DoxyCompactList}\item 
 void \mbox{\hyperlink{instrument_g_u_i_8cpp_adfb5157546d7468be65729cba16e0875}{auto\+Shut\+Down\+Callback}} (Fl\+\_\+\+Widget \texorpdfstring{$\ast$}{*})
 \begin{DoxyCompactList}\small\item\em Callback function for auto-\/shutdown. \end{DoxyCompactList}\item 
+\Hypertarget{instrument_g_u_i_8cpp_af9244672694cbbf370f905da4e58e041}\label{instrument_g_u_i_8cpp_af9244672694cbbf370f905da4e58e041} 
+bool {\bfseries wait\+For\+Response} ()
+\item 
 void \mbox{\hyperlink{instrument_g_u_i_8cpp_ad7c87c703138307977d89cbb242b2b63}{sync\+Callback}} (Fl\+\_\+\+Widget \texorpdfstring{$\ast$}{*})
 \begin{DoxyCompactList}\small\item\em Callback function for synchronization. \end{DoxyCompactList}\item 
-void \mbox{\hyperlink{instrument_g_u_i_8cpp_a2ce61d68a4032d586f6394d0abd91e63}{start\+Recording\+Callback}} (Fl\+\_\+\+Widget \texorpdfstring{$\ast$}{*}widget)
-\begin{DoxyCompactList}\small\item\em Callback function to start or stop recording logs. \end{DoxyCompactList}\item 
 void \mbox{\hyperlink{instrument_g_u_i_8cpp_a2012fc9578686e55fc30c024a3ccecde}{quit\+Callback}} (Fl\+\_\+\+Widget \texorpdfstring{$\ast$}{*})
-\begin{DoxyCompactList}\small\item\em Callback function to quit the application. \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em Callback function to handle the quit action. \end{DoxyCompactList}\item 
 void \mbox{\hyperlink{instrument_g_u_i_8cpp_a78f31a6e86614b3545660e9e56afd9ed}{stop\+Mode\+Callback}} (Fl\+\_\+\+Widget \texorpdfstring{$\ast$}{*})
 \begin{DoxyCompactList}\small\item\em Sends a stop mode command over the serial port. \end{DoxyCompactList}\item 
 void \mbox{\hyperlink{instrument_g_u_i_8cpp_ae55419737075b0e7ffc3aca07943cf40}{exit\+Stop\+Mode\+Callback}} (Fl\+\_\+\+Widget \texorpdfstring{$\ast$}{*})
@@ -38,6 +50,8 @@ void \mbox{\hyperlink{instrument_g_u_i_8cpp_a69e4144a316e7cdb5a3f332237621e54}{f
 \begin{DoxyCompactList}\small\item\em Callback function to increase a factor. \end{DoxyCompactList}\item 
 void \mbox{\hyperlink{instrument_g_u_i_8cpp_ab2a4b4e0d3a81c806ca9a87e9fc8c4a5}{factor\+Down\+Callback}} (Fl\+\_\+\+Widget \texorpdfstring{$\ast$}{*})
 \begin{DoxyCompactList}\small\item\em Callback function to decrease a factor. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{instrument_g_u_i_8cpp_a49ac2e2dc3ad0808e701a0f95d9e019e}{start\+Recording\+Callback}} (Fl\+\_\+\+Widget \texorpdfstring{$\ast$}{*})
+\begin{DoxyCompactList}\small\item\em Callback function to handle the start and stop of recording. \end{DoxyCompactList}\item 
 void \mbox{\hyperlink{instrument_g_u_i_8cpp_a7435fae06d024bbe3e0ab003a1f0af6a}{auto\+Sweep\+Callback}} (Fl\+\_\+\+Widget \texorpdfstring{$\ast$}{*})
 \begin{DoxyCompactList}\small\item\em Callback function to initiate auto sweep. \end{DoxyCompactList}\item 
 void \mbox{\hyperlink{instrument_g_u_i_8cpp_a39b5ba804b545a8257894e47454e9a2f}{SDN1\+Callback}} (Fl\+\_\+\+Widget \texorpdfstring{$\ast$}{*}widget)
@@ -64,6 +78,9 @@ void \mbox{\hyperlink{instrument_g_u_i_8cpp_aa5df99dc6d43852a4d2c375dd514cc31}{P
 \begin{DoxyCompactList}\small\item\em Callback function for PC9. \end{DoxyCompactList}\item 
 void \mbox{\hyperlink{instrument_g_u_i_8cpp_a347114b3b72df762d125e7b0f4e7df8f}{PC6\+Callback}} (Fl\+\_\+\+Widget \texorpdfstring{$\ast$}{*}widget)
 \begin{DoxyCompactList}\small\item\em Callback function for PC6. \end{DoxyCompactList}\item 
+\Hypertarget{instrument_g_u_i_8cpp_aad5a7725c84fe9bc37c92215de785386}\label{instrument_g_u_i_8cpp_aad5a7725c84fe9bc37c92215de785386} 
+void {\bfseries enter\+Flight\+Mode\+Callback} (Fl\+\_\+\+Widget \texorpdfstring{$\ast$}{*}widget)
+\item 
 int \mbox{\hyperlink{instrument_g_u_i_8cpp_ae66f6b31b5ad750f1fe042a706a4e3d4}{main}} ()
 \begin{DoxyCompactList}\small\item\em The main entry point of the program. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
@@ -73,7 +90,7 @@ int \mbox{\hyperlink{instrument_g_u_i_8cpp_ae66f6b31b5ad750f1fe042a706a4e3d4}{ma
 Jared Morrison, Jared King, Shane Woods 
 \end{DoxyAuthor}
 \begin{DoxyVersion}{Version}
-1.\+0.\+0-\/beta 
+2.\+0.\+0-\/alpha 
 \end{DoxyVersion}
 \hypertarget{logger_8cpp_DESCRIPTION}{}\doxysubsection{\texorpdfstring{DESCRIPTION}{DESCRIPTION}}\label{logger_8cpp_DESCRIPTION}
 GUI that connects to H7-\/\+Instrument-\/\+Software and shows packet data in real time 
@@ -138,9 +155,45 @@ void cleanup (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
 
 
 
-Cleans up resources used for serial communication and threading. 
+Cleans up resources and stops the read thread. 
 
-Stops the thread for reading serial data, closes the output file, and closes the serial port. \Hypertarget{instrument_g_u_i_8cpp_a031dede413f279469589f9db187c56ec}\index{instrumentGUI.cpp@{instrumentGUI.cpp}!ERPAOnCallback@{ERPAOnCallback}}
+Sets the stop flag, waits for the read thread to finish, closes log files, and closes the serial port. If GUI logging is enabled, it also processes the raw log for the GUI. \Hypertarget{instrument_g_u_i_8cpp_a8a164795ae10d89d11d5d9aace5430e3}\index{instrumentGUI.cpp@{instrumentGUI.cpp}!determinePacketType@{determinePacketType}}
+\index{determinePacketType@{determinePacketType}!instrumentGUI.cpp@{instrumentGUI.cpp}}
+\doxysubsubsection{\texorpdfstring{determinePacketType()}{determinePacketType()}}
+{\footnotesize\ttfamily \label{instrument_g_u_i_8cpp_a8a164795ae10d89d11d5d9aace5430e3} 
+Logger\+::\+Packet\+\_\+t Logger\+::determine\+Packet\+Type (\begin{DoxyParamCaption}\item[{char}]{MSB}{, }\item[{char}]{LSB}{}\end{DoxyParamCaption})}
+
+
+
+Determines the type of packet based on the given MSB and LSB. 
+
+Determines the type of packet based on the MSB and LSB values.
+
+Compares the MSB and LSB with predefined values to identify the packet type.
+
+
+\begin{DoxyParams}{Parameters}
+{\em MSB} & Most significant byte of the packet. \\
+\hline
+{\em LSB} & Least significant byte of the packet. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The type of the packet as a Packet\+\_\+t enum.
+\end{DoxyReturn}
+Determines the type of packet based on the most significant byte (MSB) and least significant byte (LSB) values.
+
+
+\begin{DoxyParams}{Parameters}
+{\em MSB} & Most significant byte of the packet header. \\
+\hline
+{\em LSB} & Least significant byte of the packet header. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The type of packet detected (ERPA, PMT, HK) or UNDEFINED if the packet type is unknown. 
+\end{DoxyReturn}
+\Hypertarget{instrument_g_u_i_8cpp_a031dede413f279469589f9db187c56ec}\index{instrumentGUI.cpp@{instrumentGUI.cpp}!ERPAOnCallback@{ERPAOnCallback}}
 \index{ERPAOnCallback@{ERPAOnCallback}!instrumentGUI.cpp@{instrumentGUI.cpp}}
 \doxysubsubsection{\texorpdfstring{ERPAOnCallback()}{ERPAOnCallback()}}
 {\footnotesize\ttfamily \label{instrument_g_u_i_8cpp_a031dede413f279469589f9db187c56ec} 
@@ -165,7 +218,7 @@ void exit\+Stop\+Mode\+Callback (\begin{DoxyParamCaption}\item[{Fl\+\_\+\+Widget
 
 Sends exit stop mode commands over the serial port. 
 
-This function sends exit stop mode commands (0x5B) over the specified serial port.
+This function sends exit stop mode commands (0x1F) over the specified serial port.
 
 
 \begin{DoxyParams}{Parameters}
@@ -206,6 +259,21 @@ This function sends a command to increase a factor via the serial port. If the c
 {\em widget} & The Fl\+\_\+\+Widget triggering the callback. \\
 \hline
 \end{DoxyParams}
+\Hypertarget{instrument_g_u_i_8cpp_a08b1134536af43152874fd57934012c5}\index{instrumentGUI.cpp@{instrumentGUI.cpp}!findSerialPort@{findSerialPort}}
+\index{findSerialPort@{findSerialPort}!instrumentGUI.cpp@{instrumentGUI.cpp}}
+\doxysubsubsection{\texorpdfstring{findSerialPort()}{findSerialPort()}}
+{\footnotesize\ttfamily \label{instrument_g_u_i_8cpp_a08b1134536af43152874fd57934012c5} 
+const char \texorpdfstring{$\ast$}{*} find\+Serial\+Port (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Finds the first serial port device matching the specified prefix in /dev. 
+
+Searches the /dev directory for a serial port device that starts with the given prefix. Returns the path of the first matching device found.
+
+\begin{DoxyReturn}{Returns}
+const char\texorpdfstring{$\ast$}{*} The path to the serial port device, or nullptr if not found. The caller is responsible for managing the memory of the returned string. 
+\end{DoxyReturn}
 \Hypertarget{instrument_g_u_i_8cpp_ae874f8d9d6be321611a9e53785f3f433}\index{instrumentGUI.cpp@{instrumentGUI.cpp}!generateTimestamp@{generateTimestamp}}
 \index{generateTimestamp@{generateTimestamp}!instrumentGUI.cpp@{instrumentGUI.cpp}}
 \doxysubsubsection{\texorpdfstring{generateTimestamp()}{generateTimestamp()}}
@@ -238,6 +306,50 @@ Callback function for HK ON.
 {\em widget} & Pointer to the Fl\+\_\+\+Widget triggering the callback. \\
 \hline
 \end{DoxyParams}
+\Hypertarget{instrument_g_u_i_8cpp_a8ddf5be6644edb229d2599135dd98d86}\index{instrumentGUI.cpp@{instrumentGUI.cpp}!intToVoltage@{intToVoltage}}
+\index{intToVoltage@{intToVoltage}!instrumentGUI.cpp@{instrumentGUI.cpp}}
+\doxysubsubsection{\texorpdfstring{intToVoltage()}{intToVoltage()}}
+{\footnotesize\ttfamily \label{instrument_g_u_i_8cpp_a8ddf5be6644edb229d2599135dd98d86} 
+double Logger\+::int\+To\+Voltage (\begin{DoxyParamCaption}\item[{int}]{value}{, }\item[{int}]{resolution}{, }\item[{double}]{ref}{, }\item[{float}]{mult}{}\end{DoxyParamCaption})}
+
+
+
+Converts an integer value to a voltage. 
+
+Converts an integer value to voltage based on resolution, reference voltage, and multiplier.
+
+Converts a given integer value to its corresponding voltage based on the specified resolution, reference voltage, and multiplier.
+
+
+\begin{DoxyParams}{Parameters}
+{\em value} & The integer value to convert. \\
+\hline
+{\em resolution} & The resolution of the ADC (e.\+g., 12 or 16 bits). \\
+\hline
+{\em ref} & The reference voltage. \\
+\hline
+{\em mult} & The multiplier to apply to the resulting voltage. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The calculated voltage.
+\end{DoxyReturn}
+Converts an integer value representing ADC reading to voltage, considering the resolution, reference voltage, and multiplier factors.
+
+
+\begin{DoxyParams}{Parameters}
+{\em value} & Integer value to convert to voltage. \\
+\hline
+{\em resolution} & Resolution of the ADC (12 or 16 bits). \\
+\hline
+{\em ref} & Reference voltage used by the ADC. \\
+\hline
+{\em mult} & Multiplier factor applied to the calculated voltage. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Calculated voltage corresponding to the input value. 
+\end{DoxyReturn}
 \Hypertarget{instrument_g_u_i_8cpp_ae66f6b31b5ad750f1fe042a706a4e3d4}\index{instrumentGUI.cpp@{instrumentGUI.cpp}!main@{main}}
 \index{main@{main}!instrumentGUI.cpp@{instrumentGUI.cpp}}
 \doxysubsubsection{\texorpdfstring{main()}{main()}}
@@ -411,34 +523,34 @@ void quit\+Callback (\begin{DoxyParamCaption}\item[{Fl\+\_\+\+Widget \texorpdfst
 
 
 
-Callback function to quit the application. 
+Callback function to handle the quit action. 
 
-This function closes the controls log stream and terminates the application.
+Cleans up resources by calling the cleanup function and exits the application.
 
 
 \begin{DoxyParams}{Parameters}
-{\em widget} & Unused parameter for the FLTK widget triggering this callback. \\
+{\em widget} & The widget that triggered the callback. \\
 \hline
 \end{DoxyParams}
-\Hypertarget{instrument_g_u_i_8cpp_a1c4bb5db1895118839fe3761db7edbf8}\index{instrumentGUI.cpp@{instrumentGUI.cpp}!readSerialData@{readSerialData}}
+\Hypertarget{instrument_g_u_i_8cpp_abfa6d51d0bebbe70c8030d20f55ef8e6}\index{instrumentGUI.cpp@{instrumentGUI.cpp}!readSerialData@{readSerialData}}
 \index{readSerialData@{readSerialData}!instrumentGUI.cpp@{instrumentGUI.cpp}}
 \doxysubsubsection{\texorpdfstring{readSerialData()}{readSerialData()}}
-{\footnotesize\ttfamily \label{instrument_g_u_i_8cpp_a1c4bb5db1895118839fe3761db7edbf8} 
-void read\+Serial\+Data (\begin{DoxyParamCaption}\item[{const int \&}]{serial\+Port}{, }\item[{std\+::atomic$<$ bool $>$ \&}]{flag}{, }\item[{std\+::ofstream \&}]{output\+File}{}\end{DoxyParamCaption})}
+{\footnotesize\ttfamily \label{instrument_g_u_i_8cpp_abfa6d51d0bebbe70c8030d20f55ef8e6} 
+void read\+Serial\+Data (\begin{DoxyParamCaption}\item[{const int \&}]{serial\+Port}{, }\item[{std\+::atomic$<$ bool $>$ \&}]{flag}{, }\item[{std\+::atomic$<$ bool $>$ \&}]{record}{}\end{DoxyParamCaption})}
 
 
 
-Reads data from the serial port and writes it to an output file. 
+Reads data from a serial port. 
 
-This function continuously reads data from the specified serial port and writes it to the specified output file. It stops when the stop\+Flag is set to true.
+Continuously reads data from the specified serial port until the flag is set. If the record flag is set, the data is also copied to a raw log.
 
 
 \begin{DoxyParams}{Parameters}
-{\em serial\+Port} & The file descriptor for the open serial port. \\
+{\em serial\+Port} & Reference to the serial port. \\
 \hline
-{\em flag} & Atomic boolean flag indicating whether to stop reading. \\
+{\em flag} & Atomic boolean to control the reading loop. \\
 \hline
-{\em output\+File} & The output file stream where the data will be written. \\
+{\em record} & Atomic boolean to control recording the data. \\
 \hline
 \end{DoxyParams}
 \Hypertarget{instrument_g_u_i_8cpp_a39b5ba804b545a8257894e47454e9a2f}\index{instrumentGUI.cpp@{instrumentGUI.cpp}!SDN1Callback@{SDN1Callback}}
@@ -456,21 +568,21 @@ Callback function for SDN1.
 {\em widget} & Pointer to the Fl\+\_\+\+Widget triggering the callback. \\
 \hline
 \end{DoxyParams}
-\Hypertarget{instrument_g_u_i_8cpp_a2ce61d68a4032d586f6394d0abd91e63}\index{instrumentGUI.cpp@{instrumentGUI.cpp}!startRecordingCallback@{startRecordingCallback}}
+\Hypertarget{instrument_g_u_i_8cpp_a49ac2e2dc3ad0808e701a0f95d9e019e}\index{instrumentGUI.cpp@{instrumentGUI.cpp}!startRecordingCallback@{startRecordingCallback}}
 \index{startRecordingCallback@{startRecordingCallback}!instrumentGUI.cpp@{instrumentGUI.cpp}}
 \doxysubsubsection{\texorpdfstring{startRecordingCallback()}{startRecordingCallback()}}
-{\footnotesize\ttfamily \label{instrument_g_u_i_8cpp_a2ce61d68a4032d586f6394d0abd91e63} 
-void start\+Recording\+Callback (\begin{DoxyParamCaption}\item[{Fl\+\_\+\+Widget \texorpdfstring{$\ast$}{*}}]{widget}{}\end{DoxyParamCaption})}
+{\footnotesize\ttfamily \label{instrument_g_u_i_8cpp_a49ac2e2dc3ad0808e701a0f95d9e019e} 
+void start\+Recording\+Callback (\begin{DoxyParamCaption}\item[{Fl\+\_\+\+Widget \texorpdfstring{$\ast$}{*}}]{}{}\end{DoxyParamCaption})}
 
 
 
-Callback function to start or stop recording logs. 
+Callback function to handle the start and stop of recording. 
 
-This function toggles the recording state. When recording starts, it creates new log files for ERPA, PMT, and HK, opens the file streams, and writes headers to the log files. When recording stops, it closes the log file streams.
+Toggles the recording state. If recording is not active, starts recording and updates the button label to indicate recording status. If recording is active, stops recording, updates the button label, and processes the recorded log.
 
 
 \begin{DoxyParams}{Parameters}
-{\em widget} & Pointer to the FLTK widget triggering this callback. \\
+{\em widget} & The widget that triggered the callback. \\
 \hline
 \end{DoxyParams}
 \Hypertarget{instrument_g_u_i_8cpp_a97e2ac12bcf73c041e55eb85fbec74c4}\index{instrumentGUI.cpp@{instrumentGUI.cpp}!startThread@{startThread}}
@@ -527,7 +639,7 @@ void stop\+Mode\+Callback (\begin{DoxyParamCaption}\item[{Fl\+\_\+\+Widget \texo
 
 Sends a stop mode command over the serial port. 
 
-This function sends a stop mode command (0x0C) over the specified serial port.
+This function sends a stop mode command (0x0F) over the specified serial port.
 
 
 \begin{DoxyParams}{Parameters}
@@ -551,6 +663,38 @@ Opens the serial port for communication and sends a timestamp to the microcontro
 {\em widget} & Pointer to the Fl\+\_\+\+Widget triggering the callback (unused). \\
 \hline
 \end{DoxyParams}
+\Hypertarget{instrument_g_u_i_8cpp_acb8e8cfd836afb86278b3b06e7493397}\index{instrumentGUI.cpp@{instrumentGUI.cpp}!tempsToCelsius@{tempsToCelsius}}
+\index{tempsToCelsius@{tempsToCelsius}!instrumentGUI.cpp@{instrumentGUI.cpp}}
+\doxysubsubsection{\texorpdfstring{tempsToCelsius()}{tempsToCelsius()}}
+{\footnotesize\ttfamily \label{instrument_g_u_i_8cpp_acb8e8cfd836afb86278b3b06e7493397} 
+double Logger\+::temps\+To\+Celsius (\begin{DoxyParamCaption}\item[{int}]{val}{}\end{DoxyParamCaption})}
+
+
+
+Converts a raw temperature sensor value to Celsius. 
+
+Converts a temperature value from ADC reading to Celsius.
+
+Converts a raw 12-\/bit temperature sensor value, accounting for potential negative temperatures using 2\textquotesingle{}s complement, to a Celsius temperature value.
+
+
+\begin{DoxyParams}{Parameters}
+{\em val} & The raw temperature sensor value. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The temperature in Celsius.
+\end{DoxyReturn}
+Converts an integer value representing temperature from ADC reading to Celsius.
+
+
+\begin{DoxyParams}{Parameters}
+{\em val} & Integer value representing temperature from ADC. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Calculated temperature in Celsius. 
+\end{DoxyReturn}
 \Hypertarget{instrument_g_u_i_8cpp_a0635f2e51c6a9fcedcd5da08987919f1}\index{instrumentGUI.cpp@{instrumentGUI.cpp}!writeSerialData@{writeSerialData}}
 \index{writeSerialData@{writeSerialData}!instrumentGUI.cpp@{instrumentGUI.cpp}}
 \doxysubsubsection{\texorpdfstring{writeSerialData()}{writeSerialData()}}

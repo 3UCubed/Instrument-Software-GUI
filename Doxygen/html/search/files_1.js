@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['logger_2ecpp_0',['logger.cpp',['../logger_8cpp.html',1,'']]]
+  ['instrumentgui_2ecpp_0',['instrumentGUI.cpp',['../instrument_g_u_i_8cpp.html',1,'']]]
 ];

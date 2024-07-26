@@ -8,16 +8,16 @@
  */
 
 #include "../include/logger.h"
-Logger::Logger(){};
-Logger::~Logger(){};
+Logger::Logger() {};
+Logger::~Logger() {};
 
 // ******************************************************************************************************************* PUBLIC FUNCTIONS
 /**
  * @brief Creates a raw log file with the specified ID.
- * 
+ *
  * Creates a raw log file with the given ID by appending ".bin" to the log title.
  * Opens the file in append mode. Updates the current log title upon successful creation.
- * 
+ *
  * @param id The identifier to include in the log file name.
  * @return True if the raw log file was successfully created and opened; false otherwise.
  */
@@ -37,9 +37,9 @@ bool Logger::createRawLog(std::string id)
 
 /**
  * @brief Copies bytes to the raw log stream.
- * 
+ *
  * Copies the specified number of bytes from the provided buffer to the raw log stream.
- * 
+ *
  * @param bytes Pointer to the buffer containing the bytes to copy.
  * @param size Number of bytes to copy.
  */
@@ -53,7 +53,7 @@ void Logger::copyToRawLog(char *bytes, int size)
 
 /**
  * @brief Closes the raw log file stream.
- * 
+ *
  * Closes the currently opened raw log file stream.
  */
 void Logger::closeRawLog()
@@ -63,10 +63,10 @@ void Logger::closeRawLog()
 
 /**
  * @brief Parses the raw log file and extracts packet data.
- * 
+ *
  * Reads the raw log file into a buffer and extracts data packets of different types (ERPA, PMT, HK).
  * Converts the extracted data into formatted strings and writes them to respective CSV files.
- * 
+ *
  * @param id Identifier used in creating the CSV file names.
  */
 void Logger::parseRawLog(std::string id)
@@ -113,7 +113,7 @@ void Logger::parseRawLog(std::string id)
             snprintf(res, 50, "%08.7f", intToVoltage(value, 16, 5, 1.0));
             erpa.adc = res;
 
-            value = ((buffer[i] & 0xFF) << 24) | ((buffer[i+1] & 0xFF) << 16) | ((buffer[i+2] & 0xFF) << 8) | (buffer[i+3] & 0xFF);
+            value = ((buffer[i] & 0xFF) << 24) | ((buffer[i + 1] & 0xFF) << 16) | ((buffer[i + 2] & 0xFF) << 8) | (buffer[i + 3] & 0xFF);
             i += 4;
             snprintf(res, 50, "%06d", value);
             erpa.uptime = res;
@@ -142,13 +142,13 @@ void Logger::parseRawLog(std::string id)
             snprintf(res, 50, "%08.7f", intToVoltage(value, 16, 5, 1.0));
             pmt.adc = res;
 
-            value = ((buffer[i] & 0xFF) << 24) | ((buffer[i+1] & 0xFF) << 16) | ((buffer[i+2] & 0xFF) << 8) | (buffer[i+3] & 0xFF);       
+            value = ((buffer[i] & 0xFF) << 24) | ((buffer[i + 1] & 0xFF) << 16) | ((buffer[i + 2] & 0xFF) << 8) | (buffer[i + 3] & 0xFF);
             i += 4;
             snprintf(res, 50, "%06d", value); // millisecond
             pmt.uptime = res;
 
             std::string formattedData = "";
-            formattedData = pmt.uptime + ", " +  pmt.sync + ", " + pmt.seq + ", " + pmt.adc + "\n";
+            formattedData = pmt.uptime + ", " + pmt.sync + ", " + pmt.seq + ", " + pmt.adc + "\n";
             pmtStream << formattedData;
         }
         else if (packetType == HK && i < bytesRead - HK_PACKET_SIZE)
@@ -268,9 +268,9 @@ void Logger::parseRawLog(std::string id)
             snprintf(res, 50, "%02d", buffer[i++]); // second
             hk.second = res;
 
-            value = ((buffer[i] & 0xFF) << 24) | ((buffer[i+1] & 0xFF) << 16) | ((buffer[i+2] & 0xFF) << 8) | (buffer[i+3] & 0xFF);
+            value = ((buffer[i] & 0xFF) << 24) | ((buffer[i + 1] & 0xFF) << 16) | ((buffer[i + 2] & 0xFF) << 8) | (buffer[i + 3] & 0xFF);
             value &= 0xFFFFF;
-            value %= 1000000;      
+            value %= 1000000;
             i += 4;
             snprintf(res, 50, "%06d", value); // millisecond
             hk.microsecond = res;
@@ -293,9 +293,9 @@ void Logger::parseRawLog(std::string id)
 // ******************************************************************************************************************* PRIVATE FUNCTIONS
 /**
  * @brief Creates a log file title based on directory, identifier, and current timestamp.
- * 
+ *
  * Constructs a log file name using the specified directory, identifier, and current timestamp.
- * 
+ *
  * @param dir Directory name where the log file will be stored.
  * @param id Identifier to include in the log file name.
  * @return The constructed log file title as a string.
@@ -314,10 +314,10 @@ std::string Logger::createLogTitle(std::string dir, std::string id)
 
 /**
  * @brief Creates CSV log files for different packet types.
- * 
- * Creates CSV log files with headers for ERPA, PMT, HK, and controls packets 
+ *
+ * Creates CSV log files with headers for ERPA, PMT, HK, and controls packets
  * based on the provided identifier.
- * 
+ *
  * @param id Identifier to include in the log file names.
  */
 void Logger::createPacketLogs(std::string id)
@@ -347,10 +347,10 @@ void Logger::createPacketLogs(std::string id)
 
 /**
  * @brief Reads the entire contents of a file into a buffer.
- * 
+ *
  * Opens the specified file in binary mode and reads its entire content into a dynamically allocated buffer.
  * Returns the size of the file read and assigns the buffer pointer to the read content.
- * 
+ *
  * @param path Path to the file to be read.
  * @param buffer Reference to a pointer where the read buffer will be stored.
  *               The buffer is allocated inside the function and must be freed by the caller.
@@ -397,9 +397,9 @@ int Logger::slurp(std::string path, char *&buffer)
 
 /**
  * @brief Determines the type of packet based on the MSB and LSB values.
- * 
+ *
  * Determines the type of packet based on the most significant byte (MSB) and least significant byte (LSB) values.
- * 
+ *
  * @param MSB Most significant byte of the packet header.
  * @param LSB Least significant byte of the packet header.
  * @return The type of packet detected (ERPA, PMT, HK) or UNDEFINED if the packet type is unknown.
@@ -426,10 +426,10 @@ Logger::Packet_t Logger::determinePacketType(char MSB, char LSB)
 
 /**
  * @brief Converts an integer value to voltage based on resolution, reference voltage, and multiplier.
- * 
+ *
  * Converts an integer value representing ADC reading to voltage, considering the resolution, reference voltage,
  * and multiplier factors.
- * 
+ *
  * @param value Integer value to convert to voltage.
  * @param resolution Resolution of the ADC (12 or 16 bits).
  * @param ref Reference voltage used by the ADC.
@@ -453,9 +453,9 @@ double Logger::intToVoltage(int value, int resolution, double ref, float mult)
 
 /**
  * @brief Converts a temperature value from ADC reading to Celsius.
- * 
+ *
  * Converts an integer value representing temperature from ADC reading to Celsius.
- * 
+ *
  * @param val Integer value representing temperature from ADC.
  * @return Calculated temperature in Celsius.
  */
@@ -477,14 +477,20 @@ double Logger::tempsToCelsius(int val)
     temp_c *= 100;
 
     snprintf(convertedChar, 16, "%u.%u",
-            ((unsigned int)temp_c / 100),
-            ((unsigned int)temp_c % 100));
+             ((unsigned int)temp_c / 100),
+             ((unsigned int)temp_c % 100));
 
     convertedTemp = std::stod(convertedChar);
 
     return convertedTemp;
 }
-float Logger::calculateTemperature(float tmpVoltage) {
+
+/**
+ * @brief Calculate temperature for ADHV4702 given voltage
+ *
+ */
+float Logger::calculateTemperature(float tmpVoltage)
+{
 
     // Calculate temperature
     float temperature = 25.0f + (tmpVoltage - 1.9f) / -0.0045f;
@@ -493,7 +499,7 @@ float Logger::calculateTemperature(float tmpVoltage) {
 }
 /**
  * @brief Closes all open packet log streams.
- * 
+ *
  * Closes the streams for ERPA, PMT, HK, and controls packet logs if they are open.
  */
 void Logger::closePacketLogs()

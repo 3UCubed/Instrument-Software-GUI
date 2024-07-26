@@ -1,4 +1,6 @@
 var searchData=
 [
-  ['generatetimestamp_0',['generateTimestamp',['../instrument_g_u_i_8cpp.html#ae874f8d9d6be321611a9e53785f3f433',1,'instrumentGUI.cpp']]]
+  ['factordowncallback_0',['factorDownCallback',['../instrument_g_u_i_8cpp.html#ab2a4b4e0d3a81c806ca9a87e9fc8c4a5',1,'instrumentGUI.cpp']]],
+  ['factorupcallback_1',['factorUpCallback',['../instrument_g_u_i_8cpp.html#a69e4144a316e7cdb5a3f332237621e54',1,'instrumentGUI.cpp']]],
+  ['findserialport_2',['findSerialPort',['../instrument_g_u_i_8cpp.html#a08b1134536af43152874fd57934012c5',1,'instrumentGUI.cpp']]]
 ];

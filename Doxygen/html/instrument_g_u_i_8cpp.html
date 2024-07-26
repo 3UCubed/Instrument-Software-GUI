@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.11.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Instrument Software GUI: /Users/jaredmorrison/Desktop/3UCubed/Git/Instrument-Software-GUI/src/instrumentGUI.cpp File Reference</title>
+<title>Instrument Software GUI: /Users/jaredmorrison/Desktop/3UCubed/3UGit/Instrument-Software-GUI/src/instrumentGUI.cpp File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -97,12 +97,15 @@ $(function(){ initResizable(false); });
 </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
+<tr class="memitem:a08b1134536af43152874fd57934012c5" id="r_a08b1134536af43152874fd57934012c5"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a08b1134536af43152874fd57934012c5">findSerialPort</a> ()</td></tr>
+<tr class="memdesc:a08b1134536af43152874fd57934012c5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Finds the first serial port device matching the specified prefix in /dev.  <br /></td></tr>
+<tr class="separator:a08b1134536af43152874fd57934012c5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0635f2e51c6a9fcedcd5da08987919f1" id="r_a0635f2e51c6a9fcedcd5da08987919f1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0635f2e51c6a9fcedcd5da08987919f1">writeSerialData</a> (const int &amp;serialPort, const unsigned char data)</td></tr>
 <tr class="memdesc:a0635f2e51c6a9fcedcd5da08987919f1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Writes a single byte of data to the specified serial port.  <br /></td></tr>
 <tr class="separator:a0635f2e51c6a9fcedcd5da08987919f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1c4bb5db1895118839fe3761db7edbf8" id="r_a1c4bb5db1895118839fe3761db7edbf8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1c4bb5db1895118839fe3761db7edbf8">readSerialData</a> (const int &amp;serialPort, std::atomic&lt; bool &gt; &amp;flag, std::ofstream &amp;outputFile)</td></tr>
-<tr class="memdesc:a1c4bb5db1895118839fe3761db7edbf8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads data from the serial port and writes it to an output file.  <br /></td></tr>
-<tr class="separator:a1c4bb5db1895118839fe3761db7edbf8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abfa6d51d0bebbe70c8030d20f55ef8e6" id="r_abfa6d51d0bebbe70c8030d20f55ef8e6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abfa6d51d0bebbe70c8030d20f55ef8e6">readSerialData</a> (const int &amp;serialPort, std::atomic&lt; bool &gt; &amp;flag, std::atomic&lt; bool &gt; &amp;record)</td></tr>
+<tr class="memdesc:abfa6d51d0bebbe70c8030d20f55ef8e6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads data from a serial port.  <br /></td></tr>
+<tr class="separator:abfa6d51d0bebbe70c8030d20f55ef8e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae874f8d9d6be321611a9e53785f3f433" id="r_ae874f8d9d6be321611a9e53785f3f433"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae874f8d9d6be321611a9e53785f3f433">generateTimestamp</a> (uint8_t *buffer)</td></tr>
 <tr class="memdesc:ae874f8d9d6be321611a9e53785f3f433"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate a timestamp and store it in the provided buffer.  <br /></td></tr>
 <tr class="separator:ae874f8d9d6be321611a9e53785f3f433"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -113,22 +116,35 @@ Functions</h2></td></tr>
 <tr class="memdesc:a97e2ac12bcf73c041e55eb85fbec74c4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Starts a thread for reading serial data.  <br /></td></tr>
 <tr class="separator:a97e2ac12bcf73c041e55eb85fbec74c4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4b66d5e31b5dc18b314c8a68163263bd" id="r_a4b66d5e31b5dc18b314c8a68163263bd"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4b66d5e31b5dc18b314c8a68163263bd">cleanup</a> ()</td></tr>
-<tr class="memdesc:a4b66d5e31b5dc18b314c8a68163263bd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Cleans up resources used for serial communication and threading.  <br /></td></tr>
+<tr class="memdesc:a4b66d5e31b5dc18b314c8a68163263bd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Cleans up resources and stops the read thread.  <br /></td></tr>
 <tr class="separator:a4b66d5e31b5dc18b314c8a68163263bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8a164795ae10d89d11d5d9aace5430e3" id="r_a8a164795ae10d89d11d5d9aace5430e3"><td class="memItemLeft" align="right" valign="top">Packet_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8a164795ae10d89d11d5d9aace5430e3">determinePacketType</a> (char MSB, char LSB)</td></tr>
+<tr class="memdesc:a8a164795ae10d89d11d5d9aace5430e3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Determines the type of packet based on the given MSB and LSB.  <br /></td></tr>
+<tr class="separator:a8a164795ae10d89d11d5d9aace5430e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8ddf5be6644edb229d2599135dd98d86" id="r_a8ddf5be6644edb229d2599135dd98d86"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8ddf5be6644edb229d2599135dd98d86">intToVoltage</a> (int value, int resolution, double ref, float mult)</td></tr>
+<tr class="memdesc:a8ddf5be6644edb229d2599135dd98d86"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts an integer value to a voltage.  <br /></td></tr>
+<tr class="separator:a8ddf5be6644edb229d2599135dd98d86"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9b4dd7c9c28ff3be96b4ed4c223ca820" id="r_a9b4dd7c9c28ff3be96b4ed4c223ca820"><td class="memItemLeft" align="right" valign="top"><a id="a9b4dd7c9c28ff3be96b4ed4c223ca820" name="a9b4dd7c9c28ff3be96b4ed4c223ca820"></a>
+float&#160;</td><td class="memItemRight" valign="bottom"><b>calculateTemperature</b> (float tmpVoltage)</td></tr>
+<tr class="memdesc:a9b4dd7c9c28ff3be96b4ed4c223ca820"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate temperature for ADHV4702 given voltage. <br /></td></tr>
+<tr class="separator:a9b4dd7c9c28ff3be96b4ed4c223ca820"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acb8e8cfd836afb86278b3b06e7493397" id="r_acb8e8cfd836afb86278b3b06e7493397"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acb8e8cfd836afb86278b3b06e7493397">tempsToCelsius</a> (int val)</td></tr>
+<tr class="memdesc:acb8e8cfd836afb86278b3b06e7493397"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts a raw temperature sensor value to Celsius.  <br /></td></tr>
+<tr class="separator:acb8e8cfd836afb86278b3b06e7493397"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7c50ee5d9f5c43d3900189a6bbbbb431" id="r_a7c50ee5d9f5c43d3900189a6bbbbb431"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7c50ee5d9f5c43d3900189a6bbbbb431">autoStartUpCallback</a> (Fl_Widget *)</td></tr>
 <tr class="memdesc:a7c50ee5d9f5c43d3900189a6bbbbb431"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback function for auto-startup.  <br /></td></tr>
 <tr class="separator:a7c50ee5d9f5c43d3900189a6bbbbb431"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adfb5157546d7468be65729cba16e0875" id="r_adfb5157546d7468be65729cba16e0875"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adfb5157546d7468be65729cba16e0875">autoShutDownCallback</a> (Fl_Widget *)</td></tr>
 <tr class="memdesc:adfb5157546d7468be65729cba16e0875"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback function for auto-shutdown.  <br /></td></tr>
 <tr class="separator:adfb5157546d7468be65729cba16e0875"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af9244672694cbbf370f905da4e58e041" id="r_af9244672694cbbf370f905da4e58e041"><td class="memItemLeft" align="right" valign="top"><a id="af9244672694cbbf370f905da4e58e041" name="af9244672694cbbf370f905da4e58e041"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>waitForResponse</b> ()</td></tr>
+<tr class="separator:af9244672694cbbf370f905da4e58e041"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad7c87c703138307977d89cbb242b2b63" id="r_ad7c87c703138307977d89cbb242b2b63"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad7c87c703138307977d89cbb242b2b63">syncCallback</a> (Fl_Widget *)</td></tr>
 <tr class="memdesc:ad7c87c703138307977d89cbb242b2b63"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback function for synchronization.  <br /></td></tr>
 <tr class="separator:ad7c87c703138307977d89cbb242b2b63"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2ce61d68a4032d586f6394d0abd91e63" id="r_a2ce61d68a4032d586f6394d0abd91e63"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2ce61d68a4032d586f6394d0abd91e63">startRecordingCallback</a> (Fl_Widget *widget)</td></tr>
-<tr class="memdesc:a2ce61d68a4032d586f6394d0abd91e63"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback function to start or stop recording logs.  <br /></td></tr>
-<tr class="separator:a2ce61d68a4032d586f6394d0abd91e63"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2012fc9578686e55fc30c024a3ccecde" id="r_a2012fc9578686e55fc30c024a3ccecde"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2012fc9578686e55fc30c024a3ccecde">quitCallback</a> (Fl_Widget *)</td></tr>
-<tr class="memdesc:a2012fc9578686e55fc30c024a3ccecde"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback function to quit the application.  <br /></td></tr>
+<tr class="memdesc:a2012fc9578686e55fc30c024a3ccecde"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback function to handle the quit action.  <br /></td></tr>
 <tr class="separator:a2012fc9578686e55fc30c024a3ccecde"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a78f31a6e86614b3545660e9e56afd9ed" id="r_a78f31a6e86614b3545660e9e56afd9ed"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a78f31a6e86614b3545660e9e56afd9ed">stopModeCallback</a> (Fl_Widget *)</td></tr>
 <tr class="memdesc:a78f31a6e86614b3545660e9e56afd9ed"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends a stop mode command over the serial port.  <br /></td></tr>
@@ -148,6 +164,9 @@ Functions</h2></td></tr>
 <tr class="memitem:ab2a4b4e0d3a81c806ca9a87e9fc8c4a5" id="r_ab2a4b4e0d3a81c806ca9a87e9fc8c4a5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab2a4b4e0d3a81c806ca9a87e9fc8c4a5">factorDownCallback</a> (Fl_Widget *)</td></tr>
 <tr class="memdesc:ab2a4b4e0d3a81c806ca9a87e9fc8c4a5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback function to decrease a factor.  <br /></td></tr>
 <tr class="separator:ab2a4b4e0d3a81c806ca9a87e9fc8c4a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a49ac2e2dc3ad0808e701a0f95d9e019e" id="r_a49ac2e2dc3ad0808e701a0f95d9e019e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a49ac2e2dc3ad0808e701a0f95d9e019e">startRecordingCallback</a> (Fl_Widget *)</td></tr>
+<tr class="memdesc:a49ac2e2dc3ad0808e701a0f95d9e019e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback function to handle the start and stop of recording.  <br /></td></tr>
+<tr class="separator:a49ac2e2dc3ad0808e701a0f95d9e019e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7435fae06d024bbe3e0ab003a1f0af6a" id="r_a7435fae06d024bbe3e0ab003a1f0af6a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7435fae06d024bbe3e0ab003a1f0af6a">autoSweepCallback</a> (Fl_Widget *)</td></tr>
 <tr class="memdesc:a7435fae06d024bbe3e0ab003a1f0af6a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback function to initiate auto sweep.  <br /></td></tr>
 <tr class="separator:a7435fae06d024bbe3e0ab003a1f0af6a"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -187,13 +206,16 @@ Functions</h2></td></tr>
 <tr class="memitem:a347114b3b72df762d125e7b0f4e7df8f" id="r_a347114b3b72df762d125e7b0f4e7df8f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a347114b3b72df762d125e7b0f4e7df8f">PC6Callback</a> (Fl_Widget *widget)</td></tr>
 <tr class="memdesc:a347114b3b72df762d125e7b0f4e7df8f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback function for PC6.  <br /></td></tr>
 <tr class="separator:a347114b3b72df762d125e7b0f4e7df8f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aad5a7725c84fe9bc37c92215de785386" id="r_aad5a7725c84fe9bc37c92215de785386"><td class="memItemLeft" align="right" valign="top"><a id="aad5a7725c84fe9bc37c92215de785386" name="aad5a7725c84fe9bc37c92215de785386"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>enterFlightModeCallback</b> (Fl_Widget *widget)</td></tr>
+<tr class="separator:aad5a7725c84fe9bc37c92215de785386"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae66f6b31b5ad750f1fe042a706a4e3d4" id="r_ae66f6b31b5ad750f1fe042a706a4e3d4"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae66f6b31b5ad750f1fe042a706a4e3d4">main</a> ()</td></tr>
 <tr class="memdesc:ae66f6b31b5ad750f1fe042a706a4e3d4"><td class="mdescLeft">&#160;</td><td class="mdescRight">The main entry point of the program.  <br /></td></tr>
 <tr class="separator:ae66f6b31b5ad750f1fe042a706a4e3d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><dl class="section author"><dt>Author</dt><dd>Jared Morrison, Jared King, Shane Woods </dd></dl>
-<dl class="section version"><dt>Version</dt><dd>1.0.0-beta </dd></dl>
+<dl class="section version"><dt>Version</dt><dd>2.0.0-alpha </dd></dl>
 <h1><a class="anchor" id="DESCRIPTION"></a>
 DESCRIPTION</h1>
 <p>GUI that connects to H7-Instrument-Software and shows packet data in real time </p>
@@ -291,8 +313,50 @@ DESCRIPTION</h1>
       </table>
 </div><div class="memdoc">
 
-<p>Cleans up resources used for serial communication and threading. </p>
-<p>Stops the thread for reading serial data, closes the output file, and closes the serial port. </p>
+<p>Cleans up resources and stops the read thread. </p>
+<p>Sets the stop flag, waits for the read thread to finish, closes log files, and closes the serial port. If GUI logging is enabled, it also processes the raw log for the GUI. </p>
+
+</div>
+</div>
+<a id="a8a164795ae10d89d11d5d9aace5430e3" name="a8a164795ae10d89d11d5d9aace5430e3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8a164795ae10d89d11d5d9aace5430e3">&#9670;&#160;</a></span>determinePacketType()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">Logger::Packet_t Logger::determinePacketType </td>
+          <td>(</td>
+          <td class="paramtype">char</td>          <td class="paramname"><span class="paramname"><em>MSB</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">char</td>          <td class="paramname"><span class="paramname"><em>LSB</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Determines the type of packet based on the given MSB and LSB. </p>
+<p>Determines the type of packet based on the MSB and LSB values.</p>
+<p>Compares the MSB and LSB with predefined values to identify the packet type.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">MSB</td><td>Most significant byte of the packet. </td></tr>
+    <tr><td class="paramname">LSB</td><td>Least significant byte of the packet. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The type of the packet as a Packet_t enum.</dd></dl>
+<p>Determines the type of packet based on the most significant byte (MSB) and least significant byte (LSB) values.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">MSB</td><td>Most significant byte of the packet header. </td></tr>
+    <tr><td class="paramname">LSB</td><td>Least significant byte of the packet header. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The type of packet detected (ERPA, PMT, HK) or UNDEFINED if the packet type is unknown. </dd></dl>
 
 </div>
 </div>
@@ -337,7 +401,7 @@ DESCRIPTION</h1>
 </div><div class="memdoc">
 
 <p>Sends exit stop mode commands over the serial port. </p>
-<p>This function sends exit stop mode commands (0x5B) over the specified serial port.</p>
+<p>This function sends exit stop mode commands (0x1F) over the specified serial port.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">serialPort</td><td>The file descriptor for the open serial port. </td></tr>
@@ -399,6 +463,27 @@ DESCRIPTION</h1>
 
 </div>
 </div>
+<a id="a08b1134536af43152874fd57934012c5" name="a08b1134536af43152874fd57934012c5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a08b1134536af43152874fd57934012c5">&#9670;&#160;</a></span>findSerialPort()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const char * findSerialPort </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Finds the first serial port device matching the specified prefix in /dev. </p>
+<p>Searches the /dev directory for a serial port device that starts with the given prefix. Returns the path of the first matching device found.</p>
+<dl class="section return"><dt>Returns</dt><dd>const char* The path to the serial port device, or nullptr if not found. The caller is responsible for managing the memory of the returned string. </dd></dl>
+
+</div>
+</div>
 <a id="ae874f8d9d6be321611a9e53785f3f433" name="ae874f8d9d6be321611a9e53785f3f433"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ae874f8d9d6be321611a9e53785f3f433">&#9670;&#160;</a></span>generateTimestamp()</h2>
 
@@ -447,6 +532,62 @@ DESCRIPTION</h1>
   </table>
   </dd>
 </dl>
+
+</div>
+</div>
+<a id="a8ddf5be6644edb229d2599135dd98d86" name="a8ddf5be6644edb229d2599135dd98d86"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8ddf5be6644edb229d2599135dd98d86">&#9670;&#160;</a></span>intToVoltage()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">double Logger::intToVoltage </td>
+          <td>(</td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>value</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>resolution</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>ref</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float</td>          <td class="paramname"><span class="paramname"><em>mult</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Converts an integer value to a voltage. </p>
+<p>Converts an integer value to voltage based on resolution, reference voltage, and multiplier.</p>
+<p>Converts a given integer value to its corresponding voltage based on the specified resolution, reference voltage, and multiplier.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">value</td><td>The integer value to convert. </td></tr>
+    <tr><td class="paramname">resolution</td><td>The resolution of the ADC (e.g., 12 or 16 bits). </td></tr>
+    <tr><td class="paramname">ref</td><td>The reference voltage. </td></tr>
+    <tr><td class="paramname">mult</td><td>The multiplier to apply to the resulting voltage. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The calculated voltage.</dd></dl>
+<p>Converts an integer value representing ADC reading to voltage, considering the resolution, reference voltage, and multiplier factors.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">value</td><td>Integer value to convert to voltage. </td></tr>
+    <tr><td class="paramname">resolution</td><td>Resolution of the ADC (12 or 16 bits). </td></tr>
+    <tr><td class="paramname">ref</td><td>Reference voltage used by the ADC. </td></tr>
+    <tr><td class="paramname">mult</td><td>Multiplier factor applied to the calculated voltage. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Calculated voltage corresponding to the input value. </dd></dl>
 
 </div>
 </div>
@@ -732,19 +873,19 @@ DESCRIPTION</h1>
       </table>
 </div><div class="memdoc">
 
-<p>Callback function to quit the application. </p>
-<p>This function closes the controls log stream and terminates the application.</p>
+<p>Callback function to handle the quit action. </p>
+<p>Cleans up resources by calling the cleanup function and exits the application.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">widget</td><td>Unused parameter for the FLTK widget triggering this callback. </td></tr>
+    <tr><td class="paramname">widget</td><td>The widget that triggered the callback. </td></tr>
   </table>
   </dd>
 </dl>
 
 </div>
 </div>
-<a id="a1c4bb5db1895118839fe3761db7edbf8" name="a1c4bb5db1895118839fe3761db7edbf8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1c4bb5db1895118839fe3761db7edbf8">&#9670;&#160;</a></span>readSerialData()</h2>
+<a id="abfa6d51d0bebbe70c8030d20f55ef8e6" name="abfa6d51d0bebbe70c8030d20f55ef8e6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abfa6d51d0bebbe70c8030d20f55ef8e6">&#9670;&#160;</a></span>readSerialData()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -762,18 +903,18 @@ DESCRIPTION</h1>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">std::ofstream &amp;</td>          <td class="paramname"><span class="paramname"><em>outputFile</em></span>&#160;)</td>
+          <td class="paramtype">std::atomic&lt; bool &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>record</em></span>&#160;)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Reads data from the serial port and writes it to an output file. </p>
-<p>This function continuously reads data from the specified serial port and writes it to the specified output file. It stops when the stopFlag is set to true.</p>
+<p>Reads data from a serial port. </p>
+<p>Continuously reads data from the specified serial port until the flag is set. If the record flag is set, the data is also copied to a raw log.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">serialPort</td><td>The file descriptor for the open serial port. </td></tr>
-    <tr><td class="paramname">flag</td><td>Atomic boolean flag indicating whether to stop reading. </td></tr>
-    <tr><td class="paramname">outputFile</td><td>The output file stream where the data will be written. </td></tr>
+    <tr><td class="paramname">serialPort</td><td>Reference to the serial port. </td></tr>
+    <tr><td class="paramname">flag</td><td>Atomic boolean to control the reading loop. </td></tr>
+    <tr><td class="paramname">record</td><td>Atomic boolean to control recording the data. </td></tr>
   </table>
   </dd>
 </dl>
@@ -805,8 +946,8 @@ DESCRIPTION</h1>
 
 </div>
 </div>
-<a id="a2ce61d68a4032d586f6394d0abd91e63" name="a2ce61d68a4032d586f6394d0abd91e63"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2ce61d68a4032d586f6394d0abd91e63">&#9670;&#160;</a></span>startRecordingCallback()</h2>
+<a id="a49ac2e2dc3ad0808e701a0f95d9e019e" name="a49ac2e2dc3ad0808e701a0f95d9e019e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a49ac2e2dc3ad0808e701a0f95d9e019e">&#9670;&#160;</a></span>startRecordingCallback()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -814,17 +955,17 @@ DESCRIPTION</h1>
         <tr>
           <td class="memname">void startRecordingCallback </td>
           <td>(</td>
-          <td class="paramtype">Fl_Widget *</td>          <td class="paramname"><span class="paramname"><em>widget</em></span></td><td>)</td>
+          <td class="paramtype">Fl_Widget *</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Callback function to start or stop recording logs. </p>
-<p>This function toggles the recording state. When recording starts, it creates new log files for ERPA, PMT, and HK, opens the file streams, and writes headers to the log files. When recording stops, it closes the log file streams.</p>
+<p>Callback function to handle the start and stop of recording. </p>
+<p>Toggles the recording state. If recording is not active, starts recording and updates the button label to indicate recording status. If recording is active, stops recording, updates the button label, and processes the recorded log.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">widget</td><td>Pointer to the FLTK widget triggering this callback. </td></tr>
+    <tr><td class="paramname">widget</td><td>The widget that triggered the callback. </td></tr>
   </table>
   </dd>
 </dl>
@@ -919,7 +1060,7 @@ DESCRIPTION</h1>
 </div><div class="memdoc">
 
 <p>Sends a stop mode command over the serial port. </p>
-<p>This function sends a stop mode command (0x0C) over the specified serial port.</p>
+<p>This function sends a stop mode command (0x0F) over the specified serial port.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">serialPort</td><td>The file descriptor for the open serial port. </td></tr>
@@ -952,6 +1093,42 @@ DESCRIPTION</h1>
   </table>
   </dd>
 </dl>
+
+</div>
+</div>
+<a id="acb8e8cfd836afb86278b3b06e7493397" name="acb8e8cfd836afb86278b3b06e7493397"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acb8e8cfd836afb86278b3b06e7493397">&#9670;&#160;</a></span>tempsToCelsius()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">double Logger::tempsToCelsius </td>
+          <td>(</td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>val</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Converts a raw temperature sensor value to Celsius. </p>
+<p>Converts a temperature value from ADC reading to Celsius.</p>
+<p>Converts a raw 12-bit temperature sensor value, accounting for potential negative temperatures using 2's complement, to a Celsius temperature value.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">val</td><td>The raw temperature sensor value. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The temperature in Celsius.</dd></dl>
+<p>Converts an integer value representing temperature from ADC reading to Celsius.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">val</td><td>Integer value representing temperature from ADC. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Calculated temperature in Celsius. </dd></dl>
 
 </div>
 </div>

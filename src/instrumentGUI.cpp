@@ -259,13 +259,20 @@ double intToVoltage(int value, int resolution, double ref, float mult)
     }
     return voltage;
 }
-float calculateTemperature(float tmpVoltage) {
+
+/**
+ * @brief Calculate temperature for ADHV4702 given voltage
+ *
+ */
+float calculateTemperature(float tmpVoltage)
+{
 
     // Calculate temperature
     float temperature = 25.0f + (tmpVoltage - 1.9f) / -0.0045f;
 
     return temperature;
 }
+
 /**
  * @brief Converts a raw temperature sensor value to Celsius.
  *
@@ -865,7 +872,8 @@ void PC6Callback(Fl_Widget *widget)
     }
 }
 
-void enterFlightModeCallback(Fl_Widget *widget) {
+void enterFlightModeCallback(Fl_Widget *widget)
+{
     writeSerialData(serialPort, 0xBF);
 }
 
@@ -1396,7 +1404,7 @@ int main()
         while (index < bytesRead)
         {
             packetType = determinePacketType(bytes[index], bytes[index + 1]);
-            //cout << hex << static_cast<int>(bytes[index]) << endl;
+            // cout << hex << static_cast<int>(bytes[index]) << endl;
             switch (packetType)
             {
             case ERROR_PACKET:
