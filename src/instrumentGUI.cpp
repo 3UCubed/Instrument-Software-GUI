@@ -1539,11 +1539,6 @@ int main()
 
                 value = (((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF));
                 index += 2;
-                snprintf(res, 50, "%06.5f", calculateTemperature(intToVoltage(value, 12, 3.3, 1.0)));
-                HKtmp1->value(res);
-
-                value = (((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF));
-                index += 2;
                 snprintf(res, 50, "%08.7f", intToVoltage(value, 16, 5, 1.0));
                 ERPAadc->value(res);
 
@@ -1660,6 +1655,11 @@ int main()
                 index += 2;
                 snprintf(res, 50, "%06.5f", intToVoltage(value, 12, 3.3, 1.0));
                 HKn800vmon->value(res);
+
+                value = (((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF));
+                index += 2;
+                snprintf(res, 50, "%06.5f", calculateTemperature(intToVoltage(value, 12, 3.3, 1.0)));
+                HKtmp1->value(res);
 
                 snprintf(res, 50, "%02d", bytes[index++]); // year
                 snprintf(res, 50, "%02d", bytes[index++]); // month

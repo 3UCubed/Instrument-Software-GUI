@@ -110,11 +110,6 @@ void Logger::parseRawLog(std::string id)
 
             value = (((buffer[i] & 0xFF) << 8) | (buffer[i + 1] & 0xFF));
             i += 2;
-            snprintf(res, 50, "%06.5f", intToVoltage(value, 12, 3.3, 1.0));
-            erpa.temp1 = res;
-
-            value = (((buffer[i] & 0xFF) << 8) | (buffer[i + 1] & 0xFF));
-            i += 2;
             snprintf(res, 50, "%08.7f", intToVoltage(value, 16, 5, 1.0));
             erpa.adc = res;
 
@@ -124,7 +119,7 @@ void Logger::parseRawLog(std::string id)
             erpa.uptime = res;
 
             std::string formattedData = "";
-            formattedData = erpa.uptime + ", " + erpa.sync + ", " + erpa.seq + ", " + erpa.step + ", " + erpa.swp + ", " + erpa.temp1 + ", " + erpa.adc + "\n"; // Packet data
+            formattedData = erpa.uptime + ", " + erpa.sync + ", " + erpa.seq + ", " + erpa.step + ", " + erpa.swp + ", " + erpa.adc + "\n"; // Packet data
             erpaStream << formattedData;
         }
         else if (packetType == PMT && i < bytesRead - PMT_PACKET_SIZE)
@@ -255,6 +250,11 @@ void Logger::parseRawLog(std::string id)
             snprintf(res, 50, "%06.5f", intToVoltage(value, 12, 3.3, 1.0));
             hk.monn800v = res;
 
+            value = (((buffer[i] & 0xFF) << 8) | (buffer[i + 1] & 0xFF));
+            i += 2;
+            snprintf(res, 50, "%06.5f", intToVoltage(value, 12, 3.3, 1.0));
+            hk.tmp1 = res;
+
             snprintf(res, 50, "%02d", buffer[i++]); // year
             hk.year = res;
             snprintf(res, 50, "%02d", buffer[i++]); // month
@@ -279,7 +279,7 @@ void Logger::parseRawLog(std::string id)
             formattedData += hk.year + "-" + hk.month + "-" + hk.day + ", ";                                   // Date
             formattedData += "T" + hk.hour + ":" + hk.minute + ":" + hk.second + "." + hk.microsecond + "Z, "; // Time
             formattedData += hk.sync + ", " + hk.seq + ", " + hk.vsense + ", " + hk.vrefint + ", " + hk.temp1 + ", " + hk.temp2 + ", " + hk.temp3 + ", " + hk.temp4 + ", ";
-            formattedData += hk.busvmon + ", " + hk.busimon + ", " + hk.mon2v5 + ", " + hk.mon3v3 + ", " + hk.mon5v + ", " + hk.monn3v3 + ", " + hk.monn5v + ", " + hk.mon15v + ", " + hk.mon5vref + ", " + hk.monn200v + ", " + hk.monn800v + "\n";
+            formattedData += hk.busvmon + ", " + hk.busimon + ", " + hk.mon2v5 + ", " + hk.mon3v3 + ", " + hk.mon5v + ", " + hk.monn3v3 + ", " + hk.monn5v + ", " + hk.mon15v + ", " + hk.mon5vref + ", " + hk.monn200v + ", " + hk.monn800v + ", " + hk.tmp1 + "\n";
             hkStream << formattedData;
         }
         else
