@@ -252,7 +252,7 @@ void Logger::parseRawLog(std::string id)
 
             value = (((buffer[i] & 0xFF) << 8) | (buffer[i + 1] & 0xFF));
             i += 2;
-            snprintf(res, 50, "%06.5f", intToVoltage(value, 12, 3.3, 1.0));
+            snprintf(res, 50, "%06.5f", calculateTemperature(intToVoltage(value, 12, 3.3, 1.0)));
             hk.tmp1 = res;
 
             snprintf(res, 50, "%02d", buffer[i++]); // year
@@ -484,7 +484,13 @@ double Logger::tempsToCelsius(int val)
 
     return convertedTemp;
 }
+float Logger::calculateTemperature(float tmpVoltage) {
 
+    // Calculate temperature
+    float temperature = 25.0f + (tmpVoltage - 1.9f) / -0.0045f;
+
+    return temperature;
+}
 /**
  * @brief Closes all open packet log streams.
  * 

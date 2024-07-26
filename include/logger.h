@@ -108,6 +108,7 @@ private:
     double intToVoltage(int value, int resolution, double ref, float mult);
     double tempsToCelsius(int val);
     void closePacketLogs();
+    float calculateTemperature(float tmpVoltage);
 
 };
 
