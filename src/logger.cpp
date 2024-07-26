@@ -93,8 +93,8 @@ void Logger::parseRawLog(std::string id)
             snprintf(res, 50, "0x%X", value);
             erpa.sync = res;
 
-            value = ((buffer[i] & 0xFF) << 8) | (buffer[i + 1] & 0xFF);
-            i += 2;
+            value = ((buffer[i] & 0xFF) << 16) | ((buffer[i + 1] & 0xFF) << 8) | (buffer[i + 2] & 0xFF);
+            i += 3;
             snprintf(res, 50, "%04d", value);
             erpa.seq = res;
 

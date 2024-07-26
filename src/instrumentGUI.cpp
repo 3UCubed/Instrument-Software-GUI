@@ -1533,8 +1533,8 @@ int main()
                 snprintf(res, 50, "0x%X", value);
                 ERPAsync->value(res);
 
-                value = ((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF);
-                index += 2;
+                value = ((bytes[index] & 0xFF) << 16) | ((bytes[index + 1] & 0xFF) << 8) | (bytes[index + 2] & 0xFF);
+                index += 3;
                 snprintf(res, 50, "%04d", value);
                 ERPAseq->value(res);
 

@@ -16,7 +16,7 @@
 #define CONTROLS_HEADER "date, time, PMT, ERPA, HK, SDN1, SYS_ON, 3v3, 5v, n3v3, n5v, 15v, n150v, 800v"
 
 #define PMT_PACKET_SIZE 10
-#define ERPA_PACKET_SIZE 13
+#define ERPA_PACKET_SIZE 14
 #define HK_PACKET_SIZE 50
 
 #include <iomanip>
