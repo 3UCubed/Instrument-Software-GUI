@@ -472,7 +472,7 @@ void syncCallback(Fl_Widget *)
     autoShutDown->activate();
     startRecording->activate();
     enterFlightMode->activate();
-
+    exitFlightMode->activate();
     return;
 }
 
@@ -877,6 +877,11 @@ void enterFlightModeCallback(Fl_Widget *widget)
     writeSerialData(serialPort, 0xBF);
 }
 
+void exitFlightModeCallback(Fl_Widget *widget)
+{
+    writeSerialData(serialPort, 0xCF);
+}
+
 /**
  * @brief The main entry point of the program.
  *
@@ -922,14 +927,17 @@ int main()
     HK6 = new Fl_Box(xPacketOffset + 580, yPacketOffset + 345, 50, 20, "n200vmon:");
     HK7 = new Fl_Box(xPacketOffset + 580, yPacketOffset + 365, 50, 20, "n800vmon:");
     HK16 = new Fl_Box(xPacketOffset + 580, yPacketOffset + 385, 50, 20, "TMP1:");
-    syncWithInstruments = new Fl_Button(xGUIOffset + 295, yGUIOffset + 90, 110, 46, "Sync");
-    autoStartUp = new Fl_Button(xGUIOffset + 295, yGUIOffset + 136, 110, 46, "Auto Init");
-    autoShutDown = new Fl_Button(xGUIOffset + 295, yGUIOffset + 182, 110, 46, "Auto DeInit");
-    enterStopMode = new Fl_Button(xGUIOffset + 295, yGUIOffset + 228, 110, 46, "Sleep");
-    exitStopMode = new Fl_Button(xGUIOffset + 295, yGUIOffset + 274, 110, 46, "Wake Up");
-    startRecording = new Fl_Button(xGUIOffset + 295, yGUIOffset + 320, 110, 46, "RECORD @circle");
-    enterFlightMode = new Fl_Button(xGUIOffset + 295, yGUIOffset + 366, 110, 46, "Flight Mode");
-    quit = new Fl_Button(xGUIOffset + 295, yGUIOffset + 412, 110, 65, "Quit");
+
+    syncWithInstruments = new Fl_Button(xGUIOffset + 295, yGUIOffset + 90, 110, 40, "Sync");
+    autoStartUp = new Fl_Button(xGUIOffset + 295, yGUIOffset + 130, 110, 40, "Auto Init");
+    autoShutDown = new Fl_Button(xGUIOffset + 295, yGUIOffset + 170, 110, 40, "Auto DeInit");
+    enterStopMode = new Fl_Button(xGUIOffset + 295, yGUIOffset + 210, 110, 40, "Sleep");
+    exitStopMode = new Fl_Button(xGUIOffset + 295, yGUIOffset + 250, 110, 40, "Wake Up");
+    startRecording = new Fl_Button(xGUIOffset + 295, yGUIOffset + 290, 110, 40, "RECORD @circle");
+    enterFlightMode = new Fl_Button(xGUIOffset + 295, yGUIOffset + 330, 110, 40, "Flight Mode");
+    exitFlightMode = new Fl_Button(xGUIOffset + 295, yGUIOffset + 370, 110, 40, "UnFlight Mode");
+
+    quit = new Fl_Button(xGUIOffset + 295, yGUIOffset + 410, 110, 65, "Quit");
     stepUp = new Fl_Button(xPacketOffset + 305, yPacketOffset + 195, 180, 20, "Step Up");
     stepDown = new Fl_Button(xPacketOffset + 305, yPacketOffset + 245, 180, 20, "Step Down");
     increaseFactor = new Fl_Button(xPacketOffset + 305, yPacketOffset + 305, 180, 20, "Factor Up");
@@ -1022,6 +1030,7 @@ int main()
     syncWithInstruments->align(FL_ALIGN_CENTER);
     syncWithInstruments->callback(syncCallback);
     enterFlightMode->callback(enterFlightModeCallback);
+    exitFlightMode->callback(exitFlightModeCallback);
     quit->align(FL_ALIGN_CENTER);
     quit->color(FL_RED);
     quit->callback(quitCallback);
@@ -1359,6 +1368,7 @@ int main()
     exitStopMode->deactivate();
     startRecording->deactivate();
     enterFlightMode->deactivate();
+    exitFlightMode->deactivate();
     increaseFactor->deactivate();
     decreaseFactor->deactivate();
     PMTOn->deactivate();
