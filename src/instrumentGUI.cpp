@@ -471,8 +471,8 @@ void syncCallback(Fl_Widget *)
     autoStartUp->activate();
     autoShutDown->activate();
     startRecording->activate();
-    enterFlightMode->activate();
-    exitFlightMode->activate();
+    scienceMode->activate();
+    idleMode->activate();
     return;
 }
 
@@ -872,12 +872,12 @@ void PC6Callback(Fl_Widget *widget)
     }
 }
 
-void enterFlightModeCallback(Fl_Widget *widget)
+void scienceModeCallback(Fl_Widget *widget)
 {
     writeSerialData(serialPort, 0xBF);
 }
 
-void exitFlightModeCallback(Fl_Widget *widget)
+void idleModeCallback(Fl_Widget *widget)
 {
     writeSerialData(serialPort, 0xCF);
 }
@@ -934,8 +934,8 @@ int main()
     enterStopMode = new Fl_Button(xGUIOffset + 295, yGUIOffset + 210, 110, 40, "Sleep");
     exitStopMode = new Fl_Button(xGUIOffset + 295, yGUIOffset + 250, 110, 40, "Wake Up");
     startRecording = new Fl_Button(xGUIOffset + 295, yGUIOffset + 290, 110, 40, "RECORD @circle");
-    enterFlightMode = new Fl_Button(xGUIOffset + 295, yGUIOffset + 330, 110, 40, "Flight Mode");
-    exitFlightMode = new Fl_Button(xGUIOffset + 295, yGUIOffset + 370, 110, 40, "UnFlight Mode");
+    scienceMode = new Fl_Button(xGUIOffset + 295, yGUIOffset + 330, 110, 40, "Science Mode");
+    idleMode = new Fl_Button(xGUIOffset + 295, yGUIOffset + 370, 110, 40, "Idle Mode");
 
     quit = new Fl_Button(xGUIOffset + 295, yGUIOffset + 410, 110, 65, "Quit");
     stepUp = new Fl_Button(xPacketOffset + 305, yPacketOffset + 195, 180, 20, "Step Up");
@@ -1029,8 +1029,8 @@ int main()
     autoShutDown->callback(autoShutDownCallback);
     syncWithInstruments->align(FL_ALIGN_CENTER);
     syncWithInstruments->callback(syncCallback);
-    enterFlightMode->callback(enterFlightModeCallback);
-    exitFlightMode->callback(exitFlightModeCallback);
+    scienceMode->callback(scienceModeCallback);
+    idleMode->callback(idleModeCallback);
     quit->align(FL_ALIGN_CENTER);
     quit->color(FL_RED);
     quit->callback(quitCallback);
@@ -1367,8 +1367,8 @@ int main()
     enterStopMode->deactivate();
     exitStopMode->deactivate();
     startRecording->deactivate();
-    enterFlightMode->deactivate();
-    exitFlightMode->deactivate();
+    scienceMode->deactivate();
+    idleMode->deactivate();
     increaseFactor->deactivate();
     decreaseFactor->deactivate();
     PMTOn->deactivate();
