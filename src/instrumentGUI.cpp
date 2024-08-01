@@ -1679,18 +1679,7 @@ int main()
                 snprintf(res, 50, "%06.5f", calculateTemperature(intToVoltage(value, 12, 3.3, 1.0)));
                 HKtmp1->value(res);
 
-                snprintf(res, 50, "%02d", bytes[index++]); // year
-                snprintf(res, 50, "%02d", bytes[index++]); // month
-                snprintf(res, 50, "%02d", bytes[index++]); // day
-                snprintf(res, 50, "%02d", bytes[index++]); // hour
-                snprintf(res, 50, "%02d", bytes[index++]); // minute
-                snprintf(res, 50, "%02d", bytes[index++]); // second
-
-                value = ((bytes[index] & 0xFF) << 24) | ((bytes[index + 1] & 0xFF) << 16) | ((bytes[index + 2] & 0xFF) << 8) | (bytes[index + 3] & 0xFF);
-                value &= 0xFFFFF;
-                value %= 1000000;
-                index += 4;
-                snprintf(res, 50, "%06d", value); // millisecond
+                index += 8; // skipping datetime and uptime
                 break;
             }
             default:

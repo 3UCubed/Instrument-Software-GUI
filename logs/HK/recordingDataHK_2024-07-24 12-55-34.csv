@@ -1,2 +1,0 @@
-date, time, sync, seq, vsense, vrefint, temp1, temp2, temp3, temp4, busvmon, busimon, 2v5mon, 3v3mon, 5vmon, n3v3mon, n5vmon, 15vmon, 5vrefmon, n200vmon, n800vmon
-00-01-01, T00:03:27.787600Z, 0xCCCC, 0004, 1.22249, 0.61648, 24.87000, 24.56000, 24.93000, 24.68000, 1.33692, 0.03143, 2.50059, 1.19509, 3.00344, 3.19685, 0.00000, 3.05099, 3.00747, 2.69963, 0.00081
