@@ -313,7 +313,7 @@ std::string Logger::createLogTitle(std::string dir, std::string id)
     std::ostringstream oss;
     oss << std::put_time(&tm, "%Y-%m-%d %H-%M-%S");
     std::string dateTime = oss.str();
-    newLogName = "logs/" + dir + "/" + id + dir + "_" + dateTime;
+    newLogName = "logs/" + dir + "/" + dateTime + "-" + dir;
     return newLogName;
 }
 
