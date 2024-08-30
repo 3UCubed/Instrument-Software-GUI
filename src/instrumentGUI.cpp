@@ -414,7 +414,7 @@ void syncCallback(Fl_Widget *)
         return;
     }
 
-    uint8_t rx_buffer[5];
+    uint8_t rx_buffer[56];
     uint8_t tx_buffer[9];
     int bytesRead = 0;
 
@@ -435,14 +435,18 @@ void syncCallback(Fl_Widget *)
             write(serialPort, tx_buffer, 9 * sizeof(uint8_t));
             if (waitForResponse())
             {
-                bytesRead = read(serialPort, rx_buffer, sizeof(uint8_t));
-                if (bytesRead > 0 && rx_buffer[0] == 0xFF)
+                bytesRead = read(serialPort, rx_buffer, 56 * sizeof(uint8_t));
+                if (bytesRead > 0 && rx_buffer[0] == 0xDD)
                 {
-                    std::cout << "Final ACK received from MCU.\n";
+                    std::cout << "Previous error packet received from iMCU. BytesRead = " << bytesRead << "\n";
+                    for (int i = 0; i < 56; i++) {
+                        printf("[%d] %x\n", i, rx_buffer[i]);
+                    }
+                    std::cout << endl;
                 }
                 else
                 {
-                    std::cerr << "Failed to receive final valid ACK.\n";
+                    std::cerr << "Failed to receive previous error packet from iMCU.\n";
                 }
             }
         }
