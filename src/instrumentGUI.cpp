@@ -210,22 +210,22 @@ void cleanup()
  */
 Packet_t determinePacketType(char MSB, char LSB)
 {
-    if (((MSB & 0xFF) == 0xAA) && ((LSB & 0xFF) == 0xAA))
+    if (((MSB & 0xFF) == 0xEE) && ((LSB & 0xFF) == 0xEE))
     {
         return ERPA;
     }
 
-    if (((MSB & 0xFF) == 0xBB) && ((LSB & 0xFF) == 0xBB))
+    if (((MSB & 0xFF) == 0xFF) && ((LSB & 0xFF) == 0xFF))
     {
         return PMT;
     }
 
-    if (((MSB & 0xFF) == 0xCC) && ((LSB & 0xFF) == 0xCC))
+    if (((MSB & 0xFF) == 0xDD) && ((LSB & 0xFF) == 0xDD))
     {
         return HK;
     }
 
-    if (((MSB & 0xFF) == 0xDD) && ((LSB & 0xFF) == 0xDD))
+    if (((MSB & 0xFF) == 0xCC) && ((LSB & 0xFF) == 0xCC))
     {
         return ERROR_PACKET;
     }
@@ -436,7 +436,7 @@ void syncCallback(Fl_Widget *)
             if (waitForResponse())
             {
                 bytesRead = read(serialPort, rx_buffer, 56 * sizeof(uint8_t));
-                if (bytesRead > 0 && rx_buffer[0] == 0xDD)
+                if (bytesRead > 0 && rx_buffer[0] == 0xCC)
                 {
                     std::cout << "Previous error packet received from iMCU. BytesRead = " << bytesRead << "\n";
                     for (int i = 0; i < 56; i++) {

@@ -411,17 +411,17 @@ int Logger::slurp(std::string path, char *&buffer)
  */
 Logger::Packet_t Logger::determinePacketType(char MSB, char LSB)
 {
-    if (((MSB & 0xFF) == 0xAA) && ((LSB & 0xFF) == 0xAA))
+    if (((MSB & 0xFF) == 0xEE) && ((LSB & 0xFF) == 0xEE))
     {
         return ERPA;
     }
 
-    if (((MSB & 0xFF) == 0xBB) && ((LSB & 0xFF) == 0xBB))
+    if (((MSB & 0xFF) == 0xFF) && ((LSB & 0xFF) == 0xFF))
     {
         return PMT;
     }
 
-    if (((MSB & 0xFF) == 0xCC) && ((LSB & 0xFF) == 0xCC))
+    if (((MSB & 0xFF) == 0xDD) && ((LSB & 0xFF) == 0xDD))
     {
         return HK;
     }
