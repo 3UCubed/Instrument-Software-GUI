@@ -43,7 +43,6 @@ enum Packet_t{
     ERPA,
     PMT,
     HK,
-    ERROR_PACKET,
     UNDEFINED
 };
 
@@ -167,4 +166,3 @@ Fl_Output *HKn800vmon;
 Fl_Output *HKtmp1;
 Fl_Output *dateTime;
 Fl_Output *guiVersion;
-Fl_Output *errorCodeOutput;
