@@ -472,6 +472,8 @@ void syncCallback(Fl_Widget *)
     startRecording->activate();
     scienceMode->activate();
     idleMode->activate();
+    previousErrorPacket->deactivate();
+
     return;
 }
 
@@ -881,6 +883,31 @@ void idleModeCallback(Fl_Widget *widget)
     writeSerialData(serialPort, 0xCF);
 }
 
+void previousErrorPacketCallback(Fl_Widget *widget) {
+    uint8_t rx_buffer[4];
+    int bytesRead = 0;
+
+    if (!openSerialPort())
+    {
+        cerr << "Sync failed on serial port.\n";
+        return;
+    }
+
+    writeSerialData(serialPort, 0xEF);
+    if (waitForResponse())
+    {
+        bytesRead = read(serialPort, rx_buffer, 4 * sizeof(uint8_t));
+        if (bytesRead > 0 && rx_buffer[0] == 0xAA)
+        {
+            std::cout << "Previous error packet received from iMCU. BytesRead = " << bytesRead << "\n";
+            for (int i = 0; i < 4; i++) {
+                printf("[%d] %x\n", i, rx_buffer[i]);
+            }
+            std::cout << endl;
+        }
+    }
+}
+
 /**
  * @brief The main entry point of the program.
  *
@@ -927,16 +954,17 @@ int main()
     HK7 = new Fl_Box(xPacketOffset + 580, yPacketOffset + 365, 50, 20, "n800vmon:");
     HK16 = new Fl_Box(xPacketOffset + 580, yPacketOffset + 385, 50, 20, "TMP1:");
 
-    syncWithInstruments = new Fl_Button(xGUIOffset + 295, yGUIOffset + 90, 110, 40, "Sync");
-    autoStartUp = new Fl_Button(xGUIOffset + 295, yGUIOffset + 130, 110, 40, "Auto Init");
-    autoShutDown = new Fl_Button(xGUIOffset + 295, yGUIOffset + 170, 110, 40, "Auto DeInit");
-    enterStopMode = new Fl_Button(xGUIOffset + 295, yGUIOffset + 210, 110, 40, "Sleep");
-    exitStopMode = new Fl_Button(xGUIOffset + 295, yGUIOffset + 250, 110, 40, "Wake Up");
-    startRecording = new Fl_Button(xGUIOffset + 295, yGUIOffset + 290, 110, 40, "RECORD @circle");
-    scienceMode = new Fl_Button(xGUIOffset + 295, yGUIOffset + 330, 110, 40, "Science Mode");
-    idleMode = new Fl_Button(xGUIOffset + 295, yGUIOffset + 370, 110, 40, "Idle Mode");
+    syncWithInstruments = new Fl_Button(xGUIOffset + 295, yGUIOffset + 90, 110, 35, "Sync");
+    autoStartUp = new Fl_Button(xGUIOffset + 295, yGUIOffset + 125, 110, 35, "Auto Init");
+    autoShutDown = new Fl_Button(xGUIOffset + 295, yGUIOffset + 160, 110, 35, "Auto DeInit");
+    enterStopMode = new Fl_Button(xGUIOffset + 295, yGUIOffset + 195, 110, 35, "Sleep");
+    exitStopMode = new Fl_Button(xGUIOffset + 295, yGUIOffset + 230, 110, 35, "Wake Up");
+    startRecording = new Fl_Button(xGUIOffset + 295, yGUIOffset + 265, 110, 35, "RECORD @circle");
+    scienceMode = new Fl_Button(xGUIOffset + 295, yGUIOffset + 300, 110, 35, "Science Mode");
+    idleMode = new Fl_Button(xGUIOffset + 295, yGUIOffset + 335, 110, 35, "Idle Mode");
+    previousErrorPacket = new Fl_Button(xGUIOffset + 295, yGUIOffset + 370, 110, 35, "Prev Err Pkt");
+    quit = new Fl_Button(xGUIOffset + 295, yGUIOffset + 405, 110, 70, "Quit");
 
-    quit = new Fl_Button(xGUIOffset + 295, yGUIOffset + 410, 110, 65, "Quit");
     stepUp = new Fl_Button(xPacketOffset + 305, yPacketOffset + 195, 180, 20, "Step Up");
     stepDown = new Fl_Button(xPacketOffset + 305, yPacketOffset + 245, 180, 20, "Step Down");
     increaseFactor = new Fl_Button(xPacketOffset + 305, yPacketOffset + 305, 180, 20, "Factor Up");
@@ -1023,6 +1051,7 @@ int main()
     syncWithInstruments->callback(syncCallback);
     scienceMode->callback(scienceModeCallback);
     idleMode->callback(idleModeCallback);
+    previousErrorPacket->callback(previousErrorPacketCallback);
     quit->align(FL_ALIGN_CENTER);
     quit->color(FL_RED);
     quit->callback(quitCallback);

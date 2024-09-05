@@ -121,6 +121,7 @@ Fl_Button *decreaseFactor;
 Fl_Button *startRecording;
 Fl_Button *scienceMode;
 Fl_Button *idleMode;
+Fl_Button *previousErrorPacket;
 Fl_Round_Button *PMTOn;
 Fl_Round_Button *ERPAOn;
 Fl_Round_Button *HKOn;
