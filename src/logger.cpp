@@ -154,7 +154,7 @@ void Logger::parseRawLog(std::string id)
         else if (packetType == HK && i < bytesRead - HK_PACKET_SIZE)
         {
             char res[50];
-            uint32_t value;
+            uint64_t value;
             value = ((buffer[i] & 0xFF) << 8) | (buffer[i + 1] & 0xFF);
             i += 2;
             snprintf(res, 50, "0x%X", value);
@@ -255,25 +255,15 @@ void Logger::parseRawLog(std::string id)
             snprintf(res, 50, "%06.5f", calculateTemperature(intToVoltage(value, 12, 3.3, 1.0)));
             hk.tmp1 = res;
 
-            snprintf(res, 50, "%02d", buffer[i++]); // year
-            hk.year = res;
-            snprintf(res, 50, "%02d", buffer[i++]); // month
-            hk.month = res;
-            snprintf(res, 50, "%02d", buffer[i++]); // day
-            hk.day = res;
-            snprintf(res, 50, "%02d", buffer[i++]); // hour
-            hk.hour = res;
-            snprintf(res, 50, "%02d", buffer[i++]); // minute
-            hk.minute = res;
-            snprintf(res, 50, "%02d", buffer[i++]); // second
-            hk.second = res;
-
-            value = ((buffer[i] & 0xFF) << 24) | ((buffer[i + 1] & 0xFF) << 16) | ((buffer[i + 2] & 0xFF) << 8) | (buffer[i + 3] & 0xFF);
-            value &= 0xFFFFF;
-            value %= 1000000;
-            i += 4;
-            snprintf(res, 50, "%06d", value); // millisecond
-            hk.microsecond = res;
+            value = (static_cast<uint64_t>(buffer[i] & 0xFF) << 40) |
+            (static_cast<uint64_t>(buffer[i+1] & 0xFF) << 32) |
+            (static_cast<uint64_t>(buffer[i+2] & 0xFF) << 24) |
+            (static_cast<uint64_t>(buffer[i+3] & 0xFF) << 16) |
+            (static_cast<uint64_t>(buffer[i+4] & 0xFF) << 8)  |
+            (static_cast<uint64_t>(buffer[i+5] & 0xFF));
+            i += 6;
+            snprintf(res, 50, "%013llu", value); 
+            hk.unix = res;
 
             value = ((buffer[i] & 0xFF) << 24) | ((buffer[i + 1] & 0xFF) << 16) | ((buffer[i + 2] & 0xFF) << 8) | (buffer[i + 3] & 0xFF);
             i += 4;
@@ -281,8 +271,7 @@ void Logger::parseRawLog(std::string id)
             hk.uptime = res;
 
             std::string formattedData = "";
-            formattedData += hk.year + "-" + hk.month + "-" + hk.day + ", ";                                   // Date
-            formattedData += hk.hour + ":" + hk.minute + ":" + hk.second + "." + hk.microsecond + ", " + hk.uptime + ", "; // Time + uptime
+            formattedData += hk.unix + ", " + hk.uptime + ", "; // unix + uptime
             formattedData += hk.sync + ", " + hk.seq + ", " + hk.vsense + ", " + hk.vrefint + ", " + hk.temp1 + ", " + hk.temp2 + ", " + hk.temp3 + ", " + hk.temp4 + ", ";
             formattedData += hk.busvmon + ", " + hk.busimon + ", " + hk.mon2v5 + ", " + hk.mon3v3 + ", " + hk.mon5v + ", " + hk.monn3v3 + ", " + hk.monn5v + ", " + hk.mon15v + ", " + hk.mon5vref + ", " + hk.monn200v + ", " + hk.monn800v + ", " + hk.tmp1 + "\n";
             hkStream << formattedData;

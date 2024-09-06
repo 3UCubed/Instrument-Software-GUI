@@ -12,12 +12,12 @@
 
 #define ERPA_HEADER "uptime, sync, seq, step, SWPMON, adc"
 #define PMT_HEADER "uptime, sync, seq, adc"
-#define HK_HEADER "date, time, uptime, sync, seq, vsense, vrefint, temp1, temp2, temp3, temp4, busvmon, busimon, 2v5mon, 3v3mon, 5vmon, n3v3mon, n5vmon, 15vmon, 5vrefmon, n200vmon, n800vmon, tmp1"
+#define HK_HEADER "unix, uptime, sync, seq, vsense, vrefint, temp1, temp2, temp3, temp4, busvmon, busimon, 2v5mon, 3v3mon, 5vmon, n3v3mon, n5vmon, 15vmon, 5vrefmon, n200vmon, n800vmon, tmp1"
 #define CONTROLS_HEADER "date, time, PMT, ERPA, HK, SDN1, SYS_ON, 3v3, 5v, n3v3, n5v, 15v, n150v, 800v"
 
 #define PMT_PACKET_SIZE 10
 #define ERPA_PACKET_SIZE 14
-#define HK_PACKET_SIZE 54
+#define HK_PACKET_SIZE 50
 
 #include <iomanip>
 #include <string>
@@ -86,13 +86,7 @@ private:
         std::string monn200v;
         std::string monn800v;
         std::string tmp1;
-        std::string year;
-        std::string month;
-        std::string day;
-        std::string hour;
-        std::string minute;
-        std::string second;
-        std::string microsecond;
+        std::string unix;
         std::string uptime;
     };
 

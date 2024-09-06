@@ -1624,7 +1624,7 @@ int main()
                 snprintf(res, 50, "%06.5f", calculateTemperature(intToVoltage(value, 12, 3.3, 1.0)));
                 HKtmp1->value(res);
 
-                index += 8; // skipping datetime and uptime
+                index += 10; // skipping datetime and uptime
                 break;
             }
             default:
