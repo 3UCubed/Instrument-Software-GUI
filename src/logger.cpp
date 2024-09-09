@@ -154,7 +154,7 @@ void Logger::parseRawLog(std::string id)
         else if (packetType == HK && i < bytesRead - HK_PACKET_SIZE)
         {
             char res[50];
-            uint64_t value;
+            uint32_t value;
             value = ((buffer[i] & 0xFF) << 8) | (buffer[i + 1] & 0xFF);
             i += 2;
             snprintf(res, 50, "0x%X", value);
@@ -255,14 +255,20 @@ void Logger::parseRawLog(std::string id)
             snprintf(res, 50, "%06.5f", calculateTemperature(intToVoltage(value, 12, 3.3, 1.0)));
             hk.tmp1 = res;
 
-            value = (static_cast<uint64_t>(buffer[i] & 0xFF) << 40) |
-            (static_cast<uint64_t>(buffer[i+1] & 0xFF) << 32) |
-            (static_cast<uint64_t>(buffer[i+2] & 0xFF) << 24) |
-            (static_cast<uint64_t>(buffer[i+3] & 0xFF) << 16) |
-            (static_cast<uint64_t>(buffer[i+4] & 0xFF) << 8)  |
-            (static_cast<uint64_t>(buffer[i+5] & 0xFF));
+            value = 
+            ((buffer[i] & 0xFF) << 24) |
+            ((buffer[i+1] & 0xFF) << 16) |
+            ((buffer[i+2] & 0xFF) << 8)  |
+            ((buffer[i+3] & 0xFF));
+
+            uint16_t ms;
+            ms = ((buffer[i+4] & 0xFF) << 8)  |
+                 ((buffer[i+5] & 0xFF));
+            uint64_t unix_ms;
+            unix_ms = static_cast<uint64_t>(value) * 1000 + ms;
             i += 6;
-            snprintf(res, 50, "%013llu", value); 
+            printf("%llu\n", unix_ms);
+            snprintf(res, 50, "%10d", value); 
             hk.unix = res;
 
             value = ((buffer[i] & 0xFF) << 24) | ((buffer[i + 1] & 0xFF) << 16) | ((buffer[i + 2] & 0xFF) << 8) | (buffer[i + 3] & 0xFF);
