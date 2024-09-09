@@ -225,6 +225,11 @@ Packet_t determinePacketType(char MSB, char LSB)
         return HK;
     }
 
+        if (((MSB & 0xFF) == 0xBB) && ((LSB & 0xFF) == 0xBB))
+    {
+        return CURRENT_ERROR;
+    }
+
     return UNDEFINED;
 }
 
@@ -1437,6 +1442,17 @@ int main()
             // cout << hex << static_cast<int>(bytes[index]) << endl;
             switch (packetType)
             {
+            case CURRENT_ERROR:
+            {
+                printf("%x\n", bytes[index]);
+                printf("%x\n", bytes[index+1]);
+                printf("%x\n", bytes[index+2]);
+                printf("%x\n", bytes[index+3]);
+                index+=4;
+
+                break;
+            }
+
             case PMT:
             {
                 if (index + PMT_PACKET_SIZE >= bytesRead)

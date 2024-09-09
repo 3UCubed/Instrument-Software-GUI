@@ -43,6 +43,7 @@ enum Packet_t{
     ERPA,
     PMT,
     HK,
+    CURRENT_ERROR,
     UNDEFINED
 };
 
