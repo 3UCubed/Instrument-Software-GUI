@@ -1448,7 +1448,33 @@ int main()
                 printf("%x\n", bytes[index+1]);
                 printf("%x\n", bytes[index+2]);
                 printf("%x\n", bytes[index+3]);
-                index+=4;
+
+                printf("%x\n", bytes[index+4]);
+                printf("%x\n", bytes[index+5]);
+
+                printf("%x\n", bytes[index+6]);
+                printf("%x\n", bytes[index+7]);
+
+                printf("%x\n", bytes[index+8]);
+                printf("%x\n-------------\n", bytes[index+9]);
+
+                uint16_t OOB_1, OOB_2, OOB_3;
+                double voltage_1, voltage_2, voltage_3;
+
+                OOB_1 = ((bytes[index+4] & 0xFF) << 8) | (bytes[index+5] & 0xFF);
+                OOB_2 = ((bytes[index+6] & 0xFF) << 8) | (bytes[index+7] & 0xFF);
+                OOB_3 = ((bytes[index+8] & 0xFF) << 8) | (bytes[index+9] & 0xFF);
+
+                voltage_1 = intToVoltage(OOB_1, 12, 3.3, 1.0);
+                voltage_2 = intToVoltage(OOB_2, 12, 3.3, 1.0);
+                voltage_3 = intToVoltage(OOB_3, 12, 3.3, 1.0);
+
+                printf("OOB_1: %d, VOLTAGE: %f\n", OOB_1, voltage_1);
+                printf("OOB_2: %d, VOLTAGE: %f\n", OOB_2, voltage_2);
+                printf("OOB_3: %d, VOLTAGE: %f\n", OOB_3, voltage_3);
+
+
+                index+=10;
 
                 break;
             }

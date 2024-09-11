@@ -264,8 +264,10 @@ void Logger::parseRawLog(std::string id)
             uint16_t ms;
             ms = ((buffer[i+4] & 0xFF) << 8)  |
                  ((buffer[i+5] & 0xFF));
+
             uint64_t unix_ms;
             unix_ms = static_cast<uint64_t>(value) * 1000 + ms;
+            
             i += 6;
             printf("%llu\n", unix_ms);
             snprintf(res, 50, "%10d", value); 
