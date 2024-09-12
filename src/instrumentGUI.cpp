@@ -308,6 +308,18 @@ double tempsToCelsius(int val)
     return convertedTemp;
 }
 
+float vsense_calculation(int raw) {
+    float temp_n40 = -40;
+    float v_n40 = 0;
+    
+    float temp_125 = 125;
+    float v_125 = 3.3;
+
+    float temperature = raw * ((v_125 - v_n40) / (temp_125 - temp_n40));
+
+    return temperature;
+}
+
 // ******************************************************************************************************************* CALLBACKS
 /**
  * @brief Callback function for auto-startup.
@@ -1578,7 +1590,7 @@ int main()
 
                 value = (((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF));
                 index += 2;
-                snprintf(res, 50, "%06.5f", intToVoltage(value, 12, 3.3, 1.0));
+                snprintf(res, 50, "%06.5f", vsense_calculation(value));
                 HKvsense->value(res);
 
                 value = (((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF));

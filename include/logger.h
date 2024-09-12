@@ -104,6 +104,7 @@ private:
     double tempsToCelsius(int val);
     void closePacketLogs();
     float calculateTemperature(float tmpVoltage);
+    float vsense_calculation(int raw);
 
 };
 

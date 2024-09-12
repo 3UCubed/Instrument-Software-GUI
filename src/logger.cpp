@@ -167,7 +167,7 @@ void Logger::parseRawLog(std::string id)
 
             value = (((buffer[i] & 0xFF) << 8) | (buffer[i + 1] & 0xFF));
             i += 2;
-            snprintf(res, 50, "%06.5f", intToVoltage(value, 12, 3.3, 1.0));
+            snprintf(res, 50, "%06.5f", vsense_calculation(value));
             hk.vsense = res;
 
             value = (((buffer[i] & 0xFF) << 8) | (buffer[i + 1] & 0xFF));
@@ -485,6 +485,18 @@ double Logger::tempsToCelsius(int val)
     convertedTemp = std::stod(convertedChar);
 
     return convertedTemp;
+}
+
+float Logger::vsense_calculation(int raw) {
+    float temp_n40 = -40;
+    float v_n40 = 0;
+    
+    float temp_125 = 125;
+    float v_125 = 3.3;
+
+    float temperature = raw * ((v_125 - v_n40) / (temp_125 - temp_n40));
+
+    return temperature;
 }
 
 /**
