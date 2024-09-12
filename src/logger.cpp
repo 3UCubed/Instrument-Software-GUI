@@ -494,7 +494,9 @@ float Logger::vsense_calculation(int raw) {
     float temp_125 = 125;
     float v_125 = 3.3;
 
-    float temperature = raw * ((v_125 - v_n40) / (temp_125 - temp_n40));
+    float voltage = (raw * 3.3) / 4095;
+
+    float temperature = voltage * ((temp_125 - temp_n40) / (v_125 - v_n40)) - 40;
 
     return temperature;
 }
