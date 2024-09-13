@@ -269,7 +269,6 @@ void Logger::parseRawLog(std::string id)
             unix_ms = static_cast<uint64_t>(value) * 1000 + ms;
             
             i += 6;
-            printf("%llu\n", unix_ms);
             snprintf(res, 50, "%10d", value); 
             hk.unix = res;
 
