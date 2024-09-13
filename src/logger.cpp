@@ -167,7 +167,7 @@ void Logger::parseRawLog(std::string id)
 
             value = (((buffer[i] & 0xFF) << 8) | (buffer[i + 1] & 0xFF));
             i += 2;
-            snprintf(res, 50, "%06.5f", vsense_calculation(value));
+            snprintf(res, 50, "%06.5f", convert_VSENSE(value));
             hk.vsense = res;
 
             value = (((buffer[i] & 0xFF) << 8) | (buffer[i + 1] & 0xFF));
@@ -177,22 +177,22 @@ void Logger::parseRawLog(std::string id)
 
             value = (((buffer[i] & 0xFF) << 8) | (buffer[i + 1] & 0xFF));
             i += 2;
-            snprintf(res, 50, "%06.5f", tempsToCelsius(value));
+            snprintf(res, 50, "%06.5f", convert_ADT7410(value));
             hk.temp1 = res;
 
             value = (((buffer[i] & 0xFF) << 8) | (buffer[i + 1] & 0xFF));
             i += 2;
-            snprintf(res, 50, "%06.5f", tempsToCelsius(value));
+            snprintf(res, 50, "%06.5f", convert_ADT7410(value));
             hk.temp2 = res;
 
             value = (((buffer[i] & 0xFF) << 8) | (buffer[i + 1] & 0xFF));
             i += 2;
-            snprintf(res, 50, "%06.5f", tempsToCelsius(value));
+            snprintf(res, 50, "%06.5f", convert_ADT7410(value));
             hk.temp3 = res;
 
             value = (((buffer[i] & 0xFF) << 8) | (buffer[i + 1] & 0xFF));
             i += 2;
-            snprintf(res, 50, "%06.5f", tempsToCelsius(value));
+            snprintf(res, 50, "%06.5f", convert_ADT7410(value));
             hk.temp4 = res;
 
             value = (((buffer[i] & 0xFF) << 8) | (buffer[i + 1] & 0xFF));
@@ -252,7 +252,7 @@ void Logger::parseRawLog(std::string id)
 
             value = (((buffer[i] & 0xFF) << 8) | (buffer[i + 1] & 0xFF));
             i += 2;
-            snprintf(res, 50, "%06.5f", calculateTemperature(intToVoltage(value, 12, 3.3, 1.0)));
+            snprintf(res, 50, "%06.5f", convert_ADHV47021(value));
             hk.tmp1 = res;
 
             value = 
@@ -453,47 +453,20 @@ double Logger::intToVoltage(int value, int resolution, double ref, float mult)
     return voltage;
 }
 
-/**
- * @brief Converts a temperature value from ADC reading to Celsius.
- *
- * Converts an integer value representing temperature from ADC reading to Celsius.
- *
- * @param val Integer value representing temperature from ADC.
- * @return Calculated temperature in Celsius.
- */
-double Logger::tempsToCelsius(int val)
-{
-    char convertedChar[16];
-    double convertedTemp;
-
-    // Convert to 2's complement, since temperature can be negative
-    if (val > 0x7FF)
-    {
-        val |= 0xF000;
+float Logger::convert_ADT7410(int16_t raw) {
+    float ret = raw;
+    if (raw >= 0x1000) {
+        ret -= 8192;
     }
 
-    // Convert to float temperature value (Celsius)
-    float temp_c = val * 0.0625;
-
-    // Convert temperature to decimal value
-    temp_c *= 100;
-
-    snprintf(convertedChar, 16, "%u.%u",
-             ((unsigned int)temp_c / 100),
-             ((unsigned int)temp_c % 100));
-
-    convertedTemp = std::stod(convertedChar);
-
-    return convertedTemp;
+    return ret / 16.0;
 }
 
-float Logger::vsense_calculation(int raw) {
+float Logger::convert_VSENSE(int16_t raw) {
     float temp_n40 = -40;
     float v_n40 = 0;
-    
     float temp_125 = 125;
     float v_125 = 3.3;
-
     float voltage = (raw * 3.3) / 4095;
 
     float temperature = voltage * ((temp_125 - temp_n40) / (v_125 - v_n40)) - 40;
@@ -501,15 +474,10 @@ float Logger::vsense_calculation(int raw) {
     return temperature;
 }
 
-/**
- * @brief Calculate temperature for ADHV4702 given voltage
- *
- */
-float Logger::calculateTemperature(float tmpVoltage)
-{
+float Logger::convert_ADHV47021(int16_t raw) {
+    float voltage = (raw * 3.3) / 4095;
 
-    // Calculate temperature
-    float temperature = 25.0f + (tmpVoltage - 1.9f) / -0.0045f;
+    float temperature = 25.0f + (voltage - 1.9f) / -0.0045f;
 
     return temperature;
 }

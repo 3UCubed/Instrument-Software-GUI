@@ -101,10 +101,10 @@ private:
     int slurp(std::string path, char *&buffer);
     Packet_t determinePacketType(char MSB, char LSB);
     double intToVoltage(int value, int resolution, double ref, float mult);
-    double tempsToCelsius(int val);
     void closePacketLogs();
-    float calculateTemperature(float tmpVoltage);
-    float vsense_calculation(int raw);
+    float convert_ADT7410(int16_t raw);
+    float convert_VSENSE(int16_t raw);
+    float convert_ADHV47021(int16_t raw);
 
 };
 

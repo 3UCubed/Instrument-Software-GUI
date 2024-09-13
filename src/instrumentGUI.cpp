@@ -260,64 +260,31 @@ double intToVoltage(int value, int resolution, double ref, float mult)
     return voltage;
 }
 
-/**
- * @brief Calculate temperature for ADHV4702 given voltage
- *
- */
-float calculateTemperature(float tmpVoltage)
-{
+float convert_ADT7410(int16_t raw) {
+    float ret = raw;
+    if (raw >= 0x1000) {
+        ret -= 8192;
+    }
 
-    // Calculate temperature
-    float temperature = 25.0f + (tmpVoltage - 1.9f) / -0.0045f;
+    return ret / 16.0;
+}
+
+float convert_VSENSE(int16_t raw) {
+    float temp_n40 = -40;
+    float v_n40 = 0;
+    float temp_125 = 125;
+    float v_125 = 3.3;
+    float voltage = (raw * 3.3) / 4095;
+
+    float temperature = voltage * ((temp_125 - temp_n40) / (v_125 - v_n40)) - 40;
 
     return temperature;
 }
 
-/**
- * @brief Converts a raw temperature sensor value to Celsius.
- *
- * Converts a raw 12-bit temperature sensor value, accounting for potential
- * negative temperatures using 2's complement, to a Celsius temperature value.
- *
- * @param val The raw temperature sensor value.
- * @return The temperature in Celsius.
- */
-double tempsToCelsius(int val)
-{
-    char convertedChar[16];
-    double convertedTemp;
-
-    // Convert to 2's complement, since temperature can be negative
-    if (val > 0x7FF)
-    {
-        val |= 0xF000;
-    }
-
-    // Convert to float temperature value (Celsius)
-    float temp_c = val * 0.0625;
-
-    // Convert temperature to decimal value
-    temp_c *= 100;
-
-    snprintf(convertedChar, 16, "%u.%u",
-             ((unsigned int)temp_c / 100),
-             ((unsigned int)temp_c % 100));
-
-    convertedTemp = std::stod(convertedChar);
-
-    return convertedTemp;
-}
-
-float vsense_calculation(int raw) {
-    float temp_n40 = -40;
-    float v_n40 = 0;
-    
-    float temp_125 = 125;
-    float v_125 = 3.3;
-
+float convert_ADHV47021(int16_t raw) {
     float voltage = (raw * 3.3) / 4095;
 
-    float temperature = voltage * ((temp_125 - temp_n40) / (v_125 - v_n40)) - 40;
+    float temperature = 25.0f + (voltage - 1.9f) / -0.0045f;
 
     return temperature;
 }
@@ -1592,7 +1559,7 @@ int main()
 
                 value = (((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF));
                 index += 2;
-                snprintf(res, 50, "%06.5f", vsense_calculation(value));
+                snprintf(res, 50, "%06.5f", convert_VSENSE(value));
                 HKvsense->value(res);
 
                 value = (((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF));
@@ -1602,22 +1569,22 @@ int main()
 
                 value = (((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF));
                 index += 2;
-                snprintf(res, 50, "%06.5f", tempsToCelsius(value));
+                snprintf(res, 50, "%06.5f", convert_ADT7410(value));
                 HKtemp1->value(res);
 
                 value = (((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF));
                 index += 2;
-                snprintf(res, 50, "%06.5f", tempsToCelsius(value));
+                snprintf(res, 50, "%06.5f", convert_ADT7410(value));
                 HKtemp2->value(res);
 
                 value = (((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF));
                 index += 2;
-                snprintf(res, 50, "%06.5f", tempsToCelsius(value));
+                snprintf(res, 50, "%06.5f", convert_ADT7410(value));
                 HKtemp3->value(res);
 
                 value = (((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF));
                 index += 2;
-                snprintf(res, 50, "%06.5f", tempsToCelsius(value));
+                snprintf(res, 50, "%06.5f", convert_ADT7410(value));
                 HKtemp4->value(res);
 
                 value = (((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF));
@@ -1677,7 +1644,7 @@ int main()
 
                 value = (((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF));
                 index += 2;
-                snprintf(res, 50, "%06.5f", calculateTemperature(intToVoltage(value, 12, 3.3, 1.0)));
+                snprintf(res, 50, "%06.5f", convert_ADHV47021(value));
                 HKtmp1->value(res);
 
                 index += 10; // skipping datetime and uptime
