@@ -463,13 +463,14 @@ float Logger::convert_ADT7410(int16_t raw) {
 }
 
 float Logger::convert_VSENSE(int16_t raw) {
-    float temp_n40 = -40;
-    float v_n40 = 0;
-    float temp_125 = 125;
-    float v_125 = 3.3;
-    float voltage = (raw * 3.3) / 4095;
+    float TS_CAL1_TEMP = 30;
+    float TS_CAL1 = 0.62;
 
-    float temperature = voltage * ((temp_125 - temp_n40) / (v_125 - v_n40)) - 40;
+    float TS_CAL2_TEMP = 130;
+    float TS_CAL2 = 0.82;
+
+    float voltage = (raw * 3.3) / 4095;
+    float temperature = ((TS_CAL2_TEMP - TS_CAL1_TEMP) / (TS_CAL2 - TS_CAL1)) * (voltage - TS_CAL1) + TS_CAL1_TEMP;
 
     return temperature;
 }
