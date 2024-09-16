@@ -395,8 +395,8 @@ void syncCallback(Fl_Widget *)
         cerr << "Sync failed on serial port.\n";
         return;
     }
-
-    uint8_t rx_buffer[56];
+    uint8_t rx_buffer_size = 60;
+    uint8_t rx_buffer[rx_buffer_size];
     uint8_t tx_buffer[9];
     int bytesRead = 0;
 
@@ -417,11 +417,11 @@ void syncCallback(Fl_Widget *)
             write(serialPort, tx_buffer, 9 * sizeof(uint8_t));
             if (waitForResponse())
             {
-                bytesRead = read(serialPort, rx_buffer, 56 * sizeof(uint8_t));
+                bytesRead = read(serialPort, rx_buffer, rx_buffer_size * sizeof(uint8_t));
                 if (bytesRead > 0 && rx_buffer[0] == 0xCC)
                 {
                     std::cout << "Error counter packet received from iMCU. BytesRead = " << bytesRead << "\n";
-                    for (int i = 0; i < 56; i++) {
+                    for (int i = 0; i < rx_buffer_size; i++) {
                         printf("[%d] %x\n", i, rx_buffer[i]);
                     }
                     std::cout << endl;
