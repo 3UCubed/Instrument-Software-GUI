@@ -1479,6 +1479,10 @@ int main()
                 snprintf(res, 50, "0x%X", value);
                 PMTsync->value(res);
 
+                value = ((bytes[index] & 0xFF) << 24) | ((bytes[index + 1] & 0xFF) << 16) | ((bytes[index + 2] & 0xFF) << 8) | (bytes[index + 3] & 0xFF);
+                index += 4;
+                snprintf(res, 50, "%06d", value);
+
                 value = ((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF);
                 index += 2;
                 snprintf(res, 50, "%04d", value);
@@ -1489,9 +1493,6 @@ int main()
                 snprintf(res, 50, "%08.7f", intToVoltage(value, 16, 5, 1.0));
                 PMTadc->value(res);
 
-                value = ((bytes[index] & 0xFF) << 24) | ((bytes[index + 1] & 0xFF) << 16) | ((bytes[index + 2] & 0xFF) << 8) | (bytes[index + 3] & 0xFF);
-                index += 4;
-                snprintf(res, 50, "%06d", value);
                 break;
             }
             case ERPA:
@@ -1512,6 +1513,10 @@ int main()
                 snprintf(res, 50, "0x%X", value);
                 ERPAsync->value(res);
 
+                value = ((bytes[index] & 0xFF) << 24) | ((bytes[index + 1] & 0xFF) << 16) | ((bytes[index + 2] & 0xFF) << 8) | (bytes[index + 3] & 0xFF);
+                index += 4;
+                snprintf(res, 50, "%06d", value);
+
                 value = ((bytes[index] & 0xFF) << 16) | ((bytes[index + 1] & 0xFF) << 8) | (bytes[index + 2] & 0xFF);
                 index += 3;
                 snprintf(res, 50, "%04d", value);
@@ -1529,9 +1534,6 @@ int main()
                 snprintf(res, 50, "%08.7f", intToVoltage(value, 16, 5, 1.0));
                 ERPAadc->value(res);
 
-                value = ((bytes[index] & 0xFF) << 24) | ((bytes[index + 1] & 0xFF) << 16) | ((bytes[index + 2] & 0xFF) << 8) | (bytes[index + 3] & 0xFF);
-                index += 4;
-                snprintf(res, 50, "%06d", value);
                 break;
             }
             case HK:
@@ -1553,6 +1555,8 @@ int main()
                 snprintf(res, 50, "0x%X", value);
                 HKsync->value(res);
 
+                index += 10; // skipping datetime and uptime
+
                 value = ((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF);
                 index += 2;
                 snprintf(res, 50, "%04d", value);
@@ -1567,26 +1571,6 @@ int main()
                 index += 2;
                 snprintf(res, 50, "%06.5f", intToVoltage(value, 12, 3.3, 1.0));
                 HKvrefint->value(res);
-
-                value = (((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF));
-                index += 2;
-                snprintf(res, 50, "%06.5f", convert_ADT7410(value));
-                HKtemp1->value(res);
-
-                value = (((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF));
-                index += 2;
-                snprintf(res, 50, "%06.5f", convert_ADT7410(value));
-                HKtemp2->value(res);
-
-                value = (((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF));
-                index += 2;
-                snprintf(res, 50, "%06.5f", convert_ADT7410(value));
-                HKtemp3->value(res);
-
-                value = (((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF));
-                index += 2;
-                snprintf(res, 50, "%06.5f", convert_ADT7410(value));
-                HKtemp4->value(res);
 
                 value = (((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF));
                 index += 2;
@@ -1642,13 +1626,32 @@ int main()
                 index += 2;
                 snprintf(res, 50, "%06.5f", intToVoltage(value, 12, 3.3, 1.0));
                 HKn800vmon->value(res);
+                
+                value = (((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF));
+                index += 2;
+                snprintf(res, 50, "%06.5f", convert_ADT7410(value));
+                HKtemp1->value(res);
+
+                value = (((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF));
+                index += 2;
+                snprintf(res, 50, "%06.5f", convert_ADT7410(value));
+                HKtemp2->value(res);
+
+                value = (((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF));
+                index += 2;
+                snprintf(res, 50, "%06.5f", convert_ADT7410(value));
+                HKtemp3->value(res);
+
+                value = (((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF));
+                index += 2;
+                snprintf(res, 50, "%06.5f", convert_ADT7410(value));
+                HKtemp4->value(res);
 
                 value = (((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF));
                 index += 2;
                 snprintf(res, 50, "%06.5f", convert_ADHV47021(value));
                 HKtmp1->value(res);
 
-                index += 10; // skipping datetime and uptime
                 break;
             }
             default:

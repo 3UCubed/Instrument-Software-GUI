@@ -93,6 +93,11 @@ void Logger::parseRawLog(std::string id)
             snprintf(res, 50, "0x%X", value);
             erpa.sync = res;
 
+            value = ((buffer[i] & 0xFF) << 24) | ((buffer[i + 1] & 0xFF) << 16) | ((buffer[i + 2] & 0xFF) << 8) | (buffer[i + 3] & 0xFF);
+            i += 4;
+            snprintf(res, 50, "%06d", value);
+            erpa.uptime = res;
+
             value = ((buffer[i] & 0xFF) << 16) | ((buffer[i + 1] & 0xFF) << 8) | (buffer[i + 2] & 0xFF);
             i += 3;
             snprintf(res, 50, "%04d", value);
@@ -113,13 +118,9 @@ void Logger::parseRawLog(std::string id)
             snprintf(res, 50, "%08.7f", intToVoltage(value, 16, 5, 1.0));
             erpa.adc = res;
 
-            value = ((buffer[i] & 0xFF) << 24) | ((buffer[i + 1] & 0xFF) << 16) | ((buffer[i + 2] & 0xFF) << 8) | (buffer[i + 3] & 0xFF);
-            i += 4;
-            snprintf(res, 50, "%06d", value);
-            erpa.uptime = res;
 
             std::string formattedData = "";
-            formattedData = erpa.uptime + ", " + erpa.sync + ", " + erpa.seq + ", " + erpa.step + ", " + erpa.swp + ", " + erpa.adc + "\n"; // Packet data
+            formattedData = erpa.sync + ", " + erpa.uptime + ", " + erpa.seq + ", " + erpa.step + ", " + erpa.swp + ", " + erpa.adc + "\n"; // Packet data
             erpaStream << formattedData;
         }
         else if (packetType == PMT && i < bytesRead - PMT_PACKET_SIZE)
@@ -132,6 +133,11 @@ void Logger::parseRawLog(std::string id)
             snprintf(res, 50, "0x%X", value);
             pmt.sync = res;
 
+            value = ((buffer[i] & 0xFF) << 24) | ((buffer[i + 1] & 0xFF) << 16) | ((buffer[i + 2] & 0xFF) << 8) | (buffer[i + 3] & 0xFF);
+            i += 4;
+            snprintf(res, 50, "%06d", value); // millisecond
+            pmt.uptime = res;
+
             value = ((buffer[i] & 0xFF) << 8) | (buffer[i + 1] & 0xFF);
             i += 2;
             snprintf(res, 50, "%04d", value);
@@ -142,13 +148,8 @@ void Logger::parseRawLog(std::string id)
             snprintf(res, 50, "%08.7f", intToVoltage(value, 16, 5, 1.0));
             pmt.adc = res;
 
-            value = ((buffer[i] & 0xFF) << 24) | ((buffer[i + 1] & 0xFF) << 16) | ((buffer[i + 2] & 0xFF) << 8) | (buffer[i + 3] & 0xFF);
-            i += 4;
-            snprintf(res, 50, "%06d", value); // millisecond
-            pmt.uptime = res;
-
             std::string formattedData = "";
-            formattedData = pmt.uptime + ", " + pmt.sync + ", " + pmt.seq + ", " + pmt.adc + "\n";
+            formattedData = pmt.sync + ", " + pmt.uptime + ", " + pmt.seq + ", " + pmt.adc + "\n";
             pmtStream << formattedData;
         }
         else if (packetType == HK && i < bytesRead - HK_PACKET_SIZE)
@@ -159,6 +160,28 @@ void Logger::parseRawLog(std::string id)
             i += 2;
             snprintf(res, 50, "0x%X", value);
             hk.sync = res;
+
+            value = 
+            ((buffer[i] & 0xFF) << 24) |
+            ((buffer[i+1] & 0xFF) << 16) |
+            ((buffer[i+2] & 0xFF) << 8)  |
+            ((buffer[i+3] & 0xFF));
+
+            uint16_t ms;
+            ms = ((buffer[i+4] & 0xFF) << 8)  |
+                 ((buffer[i+5] & 0xFF));
+
+            uint64_t unix_ms;
+            unix_ms = static_cast<uint64_t>(value) * 1000 + ms;
+            
+            i += 6;
+            snprintf(res, 50, "%10d", value); 
+            hk.unix = res;
+
+            value = ((buffer[i] & 0xFF) << 24) | ((buffer[i + 1] & 0xFF) << 16) | ((buffer[i + 2] & 0xFF) << 8) | (buffer[i + 3] & 0xFF);
+            i += 4;
+            snprintf(res, 50, "%06d", value); // millisecond
+            hk.uptime = res;
 
             value = ((buffer[i] & 0xFF) << 8) | (buffer[i + 1] & 0xFF);
             i += 2;
@@ -174,26 +197,6 @@ void Logger::parseRawLog(std::string id)
             i += 2;
             snprintf(res, 50, "%06.5f", intToVoltage(value, 12, 3.3, 1.0));
             hk.vrefint = res;
-
-            value = (((buffer[i] & 0xFF) << 8) | (buffer[i + 1] & 0xFF));
-            i += 2;
-            snprintf(res, 50, "%06.5f", convert_ADT7410(value));
-            hk.temp1 = res;
-
-            value = (((buffer[i] & 0xFF) << 8) | (buffer[i + 1] & 0xFF));
-            i += 2;
-            snprintf(res, 50, "%06.5f", convert_ADT7410(value));
-            hk.temp2 = res;
-
-            value = (((buffer[i] & 0xFF) << 8) | (buffer[i + 1] & 0xFF));
-            i += 2;
-            snprintf(res, 50, "%06.5f", convert_ADT7410(value));
-            hk.temp3 = res;
-
-            value = (((buffer[i] & 0xFF) << 8) | (buffer[i + 1] & 0xFF));
-            i += 2;
-            snprintf(res, 50, "%06.5f", convert_ADT7410(value));
-            hk.temp4 = res;
 
             value = (((buffer[i] & 0xFF) << 8) | (buffer[i + 1] & 0xFF));
             i += 2;
@@ -252,38 +255,38 @@ void Logger::parseRawLog(std::string id)
 
             value = (((buffer[i] & 0xFF) << 8) | (buffer[i + 1] & 0xFF));
             i += 2;
+            snprintf(res, 50, "%06.5f", convert_ADT7410(value));
+            hk.temp1 = res;
+
+            value = (((buffer[i] & 0xFF) << 8) | (buffer[i + 1] & 0xFF));
+            i += 2;
+            snprintf(res, 50, "%06.5f", convert_ADT7410(value));
+            hk.temp2 = res;
+
+            value = (((buffer[i] & 0xFF) << 8) | (buffer[i + 1] & 0xFF));
+            i += 2;
+            snprintf(res, 50, "%06.5f", convert_ADT7410(value));
+            hk.temp3 = res;
+
+            value = (((buffer[i] & 0xFF) << 8) | (buffer[i + 1] & 0xFF));
+            i += 2;
+            snprintf(res, 50, "%06.5f", convert_ADT7410(value));
+            hk.temp4 = res;
+
+            value = (((buffer[i] & 0xFF) << 8) | (buffer[i + 1] & 0xFF));
+            i += 2;
             snprintf(res, 50, "%06.5f", convert_ADHV47021(value));
             hk.tmp1 = res;
 
-            value = 
-            ((buffer[i] & 0xFF) << 24) |
-            ((buffer[i+1] & 0xFF) << 16) |
-            ((buffer[i+2] & 0xFF) << 8)  |
-            ((buffer[i+3] & 0xFF));
-
-            uint16_t ms;
-            ms = ((buffer[i+4] & 0xFF) << 8)  |
-                 ((buffer[i+5] & 0xFF));
-
-            uint64_t unix_ms;
-            unix_ms = static_cast<uint64_t>(value) * 1000 + ms;
-            
-            i += 6;
-            snprintf(res, 50, "%10d", value); 
-            hk.unix = res;
-
-            value = ((buffer[i] & 0xFF) << 24) | ((buffer[i + 1] & 0xFF) << 16) | ((buffer[i + 2] & 0xFF) << 8) | (buffer[i + 3] & 0xFF);
-            i += 4;
-            snprintf(res, 50, "%06d", value); // millisecond
-            hk.uptime = res;
-
             std::string formattedData = "";
-            formattedData += hk.unix + ", " + hk.uptime + ", "; // unix + uptime
-            formattedData += hk.sync + ", " + hk.seq + ", " + hk.vsense + ", " + hk.vrefint + ", " + hk.temp1 + ", " + hk.temp2 + ", " + hk.temp3 + ", " + hk.temp4 + ", ";
-            formattedData += hk.busvmon + ", " + hk.busimon + ", " + hk.mon2v5 + ", " + hk.mon3v3 + ", " + hk.mon5v + ", " + hk.monn3v3 + ", " + hk.monn5v + ", " + hk.mon15v + ", " + hk.mon5vref + ", " + hk.monn200v + ", " + hk.monn800v + ", " + hk.tmp1 + "\n";
+            formattedData += hk.sync + ", " + hk.unix + ", " + hk.uptime + ", ";
+            formattedData += hk.seq + ", " + hk.vsense + ", " + hk.vrefint + ", " + hk.busvmon + ", " + hk.busimon + ", ";
+            formattedData += hk.mon2v5 + ", " + hk.mon3v3 + ", " + hk.mon5v + ", " + hk.monn3v3 + ", " + hk.monn5v + ", "; 
+            formattedData += hk.mon15v + ", " + hk.mon5vref + ", " + hk.monn200v + ", " + hk.monn800v + ", "; 
+            formattedData += hk.temp1 + ", " + hk.temp2 + ", " + hk.temp3 + ", " + hk.temp4 + ", " + hk.tmp1 + "\n";
             hkStream << formattedData;
         }
-        else
+        else 
         {
             i++;
         }
@@ -339,11 +342,6 @@ void Logger::createPacketLogs(std::string id)
     newLogName += ".csv";
     hkStream.open(newLogName, std::ios::app);
     hkStream << HK_HEADER << "\n";
-
-    newLogName = createLogTitle("CONTROLS", id);
-    newLogName += ".csv";
-    controlsStream.open(newLogName, std::ios::app);
-    controlsStream << CONTROLS_HEADER << "\n";
 }
 
 /**
