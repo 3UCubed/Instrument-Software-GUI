@@ -473,7 +473,7 @@ void syncCallback(Fl_Widget *)
  */
 void quitCallback(Fl_Widget *)
 {
-    writeSerialData(serialPort, 0xD0); // Same command auto deinit sends, just ensuring everything gets turned off when quit button is pressed
+    writeSerialData(serialPort, 0xCF); // Same command IDLE sends, just ensuring everything gets turned off when quit button is pressed
     cleanup();
     exit(0);
 }
