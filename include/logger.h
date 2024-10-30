@@ -12,7 +12,7 @@
 
 #define ERPA_HEADER "sync, uptime, seq, step, SWPMON, adc"
 #define PMT_HEADER "sync, uptime, seq, adc"
-#define HK_HEADER "sync, unix, uptime, seq, vsense, vrefint, busvmon, busimon, 2v5mon, 3v3mon, 5vmon, n3v3mon, n5vmon, 15vmon, 5vrefmon, n200vmon, n800vmon, temp1, temp2, temp3, temp4, tmp1"
+#define HK_HEADER "sync, unix, uptime, seq, vsense, vrefint, busvmon, busimon, 2v5mon, 5vmon, n3v3mon, n5vmon, 15vmon, 5vrefmon, n200vmon, n800vmon, temp1, temp2, temp3, temp4, tmp1"
 
 #define PMT_PACKET_SIZE 10
 #define ERPA_PACKET_SIZE 14
@@ -74,7 +74,6 @@ private:
         std::string busvmon;
         std::string busimon;
         std::string mon2v5;
-        std::string mon3v3;
         std::string mon5v;
         std::string monn3v3;
         std::string monn5v;

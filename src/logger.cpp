@@ -276,7 +276,7 @@ void Logger::parseRawLog(std::string id)
             std::string formattedData = "";
             formattedData += hk.sync + ", " + hk.unix + ", " + hk.uptime + ", ";
             formattedData += hk.seq + ", " + hk.vsense + ", " + hk.vrefint + ", " + hk.busvmon + ", " + hk.busimon + ", ";
-            formattedData += hk.mon2v5 + ", " + ", " + hk.mon5v + ", " + hk.monn3v3 + ", " + hk.monn5v + ", "; 
+            formattedData += hk.mon2v5 + ", " + hk.mon5v + ", " + hk.monn3v3 + ", " + hk.monn5v + ", "; 
             formattedData += hk.mon15v + ", " + hk.mon5vref + ", " + hk.monn200v + ", " + hk.monn800v + ", "; 
             formattedData += hk.temp1 + ", " + hk.temp2 + ", " + hk.temp3 + ", " + hk.temp4 + ", " + hk.tmp1 + "\n";
             hkStream << formattedData;
