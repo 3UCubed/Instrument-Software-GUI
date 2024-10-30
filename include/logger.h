@@ -16,7 +16,7 @@
 
 #define PMT_PACKET_SIZE 10
 #define ERPA_PACKET_SIZE 14
-#define HK_PACKET_SIZE 50
+#define HK_PACKET_SIZE 48
 
 #include <iomanip>
 #include <string>

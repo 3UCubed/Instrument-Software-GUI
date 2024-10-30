@@ -225,7 +225,7 @@ Packet_t determinePacketType(char MSB, char LSB)
         return HK;
     }
 
-        if (((MSB & 0xFF) == 0xBB) && ((LSB & 0xFF) == 0xBB))
+    if (((MSB & 0xFF) == 0xBB) && ((LSB & 0xFF) == 0xBB))
     {
         return CURRENT_ERROR;
     }
@@ -301,7 +301,6 @@ float convert_ADHV47021(int16_t raw) {
 void autoStartUpCallback(Fl_Widget *)
 {
     PB6->activate();
-    PC10->activate();
     PC13->activate();
     PC7->activate();
     PC8->activate();
@@ -311,7 +310,6 @@ void autoStartUpCallback(Fl_Widget *)
     SDN1->value(1);
     PB5->value(1);
     PC7->value(1);
-    PC10->value(1);
     PC6->value(1);
     PC8->value(1);
     PC9->value(1);
@@ -329,7 +327,6 @@ void autoStartUpCallback(Fl_Widget *)
 void autoShutDownCallback(Fl_Widget *)
 {
     PB6->deactivate();
-    PC10->deactivate();
     PC13->deactivate();
     PC7->deactivate();
     PC8->deactivate();
@@ -339,7 +336,6 @@ void autoShutDownCallback(Fl_Widget *)
     SDN1->value(0);
     PB5->value(0);
     PC7->value(0);
-    PC10->value(0);
     PC6->value(0);
     PC8->value(0);
     PC9->value(0);
@@ -395,12 +391,12 @@ void syncCallback(Fl_Widget *)
         cerr << "Sync failed on serial port.\n";
         return;
     }
-    uint8_t rx_buffer_size = 65;
+    uint8_t rx_buffer_size = 63;
     uint8_t rx_buffer[rx_buffer_size];
     uint8_t tx_buffer[9];
     int bytesRead = 0;
 
-    tx_buffer[0] = 0xAF;
+    tx_buffer[0] = 0xA0;
     write(serialPort, tx_buffer, 1 * sizeof(uint8_t));
 
     if (waitForResponse())
@@ -473,7 +469,7 @@ void syncCallback(Fl_Widget *)
  */
 void quitCallback(Fl_Widget *)
 {
-    writeSerialData(serialPort, 0xCF); // Same command IDLE sends, just ensuring everything gets turned off when quit button is pressed
+    writeSerialData(serialPort, 0xA2); // Same command IDLE sends, just ensuring everything gets turned off when quit button is pressed
     cleanup();
     exit(0);
 }
@@ -487,7 +483,7 @@ void quitCallback(Fl_Widget *)
  */
 void stopModeCallback(Fl_Widget *)
 {
-    writeSerialData(serialPort, 0x0F);
+    writeSerialData(serialPort, 0xA3);
 }
 
 /**
@@ -515,7 +511,7 @@ void exitStopModeCallback(Fl_Widget *)
  */
 void stepUpCallback(Fl_Widget *)
 {
-    writeSerialData(serialPort, 0x1D);
+    writeSerialData(serialPort, 0x1C);
     if (step < 7)
     {
         step++;
@@ -532,7 +528,7 @@ void stepUpCallback(Fl_Widget *)
  */
 void stepDownCallback(Fl_Widget *)
 {
-    writeSerialData(serialPort, 0x0D);
+    writeSerialData(serialPort, 0x0C);
     if (step > 0)
     {
         step--;
@@ -549,7 +545,7 @@ void stepDownCallback(Fl_Widget *)
  */
 void factorUpCallback(Fl_Widget *)
 {
-    writeSerialData(serialPort, 0x1E);
+    writeSerialData(serialPort, 0x1D);
     if (currentFactor < 32)
     {
         currentFactor *= 2;
@@ -566,7 +562,7 @@ void factorUpCallback(Fl_Widget *)
  */
 void factorDownCallback(Fl_Widget *)
 {
-    writeSerialData(serialPort, 0x0E);
+    writeSerialData(serialPort, 0x0D);
     if (currentFactor > 1)
     {
         currentFactor /= 2;
@@ -611,11 +607,11 @@ void autoSweepCallback(Fl_Widget *)
     int autoSweeping = autoSweep->value();
     if (autoSweeping)
     {
-        writeSerialData(serialPort, 0x19);
+        writeSerialData(serialPort, 0x18);
     }
     else
     {
-        writeSerialData(serialPort, 0x09);
+        writeSerialData(serialPort, 0x08);
     }
 }
 
@@ -647,11 +643,11 @@ void PMTOnCallback(Fl_Widget *widget)
     int pmtOn = PMTOn->value();
     if (pmtOn)
     {
-        writeSerialData(serialPort, 0x1B);
+        writeSerialData(serialPort, 0x1A);
     }
     else
     {
-        writeSerialData(serialPort, 0x0B);
+        writeSerialData(serialPort, 0x0A);
     }
 }
 
@@ -665,11 +661,11 @@ void ERPAOnCallback(Fl_Widget *widget)
     int erpaOn = ERPAOn->value();
     if (erpaOn)
     {
-        writeSerialData(serialPort, 0x1A);
+        writeSerialData(serialPort, 0x19);
     }
     else
     {
-        writeSerialData(serialPort, 0x0A);
+        writeSerialData(serialPort, 0x09);
     }
 }
 
@@ -683,11 +679,11 @@ void HKOnCallback(Fl_Widget *widget)
     int hkOn = HKOn->value();
     if (hkOn)
     {
-        writeSerialData(serialPort, 0x1C);
+        writeSerialData(serialPort, 0x1B);
     }
     else
     {
-        writeSerialData(serialPort, 0x0C);
+        writeSerialData(serialPort, 0x0B);
     }
 }
 
@@ -707,7 +703,6 @@ void PB5Callback(Fl_Widget *widget)
     {
         writeSerialData(serialPort, 0x11);
         PB6->activate();
-        PC10->activate();
         PC13->activate();
         PC7->activate();
         PC8->activate();
@@ -718,7 +713,6 @@ void PB5Callback(Fl_Widget *widget)
     {
         writeSerialData(serialPort, 0x01);
         PB6->deactivate();
-        PC10->deactivate();
         PC13->deactivate();
         PC7->deactivate();
         PC8->deactivate();
@@ -727,7 +721,6 @@ void PB5Callback(Fl_Widget *widget)
         PB6->value(0);
         PC6->value(0);
         PC9->value(0);
-        PC10->value(0);
         PC13->value(0);
         PC7->value(0);
         PC8->value(0);
@@ -744,29 +737,11 @@ void PB6Callback(Fl_Widget *widget)
     int pb6On = PB6->value();
     if (pb6On)
     {
-        writeSerialData(serialPort, 0x18);
+        writeSerialData(serialPort, 0x17);
     }
     else
     {
-        writeSerialData(serialPort, 0x08);
-    }
-}
-
-/**
- * @brief Callback function for PC10.
- *
- * @param widget Pointer to the Fl_Widget triggering the callback.
- */
-void PC10Callback(Fl_Widget *widget)
-{
-    int pc10On = PC10->value();
-    if (pc10On)
-    {
-        writeSerialData(serialPort, 0x12);
-    }
-    else
-    {
-        writeSerialData(serialPort, 0x02);
+        writeSerialData(serialPort, 0x07);
     }
 }
 
@@ -780,11 +755,11 @@ void PC13Callback(Fl_Widget *widget)
     int pc13On = PC13->value();
     if (pc13On)
     {
-        writeSerialData(serialPort, 0x17);
+        writeSerialData(serialPort, 0x16);
     }
     else
     {
-        writeSerialData(serialPort, 0x07);
+        writeSerialData(serialPort, 0x06);
     }
 }
 
@@ -798,11 +773,11 @@ void PC7Callback(Fl_Widget *widget)
     int pc7On = PC7->value();
     if (pc7On)
     {
-        writeSerialData(serialPort, 0x13);
+        writeSerialData(serialPort, 0x12);
     }
     else
     {
-        writeSerialData(serialPort, 0x03);
+        writeSerialData(serialPort, 0x02);
     }
 }
 
@@ -816,11 +791,11 @@ void PC8Callback(Fl_Widget *widget)
     int pc8On = PC8->value();
     if (pc8On)
     {
-        writeSerialData(serialPort, 0x15);
+        writeSerialData(serialPort, 0x14);
     }
     else
     {
-        writeSerialData(serialPort, 0x05);
+        writeSerialData(serialPort, 0x04);
     }
 }
 
@@ -834,11 +809,11 @@ void PC9Callback(Fl_Widget *widget)
     int pc9On = PC9->value();
     if (pc9On)
     {
-        writeSerialData(serialPort, 0x16);
+        writeSerialData(serialPort, 0x15);
     }
     else
     {
-        writeSerialData(serialPort, 0x06);
+        writeSerialData(serialPort, 0x05);
     }
 }
 
@@ -852,22 +827,22 @@ void PC6Callback(Fl_Widget *widget)
     int pc6On = PC6->value();
     if (pc6On)
     {
-        writeSerialData(serialPort, 0x14);
+        writeSerialData(serialPort, 0x13);
     }
     else
     {
-        writeSerialData(serialPort, 0x04);
+        writeSerialData(serialPort, 0x03);
     }
 }
 
 void scienceModeCallback(Fl_Widget *widget)
 {
-    writeSerialData(serialPort, 0xBF);
+    writeSerialData(serialPort, 0xA1);
 }
 
 void idleModeCallback(Fl_Widget *widget)
 {
-    writeSerialData(serialPort, 0xCF);
+    writeSerialData(serialPort, 0xA2);
 }
 
 void previousErrorPacketCallback(Fl_Widget *widget) {
@@ -880,7 +855,7 @@ void previousErrorPacketCallback(Fl_Widget *widget) {
         return;
     }
 
-    writeSerialData(serialPort, 0xEF);
+    writeSerialData(serialPort, 0xA5);
     if (waitForResponse())
     {
         bytesRead = read(serialPort, rx_buffer, 4 * sizeof(uint8_t));
@@ -927,19 +902,18 @@ int main()
     HK3 = new Fl_Box(xPacketOffset + 580, yPacketOffset + 85, 50, 20, "BUSvmon:");
     HK4 = new Fl_Box(xPacketOffset + 580, yPacketOffset + 105, 50, 20, "BUSimon:");
     HK8 = new Fl_Box(xPacketOffset + 580, yPacketOffset + 125, 50, 20, "2v5mon:");
-    HK5 = new Fl_Box(xPacketOffset + 580, yPacketOffset + 145, 50, 20, "3v3mon:");
-    HK10 = new Fl_Box(xPacketOffset + 580, yPacketOffset + 165, 50, 20, "5vmon:");
-    HK11 = new Fl_Box(xPacketOffset + 580, yPacketOffset + 185, 50, 20, "n3v3mon:");
-    HK9 = new Fl_Box(xPacketOffset + 580, yPacketOffset + 205, 50, 20, "n5vmon:");
-    HK13 = new Fl_Box(xPacketOffset + 580, yPacketOffset + 225, 50, 20, "15vmon:");
-    HK12 = new Fl_Box(xPacketOffset + 580, yPacketOffset + 245, 50, 20, "5vrefmon:");
-    HK6 = new Fl_Box(xPacketOffset + 580, yPacketOffset + 265, 50, 20, "n200vmon:");
-    HK7 = new Fl_Box(xPacketOffset + 580, yPacketOffset + 285, 50, 20, "n800vmon:");
-    tempLabel1 = new Fl_Box(xPacketOffset + 580, yPacketOffset + 305, 50, 20, "TEMP1:");
-    tempLabel2 = new Fl_Box(xPacketOffset + 580, yPacketOffset + 325, 50, 20, "TEMP2:");
-    tempLabel3 = new Fl_Box(xPacketOffset + 580, yPacketOffset + 345, 50, 20, "TEMP3:");
-    tempLabel4 = new Fl_Box(xPacketOffset + 580, yPacketOffset + 365, 50, 20, "TEMP4:");
-    HK16 = new Fl_Box(xPacketOffset + 580, yPacketOffset + 385, 50, 20, "TMP1:");
+    HK10 = new Fl_Box(xPacketOffset + 580, yPacketOffset + 145, 50, 20, "5vmon:");
+    HK11 = new Fl_Box(xPacketOffset + 580, yPacketOffset + 165, 50, 20, "n3v3mon:");
+    HK9 = new Fl_Box(xPacketOffset + 580, yPacketOffset + 185, 50, 20, "n5vmon:");
+    HK13 = new Fl_Box(xPacketOffset + 580, yPacketOffset + 205, 50, 20, "15vmon:");
+    HK12 = new Fl_Box(xPacketOffset + 580, yPacketOffset + 225, 50, 20, "5vrefmon:");
+    HK6 = new Fl_Box(xPacketOffset + 580, yPacketOffset + 245, 50, 20, "n200vmon:");
+    HK7 = new Fl_Box(xPacketOffset + 580, yPacketOffset + 265, 50, 20, "n800vmon:");
+    tempLabel1 = new Fl_Box(xPacketOffset + 580, yPacketOffset + 285, 50, 20, "TEMP1:");
+    tempLabel2 = new Fl_Box(xPacketOffset + 580, yPacketOffset + 305, 50, 20, "TEMP2:");
+    tempLabel3 = new Fl_Box(xPacketOffset + 580, yPacketOffset + 325, 50, 20, "TEMP3:");
+    tempLabel4 = new Fl_Box(xPacketOffset + 580, yPacketOffset + 345, 50, 20, "TEMP4:");
+    HK16 = new Fl_Box(xPacketOffset + 580, yPacketOffset + 365, 50, 20, "TMP1:");
 
     syncWithInstruments = new Fl_Button(xGUIOffset + 295, yGUIOffset + 90, 110, 35, "Sync");
     autoStartUp = new Fl_Button(xGUIOffset + 295, yGUIOffset + 125, 110, 35, "Auto Init");
@@ -960,13 +934,12 @@ int main()
     ERPAOn = new Fl_Round_Button(xPacketOffset + 450, yPacketOffset - 18, 20, 20);
     HKOn = new Fl_Round_Button(xPacketOffset + 725, yPacketOffset - 18, 20, 20);
     PB5 = new Fl_Round_Button(xControlOffset + 20, yControlOffset + 80, 100, 50, "sys_on PB5");
-    PC7 = new Fl_Round_Button(xControlOffset + 20, yControlOffset + 180, 100, 50, "5v_en PC7");
-    PC10 = new Fl_Round_Button(xControlOffset + 20, yControlOffset + 130, 100, 50, "3v3_en PC10");
-    PC6 = new Fl_Round_Button(xControlOffset + 20, yControlOffset + 230, 100, 50, "n3v3_en PC6");
-    PC8 = new Fl_Round_Button(xControlOffset + 20, yControlOffset + 280, 100, 50, "n5v_en PC8");
-    PC9 = new Fl_Round_Button(xControlOffset + 20, yControlOffset + 330, 100, 50, "15v_en PC9");
-    PC13 = new Fl_Round_Button(xControlOffset + 20, yControlOffset + 380, 100, 50, "n200v_en PC13");
-    PB6 = new Fl_Round_Button(xControlOffset + 20, yControlOffset + 430, 100, 50, "800v_en PB6");
+    PC7 = new Fl_Round_Button(xControlOffset + 20, yControlOffset + 130, 100, 50, "5v_en PC7");
+    PC6 = new Fl_Round_Button(xControlOffset + 20, yControlOffset + 180, 100, 50, "n3v3_en PC6");
+    PC8 = new Fl_Round_Button(xControlOffset + 20, yControlOffset + 230, 100, 50, "n5v_en PC8");
+    PC9 = new Fl_Round_Button(xControlOffset + 20, yControlOffset + 280, 100, 50, "15v_en PC9");
+    PC13 = new Fl_Round_Button(xControlOffset + 20, yControlOffset + 330, 100, 50, "n200v_en PC13");
+    PB6 = new Fl_Round_Button(xControlOffset + 20, yControlOffset + 380, 100, 50, "800v_en PB6");
     curFactor = new Fl_Output(xPacketOffset + 385, yPacketOffset + 330, 20, 20);
     currStep = new Fl_Output(xPacketOffset + 355, yPacketOffset + 220, 20, 20);
     stepVoltage = new Fl_Output(xPacketOffset + 400, yPacketOffset + 220, 20, 20);
@@ -984,19 +957,18 @@ int main()
     HKbusvmon = new Fl_Output(xPacketOffset + 682, yPacketOffset + 85, 60, 20);
     HKbusimon = new Fl_Output(xPacketOffset + 682, yPacketOffset + 105, 60, 20);
     HK2v5mon = new Fl_Output(xPacketOffset + 682, yPacketOffset + 125, 60, 20);
-    HK3v3mon = new Fl_Output(xPacketOffset + 682, yPacketOffset + 145, 60, 20);
-    HK5vmon = new Fl_Output(xPacketOffset + 682, yPacketOffset + 165, 60, 20);
-    HKn3v3mon = new Fl_Output(xPacketOffset + 682, yPacketOffset + 185, 60, 20);
-    HKn5vmon = new Fl_Output(xPacketOffset + 682, yPacketOffset + 205, 60, 20);
-    HK15vmon = new Fl_Output(xPacketOffset + 682, yPacketOffset + 225, 60, 20);
-    HK5vrefmon = new Fl_Output(xPacketOffset + 682, yPacketOffset + 245, 60, 20);
-    HKn150vmon = new Fl_Output(xPacketOffset + 682, yPacketOffset + 265, 60, 20);
-    HKn800vmon = new Fl_Output(xPacketOffset + 682, yPacketOffset + 285, 60, 20);
-    HKtemp1 = new Fl_Output(xPacketOffset + 682, yPacketOffset + 305, 60, 20);
-    HKtemp2 = new Fl_Output(xPacketOffset + 682, yPacketOffset + 325, 60, 20);
-    HKtemp3 = new Fl_Output(xPacketOffset + 682, yPacketOffset + 345, 60, 20);
-    HKtemp4 = new Fl_Output(xPacketOffset + 682, yPacketOffset + 365, 60, 20);
-    HKtmp1 = new Fl_Output(xPacketOffset + 682, yPacketOffset + 385, 60, 20);
+    HK5vmon = new Fl_Output(xPacketOffset + 682, yPacketOffset + 145, 60, 20);
+    HKn3v3mon = new Fl_Output(xPacketOffset + 682, yPacketOffset + 165, 60, 20);
+    HKn5vmon = new Fl_Output(xPacketOffset + 682, yPacketOffset + 185, 60, 20);
+    HK15vmon = new Fl_Output(xPacketOffset + 682, yPacketOffset + 205, 60, 20);
+    HK5vrefmon = new Fl_Output(xPacketOffset + 682, yPacketOffset + 225, 60, 20);
+    HKn150vmon = new Fl_Output(xPacketOffset + 682, yPacketOffset + 245, 60, 20);
+    HKn800vmon = new Fl_Output(xPacketOffset + 682, yPacketOffset + 265, 60, 20);
+    HKtemp1 = new Fl_Output(xPacketOffset + 682, yPacketOffset + 285, 60, 20);
+    HKtemp2 = new Fl_Output(xPacketOffset + 682, yPacketOffset + 305, 60, 20);
+    HKtemp3 = new Fl_Output(xPacketOffset + 682, yPacketOffset + 325, 60, 20);
+    HKtemp4 = new Fl_Output(xPacketOffset + 682, yPacketOffset + 345, 60, 20);
+    HKtmp1 = new Fl_Output(xPacketOffset + 682, yPacketOffset + 365, 60, 20);
 
     SDN1 = new Fl_Light_Button(xPacketOffset + 305, yPacketOffset + 105, 150, 35, "  SDN1 High");
     autoSweep = new Fl_Light_Button(xPacketOffset + 305, yPacketOffset + 155, 150, 35, "  Auto Sweep");
@@ -1053,8 +1025,6 @@ int main()
     PB5->callback(PB5Callback);
     PB6->labelcolor(text);
     PB6->callback(PB6Callback);
-    PC10->labelcolor(text);
-    PC10->callback(PC10Callback);
     PC13->labelcolor(text);
     PC13->callback(PC13Callback);
     PC7->labelcolor(text);
@@ -1296,15 +1266,6 @@ int main()
     HK8->labelfont();
     HK8->labelcolor(text);
     HK8->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
-    HK3v3mon->color(box);
-    HK3v3mon->value(0);
-    HK3v3mon->box(FL_FLAT_BOX);
-    HK3v3mon->textcolor(output);
-    HK5->box(FL_FLAT_BOX);
-    HK5->color(box);
-    HK5->labelfont();
-    HK5->labelcolor(text);
-    HK5->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
     HK5vmon->color(box);
     HK5vmon->value(0);
     HK5vmon->box(FL_FLAT_BOX);
@@ -1384,7 +1345,6 @@ int main()
     HKOn->deactivate();
     PB5->deactivate();
     PC7->deactivate();
-    PC10->deactivate();
     PC6->deactivate();
     PC8->deactivate();
     PC9->deactivate();
@@ -1586,11 +1546,6 @@ int main()
                 index += 2;
                 snprintf(res, 50, "%06.5f", intToVoltage(value, 12, 3.3, 1.0));
                 HK2v5mon->value(res);
-
-                value = (((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF));
-                index += 2;
-                snprintf(res, 50, "%06.5f", intToVoltage(value, 12, 3.3, 1.0));
-                HK3v3mon->value(res);
 
                 value = (((bytes[index] & 0xFF) << 8) | (bytes[index + 1] & 0xFF));
                 index += 2;

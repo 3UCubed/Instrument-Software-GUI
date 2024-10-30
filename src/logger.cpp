@@ -216,11 +216,6 @@ void Logger::parseRawLog(std::string id)
             value = (((buffer[i] & 0xFF) << 8) | (buffer[i + 1] & 0xFF));
             i += 2;
             snprintf(res, 50, "%06.5f", intToVoltage(value, 12, 3.3, 1.0));
-            hk.mon3v3 = res;
-
-            value = (((buffer[i] & 0xFF) << 8) | (buffer[i + 1] & 0xFF));
-            i += 2;
-            snprintf(res, 50, "%06.5f", intToVoltage(value, 12, 3.3, 1.0));
             hk.mon5v = res;
 
             value = (((buffer[i] & 0xFF) << 8) | (buffer[i + 1] & 0xFF));
@@ -281,7 +276,7 @@ void Logger::parseRawLog(std::string id)
             std::string formattedData = "";
             formattedData += hk.sync + ", " + hk.unix + ", " + hk.uptime + ", ";
             formattedData += hk.seq + ", " + hk.vsense + ", " + hk.vrefint + ", " + hk.busvmon + ", " + hk.busimon + ", ";
-            formattedData += hk.mon2v5 + ", " + hk.mon3v3 + ", " + hk.mon5v + ", " + hk.monn3v3 + ", " + hk.monn5v + ", "; 
+            formattedData += hk.mon2v5 + ", " + ", " + hk.mon5v + ", " + hk.monn3v3 + ", " + hk.monn5v + ", "; 
             formattedData += hk.mon15v + ", " + hk.mon5vref + ", " + hk.monn200v + ", " + hk.monn800v + ", "; 
             formattedData += hk.temp1 + ", " + hk.temp2 + ", " + hk.temp3 + ", " + hk.temp4 + ", " + hk.tmp1 + "\n";
             hkStream << formattedData;
