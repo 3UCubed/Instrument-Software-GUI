@@ -396,9 +396,11 @@ void syncCallback(Fl_Widget *)
     uint8_t tx_buffer[9];
     int bytesRead = 0;
 
+    // Send sync command (0xAF)
     tx_buffer[0] = 0xA0;
     write(serialPort, tx_buffer, 1 * sizeof(uint8_t));
 
+    // Wait for ACK (0xFF) from iMCU
     if (waitForResponse())
     {
         rx_buffer[0] = 0x00;
@@ -407,16 +409,29 @@ void syncCallback(Fl_Widget *)
         {
             std::cout << "Initial ACK received from iMCU.\n";
 
+            // Send timestamp to iMCU
             tx_buffer[0] = 0xFF;
             generateTimestamp(tx_buffer);
 
             write(serialPort, tx_buffer, 9 * sizeof(uint8_t));
+
+            // Wait for Full Sync Packet (63 bytes)
             if (waitForResponse())
             {
                 bytesRead = read(serialPort, rx_buffer, rx_buffer_size * sizeof(uint8_t));
-                if (bytesRead > 0 && rx_buffer[0] == 0x88)
+                if (bytesRead == 63 && rx_buffer[0] == 0x88)
                 {
-                    std::cout << "Error counter packet received from iMCU. BytesRead = " << bytesRead << "\n";
+                    std::cout << "Sync / Error counter packet received from iMCU. BytesRead = " << bytesRead << "\n";
+                    // Extract version info
+                    int version_major = rx_buffer[2];
+                    int version_minor = rx_buffer[3];
+                    int version_patch = rx_buffer[4];
+                    std::cout << "Version: " << version_major << "." << version_minor << "." << version_patch << std::endl;
+                    // Format version as a string
+                    char versionString[20];
+                    snprintf(versionString, sizeof(versionString), "V%d.%d.%d", version_major, version_minor, version_patch);
+                    // Display version in the GUI
+                    instrumentVersion->value(versionString);
                     for (int i = 0; i < rx_buffer_size; i++) {
                         printf("[%d] %x\n", i, rx_buffer[i]);
                     }
